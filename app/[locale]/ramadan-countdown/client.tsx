@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import { ToolShell, btnGhost, cardCls, mutedCls, useMounted } from "@/components/ui";
 import { formatGregorian, ramadanStatus } from "@/lib/hijri";
+import { localePath } from "@/lib/i18n";
+import { TOOL_PATHS } from "@/lib/seo";
 
 function segments(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -82,8 +84,8 @@ export default function RamadanCountdownClient() {
           ))}
         </ul>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href={`/${locale}/tools/prayer-times`} className={btnGhost}>{t.linkPrayer}</Link>
-          <Link href={`/${locale}/tools/hijri-calendar`} className={btnGhost}>{t.linkCalendar}</Link>
+          <Link href={localePath(locale, TOOL_PATHS.prayer)} className={btnGhost}>{t.linkPrayer}</Link>
+          <Link href={localePath(locale, TOOL_PATHS.calendar)} className={btnGhost}>{t.linkCalendar}</Link>
         </div>
       </div>
     </ToolShell>

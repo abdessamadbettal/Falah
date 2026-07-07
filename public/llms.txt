@@ -11,21 +11,21 @@ Key facts:
 
 ## Tools
 
-- [Prayer Times](https://falah.io/en/tools/prayer-times): Fajr, Dhuhr, Asr, Maghrib, Isha for any coordinates; 11 calculation methods (Muslim World League, Umm al-Qura, ISNA, …); live next-prayer countdown.
-- [Hijri Smart Calendar](https://falah.io/en/tools/hijri-calendar): Umm al-Qura month grid with Gregorian dates, White Days (13th–15th) fasting highlights, .ics export.
-- [Ramadan Countdown](https://falah.io/en/tools/ramadan-countdown): live countdown to 1 Ramadan; day tracker during the month.
-- [Hijri ↔ Gregorian Converter](https://falah.io/en/tools/date-converter): exact two-way date conversion.
-- [Qibla Finder](https://falah.io/en/tools/qibla): great-circle bearing to the Kaaba, distance, live device-compass needle.
-- [Mosque Finder](https://falah.io/en/tools/mosque-finder): nearby mosques from OpenStreetMap, sorted by distance.
-- [Al-Qur'an Explorer](https://falah.io/en/tools/quran): all 114 surahs, Uthmani script, translation (Saheeh International / Hamidullah / Tafsir al-Muyassar by language).
-- [Tafseer Explorer](https://falah.io/en/tools/tafseer): verse-by-verse classical commentary (Al-Muyassar, Al-Jalalayn).
-- [99 Names of Allah](https://falah.io/en/tools/names-of-allah): Arabic, transliteration, meaning; searchable; embedded offline.
-- [Hisnul Muslim](https://falah.io/en/tools/hisnul-muslim): authentic duas with sources (Bukhari, Muslim, …) by moment of day.
-- [Zakat Calculator](https://falah.io/en/tools/zakat): 2.5% on cash, gold, silver, investments, business assets vs. gold (85 g) or silver (595 g) nisab.
-- [Inheritance Calculator](https://falah.io/en/tools/inheritance): Fara'id fixed Quranic shares with 'awl, radd, and blocking rules; exact fractions.
-- [Hijri Age Calculator](https://falah.io/en/tools/hijri-age): age in the Islamic calendar, next Hijri birthday, milestones.
-- [Quran Card Maker](https://falah.io/en/tools/quran-cards): 1080×1080 verse cards rendered with canvas, PNG download.
-- [Arabic Letterhead Date Stamp](https://falah.io/en/tools/date-stamp): Hijri/Gregorian date headers for documents, PNG download.
+- [Prayer Times](https://falah.io/prayer-times): Fajr, Dhuhr, Asr, Maghrib, Isha for any coordinates; 11 calculation methods (Muslim World League, Umm al-Qura, ISNA, …); live next-prayer countdown.
+- [Hijri Smart Calendar](https://falah.io/hijri-calendar): Umm al-Qura month grid with Gregorian dates, White Days (13th–15th) fasting highlights, .ics export.
+- [Ramadan Countdown](https://falah.io/ramadan-countdown): live countdown to 1 Ramadan; day tracker during the month.
+- [Hijri ↔ Gregorian Converter](https://falah.io/date-converter): exact two-way date conversion.
+- [Qibla Finder](https://falah.io/qibla): great-circle bearing to the Kaaba, distance, live device-compass needle.
+- [Mosque Finder](https://falah.io/mosque-finder): nearby mosques from OpenStreetMap, sorted by distance.
+- [Al-Qur'an Explorer](https://falah.io/quran): all 114 surahs, Uthmani script, translation (Saheeh International / Hamidullah / Tafsir al-Muyassar by language).
+- [Tafseer Explorer](https://falah.io/tafseer): verse-by-verse classical commentary (Al-Muyassar, Al-Jalalayn).
+- [99 Names of Allah](https://falah.io/names-of-allah): Arabic, transliteration, meaning; searchable; embedded offline.
+- [Hisnul Muslim](https://falah.io/hisnul-muslim): authentic duas with sources (Bukhari, Muslim, …) by moment of day.
+- [Zakat Calculator](https://falah.io/zakat): 2.5% on cash, gold, silver, investments, business assets vs. gold (85 g) or silver (595 g) nisab.
+- [Inheritance Calculator](https://falah.io/inheritance): Fara'id fixed Quranic shares with 'awl, radd, and blocking rules; exact fractions.
+- [Hijri Age Calculator](https://falah.io/hijri-age): age in the Islamic calendar, next Hijri birthday, milestones.
+- [Quran Card Maker](https://falah.io/quran-cards): 1080×1080 verse cards rendered with canvas, PNG download.
+- [Arabic Letterhead Date Stamp](https://falah.io/date-stamp): Hijri/Gregorian date headers for documents, PNG download.
 
 ## Notes for citation
 

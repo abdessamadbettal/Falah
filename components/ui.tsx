@@ -3,9 +3,10 @@
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useDict, useLocale } from "@/components/locale";
-import { locales } from "@/lib/i18n";
+import { Logo } from "@/components/logo";
+import { localePath, locales } from "@/lib/i18n";
 
 export const GITHUB_URL = "https://github.com/abdessamadbettal/falah.io";
 
@@ -155,40 +156,92 @@ export function ThemeToggle() {
   );
 }
 
-const LANG_LABELS: Record<string, string> = { en: "EN", fr: "FR", ar: "ع" };
+const LANG_META: Record<string, { native: string; short: string }> = {
+  en: { native: "English", short: "EN" },
+  fr: { native: "Français", short: "FR" },
+  ar: { native: "العربية", short: "AR" },
+};
 
 function LanguageSwitcher() {
   const locale = useLocale();
   const d = useDict();
-  const pathname = usePathname() ?? `/${locale}`;
-  const rest = pathname.replace(/^\/(en|fr|ar)(?=\/|$)/, "") || "/";
+  const pathname = usePathname() ?? localePath(locale);
+  const rest = pathname.replace(/^\/(fr|ar)(?=\/|$)/, "") || "/";
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
-    <nav
-      aria-label={d.common.langAria}
-      className={`flex items-center overflow-hidden rounded-full border ${lineCls}`}
-    >
-      {locales.map((l) => (
-        <Link
-          key={l}
-          href={`/${l}${rest === "/" ? "" : rest}`}
-          hrefLang={l}
-          onClick={() => {
-            try {
-              localStorage.setItem("locale", l);
-            } catch {}
-          }}
-          aria-current={l === locale ? "true" : undefined}
-          className={`px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-            l === locale
-              ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
-              : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
-          }`}
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={d.common.langAria}
+        className={`flex items-center gap-1.5 rounded-full border ${lineCls} px-3 py-1.5 text-xs font-semibold ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+      >
+        <Icon icon="ph:globe" className="size-4" />
+        <span>{LANG_META[locale].short}</span>
+        <Icon
+          icon="ph:caret-down"
+          className={`size-3 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open ? (
+        <ul
+          role="menu"
+          className={`absolute inset-e-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-xl border ${lineCls} bg-white py-1 shadow-lg dark:bg-zinc-900`}
         >
-          {LANG_LABELS[l]}
-        </Link>
-      ))}
-    </nav>
+          {locales.map((l) => (
+            <li key={l} role="none">
+              <Link
+                role="menuitem"
+                href={localePath(l, rest === "/" ? "" : rest)}
+                hrefLang={l}
+                lang={l}
+                onClick={() => {
+                  setOpen(false);
+                  try {
+                    localStorage.setItem("locale", l);
+                  } catch {}
+                }}
+                aria-current={l === locale ? "true" : undefined}
+                className={`flex items-center justify-between px-3 py-2 text-sm transition-colors ${
+                  l === locale
+                    ? "bg-emerald-50 font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+                    : "text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <span className={l === "ar" ? "font-arabic text-base" : ""}>
+                  {LANG_META[l].native}
+                </span>
+                {l === locale ? (
+                  <Icon icon="ph:check-bold" className="size-3.5 shrink-0" />
+                ) : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
@@ -202,27 +255,22 @@ export function Header() {
       className={`sticky top-0 z-40 border-b ${lineCls} bg-white/85 backdrop-blur dark:bg-zinc-950/85`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-        <Link href={`/${locale}`} className="flex items-center gap-2.5">
-          <Star8 className={`size-5 ${brandCls}`} />
-          <span className="font-display text-xl tracking-wide">
-            Falah<span className={mutedCls}>.io</span>
-          </span>
-        </Link>
+        <Logo />
         <nav className={`hidden items-center gap-7 text-sm ${mutedCls} md:flex`}>
           <Link
-            href={`/${locale}#toolkit`}
+            href={`${localePath(locale)}#toolkit`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
             {d.common.nav.toolkit}
           </Link>
           <Link
-            href={`/${locale}#principles`}
+            href={`${localePath(locale)}#principles`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
             {d.common.nav.principles}
           </Link>
           <Link
-            href={`/${locale}#contribute`}
+            href={`${localePath(locale)}#contribute`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
             {d.common.nav.contribute}
@@ -252,7 +300,7 @@ export function Footer() {
     <footer className={`border-t ${lineCls}`}>
       <div className="mx-auto max-w-6xl px-5 py-12">
         <div className="flex flex-col items-center gap-6 text-center">
-          <Star8 className={`size-5 ${goldCls}`} />
+          <Logo tagline centered />
           <p className="max-w-md font-display text-lg leading-relaxed">
             {d.common.footerDua}
           </p>
@@ -304,7 +352,7 @@ export function ToolShell({
           className={`mx-auto ${wide ? "max-w-5xl" : "max-w-3xl"} px-5 py-10 sm:py-14`}
         >
           <Link
-            href={`/${locale}#toolkit`}
+            href={`${localePath(locale)}#toolkit`}
             className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
           >
             <Icon icon="ph:arrow-left" className="size-4 rtl:rotate-180" />

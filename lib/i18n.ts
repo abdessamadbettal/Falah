@@ -20,5 +20,11 @@ export function dirFor(locale: string): "rtl" | "ltr" {
   return locale === "ar" ? "rtl" : "ltr";
 }
 
+/** English is served unprefixed at the site root; French and Arabic live
+ * under their own subdirectory (/fr, /ar). */
+export function localePath(locale: Locale, path = ""): string {
+  return locale === "en" ? path || "/" : `/${locale}${path}`;
+}
+
 export const SITE_URL = "https://falah.io";
 export const GITHUB_URL = "https://github.com/abdessamadbettal/falah.io";

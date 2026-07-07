@@ -8,7 +8,6 @@ import {
   Footer,
   GITHUB_URL,
   Header,
-  Star8,
   StarField,
   brandCls,
   btnGhost,
@@ -19,6 +18,7 @@ import {
   mutedCls,
   useMounted,
 } from "@/components/ui";
+import { localePath } from "@/lib/i18n";
 import { TOOL_PATHS } from "@/lib/seo";
 
 const CATEGORY_TOOLS: { icon: string; key: string }[][] = [
@@ -76,13 +76,11 @@ function HijriToday() {
     <p
       className={`inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-full border ${lineCls} bg-zinc-50 px-4 py-2 font-mono text-xs ${mutedCls} dark:bg-zinc-900/60`}
     >
-      <Star8 className={`size-3 ${goldCls}`} />
+      <Icon icon="ph:moon" className="size-3" />
       <span>
         {d.home.todayIs}{" "}
         <span className="text-zinc-900 dark:text-zinc-100">{date}</span>
       </span>
-      <span aria-hidden="true">·</span>
-      <span>{d.home.computedNow}</span>
     </p>
   );
 }
@@ -94,7 +92,7 @@ function Hero() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-5 pb-20 pt-16 sm:pt-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
         <div className="max-w-xl">
           <div className="rise rise-1 flex items-center gap-3">
-            <Star8 className={`size-4 ${goldCls}`} />
+            <Icon icon="ph:github-logo" className={`size-4 ${brandCls}`} />
             <span
               className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedCls}`}
             >
@@ -232,7 +230,7 @@ function Toolkit() {
                 {CATEGORY_TOOLS[i].map((tool) => (
                   <Link
                     key={tool.key}
-                    href={`/${locale}${TOOL_PATHS[tool.key]}`}
+                    href={localePath(locale, TOOL_PATHS[tool.key])}
                     className={`group ${cardCls} p-5 transition-colors hover:border-emerald-600 dark:hover:border-emerald-400`}
                   >
                     {/* icon tile shaped like a miniature mihrab arch */}

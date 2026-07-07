@@ -9,6 +9,7 @@ export const en = {
     themeToDark: "Switch to dark mode",
     githubAria: "Falah.io on GitHub",
     langAria: "Change language",
+    tagline: "Come to prayer, come to success.",
     footerDua: "May Allah accept this effort and make it beneficial for the Ummah. Ameen.",
     mit: "MIT License",
     clientSide: "100% client-side · no tracking",
@@ -39,7 +40,6 @@ export const en = {
     ctaExplore: "Explore the toolkit",
     ctaGithub: "Star on GitHub",
     todayIs: "Today is",
-    computedNow: "computed on your device just now",
     falahCaption: "falāḥ — success",
     heroQuote: "“Come to prayer, come to success.” — the call this project is named after.",
     principlesEyebrow: "Different by design",
@@ -47,7 +47,7 @@ export const en = {
       {
         icon: "ph:shield-check",
         title: "100% private, client-side",
-        body: "Prayer times, Zakat, Qibla, and inheritance are all computed on your device. Your data never leaves the browser.",
+        body: "Calculation is done on your device. Your data never leaves the browser.",
       },
       {
         icon: "ph:hand-heart",
@@ -57,7 +57,7 @@ export const en = {
       {
         icon: "ph:lightning",
         title: "Offline-ready and fast",
-        body: "A static Next.js architecture keeps every tool lightning fast and available even without a connection.",
+        body: "A static architecture keeps every tool lightning fast and available even without a connection.",
       },
       {
         icon: "ph:user-circle-minus",

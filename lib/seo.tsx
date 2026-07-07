@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { GITHUB_URL, SITE_URL, getDict, locales, type Locale } from "./i18n";
+import type { Metadata, Viewport } from "next";
+import { GITHUB_URL, SITE_URL, getDict, localePath, locales, type Dict, type Locale } from "./i18n";
 
 const OG_LOCALES: Record<Locale, string> = { en: "en_US", fr: "fr_FR", ar: "ar_MA" };
 
-/** Canonical + hreflang + OG metadata for one page in one locale. */
+/** Canonical + hreflang + OG metadata for one page in one locale. English is
+ * unprefixed at the root, so it doubles as the x-default. */
 export function pageMeta(
   locale: Locale,
   path: string,
@@ -11,21 +12,21 @@ export function pageMeta(
   description: string,
 ): Metadata {
   const languages = Object.fromEntries(
-    locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
+    locales.map((l) => [l, `${SITE_URL}${localePath(l, path)}`]),
   ) as Record<string, string>;
-  languages["x-default"] = `${SITE_URL}/en${path}`;
+  languages["x-default"] = `${SITE_URL}${localePath("en", path)}`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `${SITE_URL}/${locale}${path}`,
+      canonical: `${SITE_URL}${localePath(locale, path)}`,
       languages,
     },
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}/${locale}${path}`,
+      url: `${SITE_URL}${localePath(locale, path)}`,
       siteName: "Falah.io",
       type: "website",
       locale: OG_LOCALES[locale],
@@ -41,6 +42,36 @@ export function pageMeta(
   };
 }
 
+const KEYWORDS = [
+  "Islamic tools",
+  "prayer times",
+  "qibla",
+  "hijri calendar",
+  "zakat calculator",
+  "quran",
+  "open source",
+];
+
+/** Shared <head> metadata for the two root layouts (English at "/" and
+ * [locale] for /fr, /ar) so they can't drift apart. */
+export function siteMetadata(d: Dict): Metadata {
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: { default: d.meta.siteTitle, template: d.meta.titleTemplate },
+    description: d.meta.siteDescription,
+    applicationName: "Falah.io",
+    keywords: KEYWORDS,
+    robots: { index: true, follow: true },
+  };
+}
+
+export const siteViewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
+};
+
 const APP_BASE = {
   "@type": "WebApplication",
   applicationCategory: "LifestyleApplication",
@@ -53,6 +84,7 @@ const APP_BASE = {
 
 export function toolJsonLd(locale: Locale, path: string, name: string, description: string) {
   const d = getDict(locale);
+  const home = `${SITE_URL}${localePath(locale)}`;
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -60,16 +92,16 @@ export function toolJsonLd(locale: Locale, path: string, name: string, descripti
         ...APP_BASE,
         name,
         description,
-        url: `${SITE_URL}/${locale}${path}`,
+        url: `${SITE_URL}${localePath(locale, path)}`,
         inLanguage: locale,
         isPartOf: { "@type": "WebSite", name: "Falah.io", url: SITE_URL },
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Falah.io", item: `${SITE_URL}/${locale}` },
-          { "@type": "ListItem", position: 2, name: d.common.nav.toolkit, item: `${SITE_URL}/${locale}#toolkit` },
-          { "@type": "ListItem", position: 3, name, item: `${SITE_URL}/${locale}${path}` },
+          { "@type": "ListItem", position: 1, name: "Falah.io", item: home },
+          { "@type": "ListItem", position: 2, name: d.common.nav.toolkit, item: `${home}#toolkit` },
+          { "@type": "ListItem", position: 3, name, item: `${SITE_URL}${localePath(locale, path)}` },
         ],
       },
     ],
@@ -77,21 +109,21 @@ export function toolJsonLd(locale: Locale, path: string, name: string, descripti
 }
 
 export const TOOL_PATHS: Record<string, string> = {
-  prayer: "/tools/prayer-times",
-  calendar: "/tools/hijri-calendar",
-  ramadan: "/tools/ramadan-countdown",
-  converter: "/tools/date-converter",
-  qibla: "/tools/qibla",
-  mosque: "/tools/mosque-finder",
-  quran: "/tools/quran",
-  tafseer: "/tools/tafseer",
-  names: "/tools/names-of-allah",
-  hisnul: "/tools/hisnul-muslim",
-  zakat: "/tools/zakat",
-  inheritance: "/tools/inheritance",
-  age: "/tools/hijri-age",
-  cards: "/tools/quran-cards",
-  stamp: "/tools/date-stamp",
+  prayer: "/prayer-times",
+  calendar: "/hijri-calendar",
+  ramadan: "/ramadan-countdown",
+  converter: "/date-converter",
+  qibla: "/qibla",
+  mosque: "/mosque-finder",
+  quran: "/quran",
+  tafseer: "/tafseer",
+  names: "/names-of-allah",
+  hisnul: "/hisnul-muslim",
+  zakat: "/zakat",
+  inheritance: "/inheritance",
+  age: "/hijri-age",
+  cards: "/quran-cards",
+  stamp: "/date-stamp",
 };
 
 export function homeJsonLd(locale: Locale) {
@@ -112,7 +144,7 @@ export function homeJsonLd(locale: Locale) {
         ...APP_BASE,
         name: d.meta.siteTitle,
         description: d.meta.siteDescription,
-        url: `${SITE_URL}/${locale}`,
+        url: `${SITE_URL}${localePath(locale)}`,
         inLanguage: locale,
         featureList: Object.values(cards).map((c) => c.name),
       },
@@ -125,7 +157,7 @@ export function homeJsonLd(locale: Locale) {
           position: i + 1,
           name: cards[key].name,
           description: cards[key].description,
-          url: `${SITE_URL}/${locale}${path}`,
+          url: `${SITE_URL}${localePath(locale, path)}`,
         })),
       },
     ],

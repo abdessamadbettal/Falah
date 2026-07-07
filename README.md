@@ -22,6 +22,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 - 🚫 **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
 - ⚡ **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
 - 🌍 **No Accounts Required:** Open the app and instantly access every feature without signing up.
+- 🌐 **Multilingual Support:** Available in **English**, **Arabic (العربية)**, and **French (Français)**.
 
 ---
 
