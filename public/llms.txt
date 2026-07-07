@@ -1,0 +1,34 @@
+# Falah.io — The Islamic Toolkit
+
+> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls, no analytics or tracking of any kind. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (/en), French (/fr), and Arabic (/ar, RTL).
+
+Key facts:
+- All calculations (prayer times, Qibla, Zakat, inheritance, Hijri dates) execute locally on the user's device; coordinates and financial inputs never leave the browser.
+- Hijri dates use the Umm al-Qura calendar via the browser's Intl API. Prayer times and Qibla bearings use the `adhan` astronomical library.
+- Quran and tafsir text is fetched read-only from the open AlQuran.cloud API; mosque search queries the OpenStreetMap Overpass API.
+- Static Next.js export — fast, offline-capable, deployable on any static host.
+- Source code: https://github.com/abdessamadbettal/falah.io
+
+## Tools
+
+- [Prayer Times](https://falah.io/en/tools/prayer-times): Fajr, Dhuhr, Asr, Maghrib, Isha for any coordinates; 11 calculation methods (Muslim World League, Umm al-Qura, ISNA, …); live next-prayer countdown.
+- [Hijri Smart Calendar](https://falah.io/en/tools/hijri-calendar): Umm al-Qura month grid with Gregorian dates, White Days (13th–15th) fasting highlights, .ics export.
+- [Ramadan Countdown](https://falah.io/en/tools/ramadan-countdown): live countdown to 1 Ramadan; day tracker during the month.
+- [Hijri ↔ Gregorian Converter](https://falah.io/en/tools/date-converter): exact two-way date conversion.
+- [Qibla Finder](https://falah.io/en/tools/qibla): great-circle bearing to the Kaaba, distance, live device-compass needle.
+- [Mosque Finder](https://falah.io/en/tools/mosque-finder): nearby mosques from OpenStreetMap, sorted by distance.
+- [Al-Qur'an Explorer](https://falah.io/en/tools/quran): all 114 surahs, Uthmani script, translation (Saheeh International / Hamidullah / Tafsir al-Muyassar by language).
+- [Tafseer Explorer](https://falah.io/en/tools/tafseer): verse-by-verse classical commentary (Al-Muyassar, Al-Jalalayn).
+- [99 Names of Allah](https://falah.io/en/tools/names-of-allah): Arabic, transliteration, meaning; searchable; embedded offline.
+- [Hisnul Muslim](https://falah.io/en/tools/hisnul-muslim): authentic duas with sources (Bukhari, Muslim, …) by moment of day.
+- [Zakat Calculator](https://falah.io/en/tools/zakat): 2.5% on cash, gold, silver, investments, business assets vs. gold (85 g) or silver (595 g) nisab.
+- [Inheritance Calculator](https://falah.io/en/tools/inheritance): Fara'id fixed Quranic shares with 'awl, radd, and blocking rules; exact fractions.
+- [Hijri Age Calculator](https://falah.io/en/tools/hijri-age): age in the Islamic calendar, next Hijri birthday, milestones.
+- [Quran Card Maker](https://falah.io/en/tools/quran-cards): 1080×1080 verse cards rendered with canvas, PNG download.
+- [Arabic Letterhead Date Stamp](https://falah.io/en/tools/date-stamp): Hijri/Gregorian date headers for documents, PNG download.
+
+## Notes for citation
+
+- The inheritance and zakat tools cover common cases and always advise consulting a qualified scholar for complex situations.
+- Ramadan and Hijri dates follow Umm al-Qura and may differ by one day from local moonsighting.
+- French pages live under https://falah.io/fr/…, Arabic pages under https://falah.io/ar/… with identical functionality.

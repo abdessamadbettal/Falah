@@ -2,7 +2,10 @@
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useDict, useLocale } from "@/components/locale";
+import { locales } from "@/lib/i18n";
 
 export const GITHUB_URL = "https://github.com/abdessamadbettal/falah.io";
 
@@ -107,6 +110,7 @@ export function useMounted() {
 }
 
 export function ThemeToggle() {
+  const d = useDict();
   const mounted = useMounted();
   const [, bump] = useState(0);
 
@@ -139,7 +143,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={dark ? d.common.themeToLight : d.common.themeToDark}
       className={`inline-flex size-9 items-center justify-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
     >
       {dark === null ? (
@@ -151,47 +155,87 @@ export function ThemeToggle() {
   );
 }
 
+const LANG_LABELS: Record<string, string> = { en: "EN", fr: "FR", ar: "ع" };
+
+function LanguageSwitcher() {
+  const locale = useLocale();
+  const d = useDict();
+  const pathname = usePathname() ?? `/${locale}`;
+  const rest = pathname.replace(/^\/(en|fr|ar)(?=\/|$)/, "") || "/";
+
+  return (
+    <nav
+      aria-label={d.common.langAria}
+      className={`flex items-center overflow-hidden rounded-full border ${lineCls}`}
+    >
+      {locales.map((l) => (
+        <Link
+          key={l}
+          href={`/${l}${rest === "/" ? "" : rest}`}
+          hrefLang={l}
+          onClick={() => {
+            try {
+              localStorage.setItem("locale", l);
+            } catch {}
+          }}
+          aria-current={l === locale ? "true" : undefined}
+          className={`px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+            l === locale
+              ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
+              : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
+          }`}
+        >
+          {LANG_LABELS[l]}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
 /* --------------------------------- chrome --------------------------------- */
 
 export function Header() {
+  const locale = useLocale();
+  const d = useDict();
   return (
     <header
       className={`sticky top-0 z-40 border-b ${lineCls} bg-white/85 backdrop-blur dark:bg-zinc-950/85`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href={`/${locale}`} className="flex items-center gap-2.5">
           <Star8 className={`size-5 ${brandCls}`} />
           <span className="font-display text-xl tracking-wide">
             Falah<span className={mutedCls}>.io</span>
           </span>
         </Link>
-        <nav className={`hidden items-center gap-7 text-sm ${mutedCls} sm:flex`}>
+        <nav className={`hidden items-center gap-7 text-sm ${mutedCls} md:flex`}>
           <Link
-            href="/#toolkit"
+            href={`/${locale}#toolkit`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            Toolkit
+            {d.common.nav.toolkit}
           </Link>
           <Link
-            href="/#principles"
+            href={`/${locale}#principles`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            Principles
+            {d.common.nav.principles}
           </Link>
           <Link
-            href="/#contribute"
+            href={`/${locale}#contribute`}
             className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            Contribute
+            {d.common.nav.contribute}
           </Link>
         </nav>
         <div className="flex items-center gap-2.5">
+          <LanguageSwitcher />
           <a
             href={GITHUB_URL}
             target="_blank"
             rel="noreferrer"
-            aria-label="Falah.io on GitHub"
-            className={`inline-flex size-9 items-center justify-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+            aria-label={d.common.githubAria}
+            className={`hidden size-9 items-center justify-center rounded-full border sm:inline-flex ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
           >
             <Icon icon="ph:github-logo" className="size-4" />
           </a>
@@ -203,19 +247,19 @@ export function Header() {
 }
 
 export function Footer() {
+  const d = useDict();
   return (
     <footer className={`border-t ${lineCls}`}>
       <div className="mx-auto max-w-6xl px-5 py-12">
         <div className="flex flex-col items-center gap-6 text-center">
           <Star8 className={`size-5 ${goldCls}`} />
           <p className="max-w-md font-display text-lg leading-relaxed">
-            May Allah accept this effort and make it beneficial for the Ummah.
-            Ameen.
+            {d.common.footerDua}
           </p>
           <div
             className={`flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs ${mutedCls}`}
           >
-            <span>MIT License</span>
+            <span>{d.common.mit}</span>
             <a
               href={GITHUB_URL}
               target="_blank"
@@ -224,7 +268,7 @@ export function Footer() {
             >
               GitHub
             </a>
-            <span>100% client-side · no tracking</span>
+            <span>{d.common.clientSide}</span>
           </div>
         </div>
       </div>
@@ -237,18 +281,21 @@ export function Footer() {
 export function ToolShell({
   icon,
   title,
-  arabic,
+  side,
   intro,
   wide = false,
   children,
 }: {
   icon: string;
   title: string;
-  arabic: string;
+  side: string;
   intro: string;
   wide?: boolean;
   children: React.ReactNode;
 }) {
+  const locale = useLocale();
+  const d = useDict();
+  const sideIsArabic = locale !== "ar";
   return (
     <>
       <Header />
@@ -257,11 +304,11 @@ export function ToolShell({
           className={`mx-auto ${wide ? "max-w-5xl" : "max-w-3xl"} px-5 py-10 sm:py-14`}
         >
           <Link
-            href="/#toolkit"
+            href={`/${locale}#toolkit`}
             className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
           >
-            <Icon icon="ph:arrow-left" className="size-4" />
-            All tools
+            <Icon icon="ph:arrow-left" className="size-4 rtl:rotate-180" />
+            {d.common.allTools}
           </Link>
           <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -272,11 +319,11 @@ export function ToolShell({
               <h1 className="font-display text-3xl sm:text-4xl">{title}</h1>
             </div>
             <span
-              lang="ar"
-              dir="rtl"
-              className={`font-arabic text-2xl ${goldCls}`}
+              lang={sideIsArabic ? "ar" : "en"}
+              dir={sideIsArabic ? "rtl" : "ltr"}
+              className={`${sideIsArabic ? "font-arabic text-2xl" : "font-mono text-xs uppercase tracking-[0.2em]"} ${goldCls}`}
             >
-              {arabic}
+              {side}
             </span>
           </div>
           <p className={`mt-4 max-w-2xl leading-relaxed ${mutedCls}`}>

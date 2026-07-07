@@ -15,6 +15,21 @@ export const HIJRI_MONTHS = [
   "Dhu al-Hijjah",
 ];
 
+export const HIJRI_MONTHS_FR = [
+  "Mouharram",
+  "Safar",
+  "Rabi' al-Awwal",
+  "Rabi' ath-Thani",
+  "Joumada al-Oula",
+  "Joumada ath-Thaniya",
+  "Rajab",
+  "Cha'ban",
+  "Ramadan",
+  "Chawwal",
+  "Dhou al-Qi'da",
+  "Dhou al-Hijja",
+];
+
 export const HIJRI_MONTHS_AR = [
   "محرم",
   "صفر",
@@ -92,11 +107,17 @@ export function hijriMonthLength(year: number, month: number): number {
   return next.day === 30 ? 30 : 29;
 }
 
-export function formatHijri(h: HijriDate, locale: "en" | "ar" = "en"): string {
+export function hijriMonthName(month: number, locale: string): string {
+  if (locale === "ar") return HIJRI_MONTHS_AR[month - 1];
+  if (locale === "fr") return HIJRI_MONTHS_FR[month - 1];
+  return HIJRI_MONTHS[month - 1];
+}
+
+export function formatHijri(h: HijriDate, locale: string = "en"): string {
   if (locale === "ar") {
     return `${toArabicDigits(h.day)} ${HIJRI_MONTHS_AR[h.month - 1]} ${toArabicDigits(h.year)} هـ`;
   }
-  return `${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} AH`;
+  return `${h.day} ${hijriMonthName(h.month, locale)} ${h.year} AH`;
 }
 
 export function toArabicDigits(n: number | string): string {
@@ -129,8 +150,8 @@ export function ramadanStatus(): {
   };
 }
 
-export function formatGregorian(date: Date): string {
-  return new Intl.DateTimeFormat("en", {
+export function formatGregorian(date: Date, locale: string = "en"): string {
+  return new Intl.DateTimeFormat(locale, {
     timeZone: "UTC",
     weekday: "long",
     day: "numeric",
