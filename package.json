@@ -1,5 +1,5 @@
 {
-  "name": "lara4",
+  "name": "falah-io",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@iconify/react": "^6.0.2",
+    "adhan": "^4.4.4",
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4"
