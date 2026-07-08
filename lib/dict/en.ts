@@ -3,7 +3,7 @@ export const en = {
   name: "English",
 
   common: {
-    nav: { toolkit: "Toolkit", principles: "Principles", contribute: "Contribute" },
+    nav: { toolkit: "Toolkit", principles: "Principles", contribute: "Contribute", about: "About" },
     allTools: "All tools",
     themeToLight: "Switch to light mode",
     themeToDark: "Switch to dark mode",
@@ -175,6 +175,23 @@ export const en = {
         description: "Generate professional Hijri date headers and official stamps to add a polished touch to correspondence and documents." 
       },
     },
+  },
+
+  about: {
+    meta: {
+      title: "About — why Falah.io exists",
+      description:
+        "Falah.io is a free, open-source, privacy-first Islamic toolkit built as Sadaqah Jariyah. No ads, no accounts, no tracking — every tool runs entirely in your browser.",
+    },
+    eyebrow: "Our Mission",
+    h1a: "An Islamic toolkit,",
+    h1b: "built as Sadaqah Jariyah.",
+    lead: "Most Islamic apps track your location, bury tools under ads, or lock daily necessities behind a paywall. Falah is different by design — a free, open-source suite of essential tools that runs entirely in your browser, offered for the sake of Allah.",
+    storyTitle: "Faith, never monetized",
+    story: [
+      "Every calculation — prayer times, Qibla, Zakat, inheritance — happens locally on your device. Nothing you type is sent to a server, because there is no server collecting it.",
+      "There are no accounts to create, no emails to hand over, and no premium tier. Open the site and every tool is simply there, like a built-in calculator.",
+    ],
   },
 
   tools: {

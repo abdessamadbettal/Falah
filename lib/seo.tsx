@@ -126,6 +126,64 @@ export const TOOL_PATHS: Record<string, string> = {
   stamp: "/date-stamp",
 };
 
+/** The 15 tools grouped into the 5 categories used across the site — the home
+ * directory and the footer both read from this one source. Group order matches
+ * d.home.categories, so index i lines up with categories[i]. */
+export const TOOL_CATEGORIES: { key: string; icon: string }[][] = [
+  [
+    { key: "prayer", icon: "ph:mosque" },
+    { key: "calendar", icon: "ph:calendar-dots" },
+    { key: "ramadan", icon: "ph:moon-stars" },
+    { key: "converter", icon: "ph:arrows-left-right" },
+  ],
+  [
+    { key: "qibla", icon: "ph:compass" },
+    { key: "mosque", icon: "ph:map-pin-area" },
+  ],
+  [
+    { key: "quran", icon: "ph:book-open-text" },
+    { key: "tafseer", icon: "ph:scroll" },
+    { key: "names", icon: "ph:sparkle" },
+    { key: "hisnul", icon: "ph:hands-praying" },
+  ],
+  [
+    { key: "zakat", icon: "ph:coins" },
+    { key: "inheritance", icon: "ph:tree-structure" },
+    { key: "age", icon: "ph:hourglass-medium" },
+  ],
+  [
+    { key: "cards", icon: "ph:paint-brush" },
+    { key: "stamp", icon: "ph:stamp" },
+  ],
+];
+
+export const ABOUT_PATH = "/about";
+
+export function aboutJsonLd(locale: Locale) {
+  const d = getDict(locale);
+  const home = `${SITE_URL}${localePath(locale)}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        name: d.about.meta.title,
+        description: d.about.meta.description,
+        url: `${SITE_URL}${localePath(locale, ABOUT_PATH)}`,
+        inLanguage: locale,
+        isPartOf: { "@type": "WebSite", name: "Falah.io", url: SITE_URL },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Falah.io", item: home },
+          { "@type": "ListItem", position: 2, name: d.common.nav.about, item: `${SITE_URL}${localePath(locale, ABOUT_PATH)}` },
+        ],
+      },
+    ],
+  };
+}
+
 export function homeJsonLd(locale: Locale) {
   const d = getDict(locale);
   const cards = d.home.toolCards as Record<string, { name: string; description: string }>;
