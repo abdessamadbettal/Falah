@@ -11,7 +11,7 @@ export const ar: typeof en = {
     themeToDark: "التبديل إلى الوضع الداكن",
     githubAria: "فلاح على GitHub",
     langAria: "تغيير اللغة",
-    tagline: "حيّ على الصلاة، حيّ على الفلاح.",
+    tagline: "دليلك اليومي للطاعة والنجاح",
     footerDua: "تقبّل الله هذا العمل وجعله نافعًا للأمة. آمين.",
     mit: "رخصة MIT",
     clientSide: "يعمل بالكامل على جهازك · بلا تتبع",

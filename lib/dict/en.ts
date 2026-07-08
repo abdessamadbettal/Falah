@@ -9,7 +9,7 @@ export const en = {
     themeToDark: "Switch to dark mode",
     githubAria: "Falah.io on GitHub",
     langAria: "Change language",
-    tagline: "Come to prayer, come to success.",
+    tagline: "Your daily guide to worship and success",
     footerDua: "May Allah accept this effort and make it beneficial for the Ummah. Ameen.",
     mit: "MIT License",
     clientSide: "100% client-side · no tracking",

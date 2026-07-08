@@ -190,7 +190,7 @@ function LanguageSwitcher() {
       className={`flex items-center gap-1.5 rounded-full border ${lineCls} px-3 py-1.5 text-xs font-semibold ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
     >
       <Icon icon="ph:globe" className="size-4" />
-      <span className={other === "ar" ? "font-arabic text-sm" : ""}>
+      <span className={other === "ar" ? "font-arabic  text-sm" : " text-sm"}>
         {LANG_NATIVE[other]}
       </span>
     </Link>
