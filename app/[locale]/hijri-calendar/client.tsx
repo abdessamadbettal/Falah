@@ -1,7 +1,9 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
+import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
   ToolShell,
@@ -16,12 +18,14 @@ import {
 import {
   HIJRI_MONTHS_AR,
   addDays,
+  formatHijri,
   hijriFromGregorian,
   hijriMonthLength,
   hijriMonthName,
   hijriToGregorian,
   todayUtcNoon,
 } from "@/lib/hijri";
+import { JsonLd, faqJsonLd } from "@/lib/seo";
 
 function icsDate(d: Date) {
   return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
@@ -32,10 +36,12 @@ export default function HijriCalendarClient() {
   const t = d.tools.calendar;
   const locale = useLocale();
   const mounted = useMounted();
+  const reduce = useReducedMotion();
   const today = todayUtcNoon();
   const todayHijri = hijriFromGregorian(today);
   const [year, setYear] = useState(todayHijri.year);
   const [month, setMonth] = useState(todayHijri.month);
+  const [dir, setDir] = useState(0);
 
   const grid = useMemo(() => {
     const first = hijriToGregorian({ year, month, day: 1 });
@@ -53,6 +59,7 @@ export default function HijriCalendarClient() {
     let y = year;
     if (m < 1) { m = 12; y -= 1; }
     if (m > 12) { m = 1; y += 1; }
+    setDir(delta);
     setYear(y);
     setMonth(m);
   }
@@ -96,9 +103,29 @@ export default function HijriCalendarClient() {
 
   return (
     <ToolShell icon="ph:calendar-dots" title={t.title} side={t.side} intro={t.intro} wide>
+      <JsonLd data={faqJsonLd(t.faq)} />
       {!mounted ? (
         <p className={`text-sm ${mutedCls}`}>{t.loading}</p>
       ) : (
+      <>
+      {/* today's Hijri date — a calm, prominent hero */}
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-emerald-700 p-5 text-white dark:bg-emerald-400 dark:text-emerald-950"
+      >
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-80">
+            {t.todayIs}
+          </p>
+          <p className="mt-1 font-display text-2xl sm:text-3xl">
+            {formatHijri(todayHijri, locale)}
+          </p>
+        </div>
+        <Icon icon="ph:moon-stars" className="size-9 opacity-90" />
+      </motion.div>
+
       <div className={`${cardCls} p-5`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -137,7 +164,22 @@ export default function HijriCalendarClient() {
         </div>
 
         {grid ? (
-          <div className="mt-6 grid grid-cols-7 gap-1.5 sm:gap-2">
+          <div className="mt-6 overflow-hidden">
+          <AnimatePresence mode="popLayout" initial={false} custom={dir}>
+          <motion.div
+            key={`${year}-${month}`}
+            custom={dir}
+            variants={{
+              enter: (c: number) => ({ opacity: 0, x: reduce ? 0 : c >= 0 ? 32 : -32 }),
+              center: { opacity: 1, x: 0 },
+              exit: (c: number) => ({ opacity: 0, x: reduce ? 0 : c >= 0 ? -32 : 32 }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-7 gap-1.5 sm:gap-2"
+          >
             {t.weekdays.map((w) => (
               <div key={w} className={`pb-1 text-center text-xs font-semibold uppercase tracking-wide ${mutedCls}`}>
                 {w}
@@ -168,6 +210,8 @@ export default function HijriCalendarClient() {
                 </div>
               );
             })}
+          </motion.div>
+          </AnimatePresence>
           </div>
         ) : (
           <p className={`mt-6 text-sm ${mutedCls}`}>{t.outOfRange}</p>
@@ -184,7 +228,9 @@ export default function HijriCalendarClient() {
           </button>
         </div>
       </div>
+      </>
       )}
+      <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>
   );
 }

@@ -218,7 +218,29 @@ export function homeJsonLd(locale: Locale) {
           url: `${SITE_URL}${localePath(locale, path)}`,
         })),
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: d.home.faq.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      },
     ],
+  };
+}
+
+/** Build FAQPage structured data from a list of Q&A pairs — feed it the same
+ * array the visible <Faq> renders so the two never drift. */
+export function faqJsonLd(items: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
 }
 

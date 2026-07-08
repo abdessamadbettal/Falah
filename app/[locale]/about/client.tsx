@@ -75,9 +75,9 @@ function Principles() {
   const d = useDict();
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
-      <Eyebrow>{d.home.principlesEyebrow}</Eyebrow>
+      <Eyebrow>{d.about.principlesEyebrow}</Eyebrow>
       <div className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-        {d.home.principles.map((p, i) => (
+        {d.about.principles.map((p, i) => (
           <Reveal key={p.title} i={i % 3}>
             <div className="group">
               {/* icon tile shaped like a miniature mihrab arch */}

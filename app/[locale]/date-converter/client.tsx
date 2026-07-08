@@ -1,6 +1,9 @@
 "use client";
 
+import { Icon } from "@iconify/react";
+import { motion } from "motion/react";
 import { useState } from "react";
+import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
   Field,
@@ -9,6 +12,7 @@ import {
   cardCls,
   goldCls,
   inputCls,
+  lineCls,
   mutedCls,
   useMounted,
 } from "@/components/ui";
@@ -21,6 +25,7 @@ import {
   todayUtcNoon,
   utcNoon,
 } from "@/lib/hijri";
+import { JsonLd, faqJsonLd } from "@/lib/seo";
 
 export default function DateConverterClient() {
   const d = useDict();
@@ -53,10 +58,18 @@ export default function DateConverterClient() {
 
   return (
     <ToolShell icon="ph:arrows-left-right" title={t.title} side={t.side} intro={t.intro}>
+      <JsonLd data={faqJsonLd(t.faq)} />
       {!mounted ? (
         <p className={`text-sm ${mutedCls}`}>{t.loading}</p>
       ) : (
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="relative grid gap-6 sm:grid-cols-2">
+        {/* a quiet swap glyph bridging the two directions */}
+        <span
+          aria-hidden="true"
+          className={`absolute left-1/2 top-1/2 z-10 hidden size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-white ${lineCls} ${brandCls} sm:grid dark:bg-zinc-950`}
+        >
+          <Icon icon="ph:arrows-left-right" className="size-4" />
+        </span>
         <section className={`${cardCls} p-5`}>
           <h2 className="font-display text-xl">{t.g2h}</h2>
           <div className="mt-4">
@@ -71,14 +84,19 @@ export default function DateConverterClient() {
           </div>
           <div className="mt-5 rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
             {toHijri ? (
-              <>
+              <motion.div
+                key={formatHijri(toHijri, locale)}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <p className={`font-semibold ${brandCls}`}>{formatHijri(toHijri, locale)}</p>
                 {locale !== "ar" ? (
                   <p lang="ar" dir="rtl" className={`mt-1 font-arabic text-xl ${goldCls}`}>
                     {formatHijri(toHijri, "ar")}
                   </p>
                 ) : null}
-              </>
+              </motion.div>
             ) : (
               <p className={`text-sm ${mutedCls}`}>{t.pick}</p>
             )}
@@ -113,7 +131,15 @@ export default function DateConverterClient() {
           </div>
           <div className="mt-5 rounded-xl bg-emerald-50 p-4 dark:bg-emerald-500/10">
             {toGregorian ? (
-              <p className={`font-semibold ${brandCls}`}>{formatGregorian(toGregorian, locale)}</p>
+              <motion.p
+                key={formatGregorian(toGregorian, locale)}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`font-semibold ${brandCls}`}
+              >
+                {formatGregorian(toGregorian, locale)}
+              </motion.p>
             ) : (
               <p className={`text-sm ${mutedCls}`}>{t.invalid}</p>
             )}
@@ -121,6 +147,7 @@ export default function DateConverterClient() {
         </section>
       </div>
       )}
+      <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>
   );
 }

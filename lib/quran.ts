@@ -16,6 +16,10 @@ export type Surah = {
 export type Ayah = {
   numberInSurah: number;
   text: string;
+  /** Global ayah number (1–6236) — present on every edition. */
+  number?: number;
+  /** Present on audio editions: the recitation mp3 URL for this ayah. */
+  audio?: string;
 };
 
 export function useSurahs() {

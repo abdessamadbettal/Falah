@@ -1,16 +1,21 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
+import { Article } from "@/components/article";
+import { Faq } from "@/components/faq";
 import { useDict } from "@/components/locale";
 import {
   Field,
   ToolShell,
+  brandCls,
   cardCls,
   inputCls,
   lineCls,
   mutedCls,
 } from "@/components/ui";
 import type { Dict } from "@/lib/i18n";
+import { JsonLd, faqJsonLd } from "@/lib/seo";
 
 /* ------------------------- exact fraction helpers ------------------------- */
 
@@ -193,6 +198,7 @@ export default function InheritanceClient() {
     heirs.brothers > 0 || heirs.sisters > 0;
   const result = anyHeir ? solve(heirs, t) : null;
 
+  const reduce = useReducedMotion();
   const set = <K extends keyof Heirs>(key: K, value: Heirs[K]) =>
     setHeirs((h) => ({ ...h, [key]: value }));
 
@@ -224,6 +230,7 @@ export default function InheritanceClient() {
 
   return (
     <ToolShell icon="ph:tree-structure" title={t.title} side={t.side} intro={t.intro} wide>
+      <JsonLd data={faqJsonLd(t.faq)} />
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className={`${cardCls} space-y-5 p-5`}>
           <Field label={t.estate} hint={t.estateHint}>
@@ -264,31 +271,41 @@ export default function InheritanceClient() {
         <div className="space-y-4 self-start">
           {result && result.shares.length > 0 ? (
             <div className={`overflow-hidden rounded-2xl border ${lineCls} bg-white dark:bg-zinc-900/60`}>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className={`border-b ${lineCls} bg-zinc-50 text-start dark:bg-zinc-900`}>
-                    <th className="px-4 py-3 text-start font-semibold">{t.heir}</th>
-                    <th className="px-4 py-3 text-start font-semibold">{t.share}</th>
-                    <th className="px-4 py-3 text-end font-semibold">{t.amount}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                  {result.shares.map((s) => (
-                    <tr key={s.label}>
-                      <td className="px-4 py-3">{s.label}</td>
-                      <td className="px-4 py-3 font-mono text-emerald-700 dark:text-emerald-400">
-                        {fracLabel(s.fraction)}
-                        {s.perPerson ? (
-                          <span className={`ms-1 ${mutedCls}`}>{t.each(fracLabel(s.perPerson))}</span>
-                        ) : null}
-                      </td>
-                      <td className="px-4 py-3 text-end font-mono">
-                        {(estateNum * toNum(s.fraction)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className={`flex items-center justify-between border-b ${lineCls} bg-zinc-50 px-5 py-3 text-xs font-semibold uppercase tracking-wide dark:bg-zinc-900`}>
+                <span>{t.heir}</span>
+                <span>{t.amount}</span>
+              </div>
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-800/70">
+                {result.shares.map((s, i) => {
+                  const frac = toNum(s.fraction);
+                  return (
+                    <li key={s.label} className="px-5 py-4">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="font-medium">{s.label}</span>
+                        <span className="font-mono text-sm" dir="ltr">
+                          {(estateNum * frac).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex items-center gap-3">
+                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                          <motion.div
+                            className="h-full rounded-full bg-emerald-600 dark:bg-emerald-400"
+                            initial={reduce ? false : { width: 0 }}
+                            animate={{ width: `${Math.min(100, frac * 100)}%` }}
+                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: reduce ? 0 : i * 0.04 }}
+                          />
+                        </div>
+                        <span className={`shrink-0 font-mono text-xs ${brandCls}`} dir="ltr">
+                          {fracLabel(s.fraction)}
+                          {s.perPerson ? (
+                            <span className={`ms-1 ${mutedCls}`}>{t.each(fracLabel(s.perPerson))}</span>
+                          ) : null}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           ) : (
             <p className={`${cardCls} p-5 text-sm ${mutedCls}`}>{t.selectPrompt}</p>
@@ -301,6 +318,14 @@ export default function InheritanceClient() {
           </p>
         </div>
       </div>
+
+      <Article
+        eyebrow={t.content.eyebrow}
+        heading={t.content.heading}
+        intro={t.content.intro}
+        sections={t.content.sections}
+      />
+      <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>
   );
 }
