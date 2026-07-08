@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import { Logo } from "@/components/logo";
 import { localePath, locales } from "@/lib/i18n";
@@ -156,92 +156,42 @@ export function ThemeToggle() {
   );
 }
 
-const LANG_META: Record<string, { native: string; short: string }> = {
-  en: { native: "English", short: "EN" },
-  fr: { native: "Français", short: "FR" },
-  ar: { native: "العربية", short: "AR" },
+const LANG_NATIVE: Record<string, string> = {
+  en: "English",
+  ar: "العربية",
 };
 
+const PREFIXED_LOCALES = locales.filter((l) => l !== "en");
+const PREFIX_RE = new RegExp(`^/(${PREFIXED_LOCALES.join("|")})(?=/|$)`);
+
+/** A one-click toggle to the other language — with only two locales, a
+ * dropdown menu is more interaction than the site needs. Shows the
+ * language you'd switch to, not the current one. */
 function LanguageSwitcher() {
   const locale = useLocale();
   const d = useDict();
   const pathname = usePathname() ?? localePath(locale);
-  const rest = pathname.replace(/^\/(fr|ar)(?=\/|$)/, "") || "/";
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onPointerDown(e: PointerEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+  const rest = pathname.replace(PREFIX_RE, "") || "/";
+  const other = locales.find((l) => l !== locale) ?? locale;
 
   return (
-    <div ref={rootRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={d.common.langAria}
-        className={`flex items-center gap-1.5 rounded-full border ${lineCls} px-3 py-1.5 text-xs font-semibold ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
-      >
-        <Icon icon="ph:globe" className="size-4" />
-        <span>{LANG_META[locale].short}</span>
-        <Icon
-          icon="ph:caret-down"
-          className={`size-3 transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open ? (
-        <ul
-          role="menu"
-          className={`absolute inset-e-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-xl border ${lineCls} bg-white py-1 shadow-lg dark:bg-zinc-900`}
-        >
-          {locales.map((l) => (
-            <li key={l} role="none">
-              <Link
-                role="menuitem"
-                href={localePath(l, rest === "/" ? "" : rest)}
-                hrefLang={l}
-                lang={l}
-                onClick={() => {
-                  setOpen(false);
-                  try {
-                    localStorage.setItem("locale", l);
-                  } catch {}
-                }}
-                aria-current={l === locale ? "true" : undefined}
-                className={`flex items-center justify-between px-3 py-2 text-sm transition-colors ${
-                  l === locale
-                    ? "bg-emerald-50 font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                    : "text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                }`}
-              >
-                <span className={l === "ar" ? "font-arabic text-base" : ""}>
-                  {LANG_META[l].native}
-                </span>
-                {l === locale ? (
-                  <Icon icon="ph:check-bold" className="size-3.5 shrink-0" />
-                ) : null}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </div>
+    <Link
+      href={localePath(other, rest === "/" ? "" : rest)}
+      hrefLang={other}
+      lang={other}
+      onClick={() => {
+        try {
+          localStorage.setItem("locale", other);
+        } catch {}
+      }}
+      aria-label={d.common.langAria}
+      className={`flex items-center gap-1.5 rounded-full border ${lineCls} px-3 py-1.5 text-xs font-semibold ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+    >
+      <Icon icon="ph:globe" className="size-4" />
+      <span className={other === "ar" ? "font-arabic text-sm" : ""}>
+        {LANG_NATIVE[other]}
+      </span>
+    </Link>
   );
 }
 

@@ -57,9 +57,7 @@ export default function NamesOfAllahClient() {
               {name.transliteration}
             </p>
             {locale !== "ar" ? (
-              <p className={`mt-0.5 text-sm ${mutedCls}`}>
-                {locale === "fr" && name.meaningFr ? name.meaningFr : name.meaning}
-              </p>
+              <p className={`mt-0.5 text-sm ${mutedCls}`}>{name.meaning}</p>
             ) : null}
           </div>
         ))}

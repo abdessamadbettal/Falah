@@ -153,7 +153,7 @@ export default function HisnulMuslimClient() {
             </p>
             {locale !== "ar" ? (
               <p className={`mt-4 border-t ${lineCls} pt-4 text-sm leading-relaxed ${mutedCls}`}>
-                {locale === "fr" ? dua.translationFr : dua.translation}
+                {dua.translation}
               </p>
             ) : null}
             <p className={`mt-2 text-xs font-semibold uppercase tracking-wide ${goldCls}`}>

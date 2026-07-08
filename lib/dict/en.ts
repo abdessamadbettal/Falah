@@ -32,78 +32,148 @@ export const en = {
   },
 
   home: {
-    eyebrow: "Open source · Sadaqah Jariyah",
-    h1a: (n: number) => `${n} Islamic tools.`,
-    h1b: "Zero tracking.",
+    eyebrow: "Open Source | Sadaqah Jariyah",
+    h1a: (n: number) => `${n} Islamic Tools`,
+    h1b: "Everything a Muslim needs in one place.",
     heroP:
-      "Prayer times, Qibla, Zakat, Quran, and more — every calculation runs in your browser. No accounts, no ads, no paywalls. Just clean, accurate tools for the Ummah, built as continuous charity.",
-    ctaExplore: "Explore the toolkit",
+      "Prayer times, Qibla, Zakat, Quran, Hijri calendar, Inheritance, and more — no ads, no subscriptions. Built purely as Sadaqah Jariyah.",
+    ctaExplore: "Explore Tools",
     ctaGithub: "Star on GitHub",
     todayIs: "Today is",
-    falahCaption: "falāḥ — success",
-    heroQuote: "“Come to prayer, come to success.” — the call this project is named after.",
-    principlesEyebrow: "Different by design",
+    falahCaption: "The call to success in this life and the next (Akhira)",
+    heroQuote: "“Come to success (Falah)” — the daily call we answer, and a platform built to serve your worship.",
+    principlesEyebrow: "Different by Design",
     principles: [
       {
-        icon: "ph:shield-check",
-        title: "100% private, client-side",
-        body: "Calculation is done on your device. Your data never leaves the browser.",
+        icon: "ph:shield-check-duotone",
+        title: "100% Private & Secure",
+        body: "All calculations happen locally in your browser. We never track your GPS location, and your personal data never leaves your device.",
       },
       {
-        icon: "ph:hand-heart",
-        title: "No ads, no paywalls",
-        body: "Faith is never monetized here. No advertisements, no sponsored listings, no premium-only features.",
+        icon: "ph:hand-heart-duotone",
+        title: "Always Free, No Ads",
+        body: "We believe faith should never be monetized. Our platform is completely free of intrusive ads, paywalls, and sponsored results.",
       },
       {
-        icon: "ph:lightning",
-        title: "Offline-ready and fast",
-        body: "A static architecture keeps every tool lightning fast and available even without a connection.",
+        icon: "ph:lightning-duotone",
+        title: "Lightning Fast & Offline",
+        body: "Built with a lightweight static architecture for instant response times. Use the tools anywhere, anytime — even without an internet connection.",
       },
       {
-        icon: "ph:user-circle-minus",
-        title: "No accounts required",
-        body: "Open the app and use every feature instantly. There is nothing to sign up for.",
+        icon: "ph:user-focus-duotone",
+        title: "No Account Required",
+        body: "No registration or emails needed. Open the app and instantly use any tool just like a standard built-in calculator.",
+      },
+      {
+        icon: "ph:hands-praying",
+        title: "Built as Sadaqah Jariyah",
+        body: "A non-profit project crafted with care to serve Muslims worldwide. It will remain free and accessible to everyone for the sake of Allah.",
+      },
+      {
+        icon: "ph:code-duotone",
+        title: "Open Source & Transparent",
+        body: "Our source code is publicly available on GitHub. You can inspect the code yourself, verify its security, or contribute to its development.",
+      },
+      {
+        icon: "ph:scales-duotone",
+        title: "Scholarly & Mathematical Accuracy",
+        body: "Reliable algorithms for prayer times, Qibla direction, Zakat, and Inheritance, built according to verified Islamic jurisprudence and standards.",
+      },
+      {
+        icon: "ph:moon-stars-duotone",
+        title: "Modern & Eye-Friendly UI",
+        body: "A clean, distraction-free interface that supports full Dark Mode for a comfortable reading experience at any hour.",
+      },
+      {
+        icon: "ph:squares-four-duotone",
+        title: "All-in-One Toolkit",
+        body: "Over 15 utilities covering daily worship, financial transactions, and creative needs — saving you from installing multiple bloated apps.",
       },
     ],
-    toolkitEyebrow: "The toolkit",
-    toolkitH2: "Every tool ships free, forever.",
+    toolkitEyebrow: "The Toolkit",
+    toolkitH2: "Every tool free, forever.",
     toolkitP: (n: number) =>
-      `${n} utilities across worship, direction, knowledge, calculation, and creativity — all running entirely on your device.`,
+      `${n} tools spanning worship, direction, knowledge, finance, and creativity — all running 100% locally on your device.`,
     contributeEyebrow: "Sadaqah Jariyah",
     contributeH2: "Built by the community, for the Ummah.",
     contributeP:
-      "Falah.io will always remain open source, privacy-first, ad-free, and without a premium tier. If you'd like to help cover hosting and domain costs, voluntary donations are welcome as Sadaqah Jariyah — but the most valuable contribution is your time.",
-    contributeCta: "Open a pull request",
+      "Falah will always remain open-source, privacy-first, ad-free, and without a premium tier. While voluntary donations to help cover hosting and domain costs are welcomed as Sadaqah Jariyah, your most valuable contribution is your time.",
+    contributeCta: "Open a Pull Request",
     contributions: [
-      { icon: "ph:code", label: "Submit code improvements" },
+      { icon: "ph:code", label: "Contribute code improvements" },
       { icon: "ph:translate", label: "Help translate the project" },
-      { icon: "ph:bug-beetle", label: "Report bugs" },
+      { icon: "ph:bug-beetle", label: "Report bugs & issues" },
       { icon: "ph:book-bookmark", label: "Improve documentation" },
-      { icon: "ph:megaphone", label: "Share it with others" },
+      { icon: "ph:megaphone", label: "Share the project with others" },
     ],
     categories: [
-      { label: "Time & Daily Worship", side: "العبادة اليومية" },
-      { label: "Direction & Local Community", side: "القبلة والمساجد" },
-      { label: "Quran & Islamic Knowledge", side: "القرآن والعلم" },
-      { label: "Islamic Calculators", side: "الحاسبات الشرعية" },
-      { label: "Creative & Utility Tools", side: "أدوات إبداعية" },
+      { label: "Daily Worship", side: "Time & Worship" },
+      { label: "Qibla & Mosques", side: "Direction" },
+      { label: "Quran & Knowledge", side: "Quran & Knowledge" },
+      { label: "Islamic Calculators", side: "Calculators" },
+      { label: "Creative Tools", side: "Creative" },
     ],
     toolCards: {
-      prayer: { name: "Prayer Times", description: "Accurate prayer times for your location or any point worldwide, with a live next-prayer countdown." },
-      calendar: { name: "Hijri Smart Calendar", description: "Islamic calendar with White Days (Ayyam al-Bid) highlighted and calendar export support." },
-      ramadan: { name: "Ramadan Countdown", description: "Live countdown to Ramadan and a daily companion for the blessed month." },
-      converter: { name: "Hijri ↔ Gregorian Converter", description: "Instant conversion between the two calendars, both ways." },
-      qibla: { name: "Qibla Finder", description: "Compass-based Qibla direction using your device sensors — locally, never uploaded." },
-      mosque: { name: "Mosque Finder", description: "Find nearby mosques and prayer spaces using browser geolocation only." },
-      quran: { name: "Al-Qur'an Explorer", description: "A clean Quran reader in the Uthmani script with translation." },
-      tafseer: { name: "Tafseer Explorer", description: "Read explanations and scholarly commentary alongside every verse." },
-      names: { name: "99 Names of Allah", description: "Meanings and transliterations of al-Asma ul-Husna — works fully offline." },
-      hisnul: { name: "Hisnul Muslim", description: "Authentic daily Duas from the Fortress of the Muslim, organized by moment." },
-      zakat: { name: "Zakat Calculator", description: "Cash, gold, silver, investments, and business assets — checked against the nisab." },
-      inheritance: { name: "Inheritance Calculator (Fara'id)", description: "Estate distribution with fixed Quranic shares, 'awl, and radd." },
-      age: { name: "Hijri Age Calculator", description: "Your exact Hijri age, next Hijri birthday, and Islamic milestones." },
-      cards: { name: "Quran Card Maker", description: "Generate beautiful Quran verse cards, ready to share anywhere." },
-      stamp: { name: "Arabic Letterhead Date Stamp", description: "Professional Hijri date headers and stamps for Islamic documents." },
+      prayer: { 
+        name: "Prayer Times & Adhan", 
+        description: "Accurate prayer schedules for your precise location or any city worldwide, featuring a live countdown to the next prayer and custom alerts." 
+      },
+      calendar: { 
+        name: "Smart Hijri Calendar", 
+        description: "A comprehensive Islamic calendar highlighting the White Days (Ayyam al-Bid) and key religious events, with easy scheduling export." 
+      },
+      ramadan: { 
+        name: "Ramadan Companion & Countdown", 
+        description: "A live countdown to the blessed month of Ramadan, complete with a daily planner and guide to maximize your worship." 
+      },
+      converter: { 
+        name: "Date Converter (Hijri ↔ Gregorian)", 
+        description: "Instant and accurate two-way date conversion between the Hijri and Gregorian calendars with a single click." 
+      },
+      qibla: { 
+        name: "Smart Qibla Compass", 
+        description: "Precise Kaaba direction finding using your device's built-in sensors entirely offline — zero location tracking or server data sharing." 
+      },
+      mosque: { 
+        name: "Nearby Mosque Finder", 
+        description: "Locate mosques and prayer rooms around you instantly using local browser geolocation with complete privacy." 
+      },
+      quran: { 
+        name: "Al-Qur'an Explorer (Uthmani)", 
+        description: "Read and navigate the Holy Quran in authentic Uthmani script with a clean, typography-focused, distraction-free reader." 
+      },
+      tafseer: { 
+        name: "Quranic Tafseer Explorer", 
+        description: "Read authoritative explanations and scholarly commentary verse by verse to deepen your understanding of the Quran." 
+      },
+      names: { 
+        name: "99 Names of Allah (Asma ul Husna)", 
+        description: "Explore the Divine Names with deep meanings, spiritual significance, and audio pronunciations — completely offline." 
+      },
+      hisnul: { 
+        name: "Hisnul Muslim (Fortress of the Muslim)", 
+        description: "An extensive, categorized collection of authentic daily Duas and Azkar for every occasion and circumstance." 
+      },
+      zakat: { 
+        name: "Comprehensive Zakat Calculator", 
+        description: "A fast, precise tool to calculate Zakat on cash, gold, silver, investments, and business assets against live Nisab values." 
+      },
+      inheritance: { 
+        name: "Inheritance Calculator (Fara'id)", 
+        description: "Accurately calculate estate distribution according to fixed Quranic shares and Islamic jurisprudence, handling complex cases." 
+      },
+      age: { 
+        name: "Hijri Age & Milestone Tracker", 
+        description: "Calculate your exact age in Hijri years, find out your next Hijri birthday, and track significant life milestones." 
+      },
+      cards: { 
+        name: "Quranic Quote & Card Maker", 
+        description: "Design stunning typography cards for Quran verses and Islamic quotes, optimized and ready for instant social media sharing." 
+      },
+      stamp: { 
+        name: "Arabic Letterhead & Date Stamp", 
+        description: "Generate professional Hijri date headers and official stamps to add a polished touch to correspondence and documents." 
+      },
     },
   },
 

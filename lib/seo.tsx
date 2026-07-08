@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { GITHUB_URL, SITE_URL, getDict, localePath, locales, type Dict, type Locale } from "./i18n";
 
-const OG_LOCALES: Record<Locale, string> = { en: "en_US", fr: "fr_FR", ar: "ar_MA" };
+const OG_LOCALES: Record<Locale, string> = { en: "en_US", ar: "ar_MA" };
 
 /** Canonical + hreflang + OG metadata for one page in one locale. English is
  * unprefixed at the root, so it doubles as the x-default. */
