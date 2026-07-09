@@ -4,14 +4,14 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   brandCls,
   cardCls,
+  Field,
   goldCls,
-  inputCls,
+  Input,
   lineCls,
   mutedCls,
+  ToolShell,
 } from "@/components/ui";
 import {
   formatGregorian,
@@ -133,7 +133,7 @@ export default function HijriAgeClient() {
     <ToolShell icon="ph:hourglass-medium" title={t.title} side={t.side} intro={t.intro}>
       <div className={`${cardCls} p-5`}>
         <Field label={t.dob}>
-          <input type="date" className={inputCls} value={birth} onChange={(e) => setBirth(e.target.value)} />
+          <Input type="date" value={birth} onChange={(e) => setBirth(e.target.value)} />
         </Field>
       </div>
       <div className="mt-6">

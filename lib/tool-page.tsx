@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { getDict, type Dict, type Locale } from "@/lib/i18n";
-import { JsonLd, TOOL_PATHS, pageMeta, toolJsonLd } from "@/lib/seo";
+import { getDict, type Locale } from "@/lib/i18n";
+import {
+  ABOUT_PATH,
+  JsonLd,
+  TOOL_PATHS,
+  aboutJsonLd,
+  homeJsonLd,
+  pageMeta,
+  toolJsonLd,
+  type ToolKey,
+} from "@/lib/seo";
 
-type ToolKey = keyof Dict["tools"] & keyof typeof TOOL_PATHS;
-
-/** Shared metadata + JSON-LD for a tool page, used by both the
- * app/(en)/<slug> pages (fixed locale="en") and app/[locale]/<slug> pages
- * (fr/ar) so the two trees can't drift apart. */
+/** Shared metadata + JSON-LD for every page, used by both route trees —
+ * app/(en)/<slug> passes a literal "en", app/[locale]/<slug> passes the
+ * segment param — so the two trees are mechanically identical wrappers
+ * and can't drift apart. */
 export function toolMetadata(locale: Locale, key: ToolKey): Metadata {
   const m = getDict(locale).tools[key].meta;
   return pageMeta(locale, TOOL_PATHS[key], m.title, m.description);
@@ -15,4 +23,22 @@ export function toolMetadata(locale: Locale, key: ToolKey): Metadata {
 export function ToolJsonLd({ locale, toolKey }: { locale: Locale; toolKey: ToolKey }) {
   const m = getDict(locale).tools[toolKey].meta;
   return <JsonLd data={toolJsonLd(locale, TOOL_PATHS[toolKey], m.title, m.description)} />;
+}
+
+export function homeMetadata(locale: Locale): Metadata {
+  const d = getDict(locale);
+  return pageMeta(locale, "", d.meta.siteTitle, d.meta.siteDescription);
+}
+
+export function HomeJsonLd({ locale }: { locale: Locale }) {
+  return <JsonLd data={homeJsonLd(locale)} />;
+}
+
+export function aboutMetadata(locale: Locale): Metadata {
+  const m = getDict(locale).about.meta;
+  return pageMeta(locale, ABOUT_PATH, m.title, m.description);
+}
+
+export function AboutJsonLd({ locale }: { locale: Locale }) {
+  return <JsonLd data={aboutJsonLd(locale)} />;
 }

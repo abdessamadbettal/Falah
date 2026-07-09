@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { GITHUB_URL, SITE_URL, getDict, localePath, locales, type Dict, type Locale } from "./i18n";
+import { getDict, localePath, locales, type Dict, type Locale } from "./i18n";
+import { GITHUB_URL, SITE_URL } from "./site";
 
 const OG_LOCALES: Record<Locale, string> = { en: "en_US", ar: "ar_MA" };
 
@@ -108,7 +109,13 @@ export function toolJsonLd(locale: Locale, path: string, name: string, descripti
   };
 }
 
-export const TOOL_PATHS: Record<string, string> = {
+/** Every tool the site ships, keyed exactly like `Dict["tools"]` and
+ * `Dict["home"]["toolCards"]`. Because the map is `Record<ToolKey, string>`,
+ * adding a tool to the dictionaries without registering its path here (or
+ * vice versa) is a compile error, not a runtime surprise. */
+export type ToolKey = keyof Dict["tools"];
+
+export const TOOL_PATHS: Record<ToolKey, string> = {
   prayer: "/prayer-times",
   calendar: "/hijri-calendar",
   ramadan: "/ramadan-countdown",
@@ -129,7 +136,7 @@ export const TOOL_PATHS: Record<string, string> = {
 /** The 15 tools grouped into the 5 categories used across the site — the home
  * directory and the footer both read from this one source. Group order matches
  * d.home.categories, so index i lines up with categories[i]. */
-export const TOOL_CATEGORIES: { key: string; icon: string }[][] = [
+export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
   [
     { key: "prayer", icon: "ph:mosque" },
     { key: "calendar", icon: "ph:calendar-dots" },
@@ -186,7 +193,8 @@ export function aboutJsonLd(locale: Locale) {
 
 export function homeJsonLd(locale: Locale) {
   const d = getDict(locale);
-  const cards = d.home.toolCards as Record<string, { name: string; description: string }>;
+  const cards = d.home.toolCards;
+  const toolKeys = Object.keys(TOOL_PATHS) as ToolKey[];
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -209,13 +217,13 @@ export function homeJsonLd(locale: Locale) {
       {
         "@type": "ItemList",
         name: d.common.nav.toolkit,
-        numberOfItems: Object.keys(TOOL_PATHS).length,
-        itemListElement: Object.entries(TOOL_PATHS).map(([key, path], i) => ({
+        numberOfItems: toolKeys.length,
+        itemListElement: toolKeys.map((key, i) => ({
           "@type": "ListItem",
           position: i + 1,
           name: cards[key].name,
           description: cards[key].description,
-          url: `${SITE_URL}${localePath(locale, path)}`,
+          url: `${SITE_URL}${localePath(locale, TOOL_PATHS[key])}`,
         })),
       },
       {

@@ -1,0 +1,28 @@
+name: Bug report
+description: Something broken or behaving unexpectedly
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page / tool
+      placeholder: e.g. /zakat or /ar/prayer-times
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Browser & device
+      placeholder: e.g. Safari 18 on iPhone 15, Chrome 126 on Windows
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Language
+      options: [English, Arabic (العربية), Both]

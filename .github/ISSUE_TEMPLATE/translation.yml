@@ -1,0 +1,26 @@
+name: Translation
+description: Offer a new language or report a translation issue
+labels: [i18n]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: e.g. French (fr), Urdu (ur), Turkish (tr)
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is this about?
+      options:
+        - I want to translate Falah.io into this language
+        - A translation is wrong or awkward
+        - RTL/layout issue in this language
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For corrections, quote the current text and your suggestion. For new languages, see "Adding a new language" in CONTRIBUTING.md.

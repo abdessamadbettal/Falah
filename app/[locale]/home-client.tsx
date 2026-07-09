@@ -6,23 +6,22 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Eyebrow,
-  Footer,
-  GITHUB_URL,
-  Header,
-  Star8,
-  StarField,
   brandCls,
   btnGhost,
   btnPrimary,
+  Eyebrow,
+  Footer,
+  GITHUB_URL,
   goldCls,
-  inputCls,
+  Header,
+  Input,
   lineCls,
   mutedCls,
+  StarField,
   useMounted,
 } from "@/components/ui";
 import { localePath } from "@/lib/i18n";
-import { TOOL_CATEGORIES, TOOL_PATHS } from "@/lib/seo";
+import { TOOL_CATEGORIES, TOOL_PATHS, type ToolKey } from "@/lib/seo";
 
 /** One flat list of every tool, tagged with its category index — the shape the
  * searchable directory filters over. */
@@ -208,14 +207,11 @@ function spotlight(e: React.MouseEvent<HTMLElement>) {
 
 /** A tool as an interactive tile: the mihrab arch fills, a girih pattern
  * fades in, and an emerald spotlight tracks the pointer. */
-function ToolTile({ tool }: { tool: { key: string; icon: string } }) {
+function ToolTile({ tool }: { tool: { key: ToolKey; icon: string } }) {
   const d = useDict();
   const locale = useLocale();
-  const cards = d.home.toolCards as Record<
-    string,
-    { name: string; description: string }
-  >;
-  const tools = d.tools as Record<string, { side: string }>;
+  const cards = d.home.toolCards;
+  const tools = d.tools;
 
   return (
     <Link
@@ -352,13 +348,13 @@ function Toolkit() {
               icon="ph:magnifying-glass"
               className={`pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 ${mutedCls} rtl:left-auto rtl:right-3`}
             />
-            <input
+            <Input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={d.home.searchPh}
               aria-label={d.home.searchAria}
-              className={`${inputCls} pl-9 rtl:pr-9 rtl:pl-3`}
+              className="pl-9 rtl:pr-9 rtl:pl-3"
             />
           </div>
         </div>
@@ -466,7 +462,7 @@ export default function HomeClient() {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <Hero />
         <Toolkit />
         <Faq />

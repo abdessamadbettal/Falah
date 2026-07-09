@@ -6,15 +6,15 @@ import { useEffect, useState } from "react";
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Star8,
-  StarField,
-  ToolShell,
   brandCls,
   cardCls,
   goldCls,
-  inputCls,
+  Input,
   lineCls,
   mutedCls,
+  Star8,
+  StarField,
+  ToolShell,
 } from "@/components/ui";
 import { NAMES_OF_ALLAH } from "@/lib/names";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
@@ -87,8 +87,8 @@ export default function NamesOfAllahClient() {
           icon="ph:magnifying-glass"
           className={`pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 ${mutedCls}`}
         />
-        <input
-          className={`${inputCls} ps-10`}
+        <Input
+          className="ps-10"
           placeholder={t.searchPh}
           value={query}
           onChange={(e) => setQuery(e.target.value)}

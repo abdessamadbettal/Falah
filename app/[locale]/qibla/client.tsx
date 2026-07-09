@@ -17,7 +17,6 @@ import {
   btnPrimary,
   cardCls,
   goldCls,
-  lineCls,
   mutedCls,
 } from "@/components/ui";
 import { JsonLd, faqJsonLd } from "@/lib/seo";

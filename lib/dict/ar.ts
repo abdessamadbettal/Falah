@@ -7,6 +7,7 @@ export const ar: typeof en = {
   common: {
     nav: { toolkit: "الأدوات", principles: "المبادئ", contribute: "المساهمة", about: "عن فلاح" },
     allTools: "كل الأدوات",
+    skipToContent: "تخطَّ إلى المحتوى",
     themeToLight: "التبديل إلى الوضع الفاتح",
     themeToDark: "التبديل إلى الوضع الداكن",
     githubAria: "فلاح على GitHub",

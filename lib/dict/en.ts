@@ -5,6 +5,7 @@ export const en = {
   common: {
     nav: { toolkit: "Toolkit", principles: "Principles", contribute: "Contribute", about: "About" },
     allTools: "All tools",
+    skipToContent: "Skip to content",
     themeToLight: "Switch to light mode",
     themeToDark: "Switch to dark mode",
     githubAria: "Falah.io on GitHub",

@@ -4,13 +4,13 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   btnGhost,
   btnPrimary,
   cardCls,
-  inputCls,
+  Field,
+  Input,
   mutedCls,
+  ToolShell,
   useMounted,
 } from "@/components/ui";
 import {
@@ -148,15 +148,14 @@ export default function DateStampClient() {
       <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div className={`${cardCls} space-y-4 self-start p-5`}>
           <Field label={t.heading} hint={t.headingHint}>
-            <input
-              className={inputCls}
+            <Input
               placeholder={t.headingPh}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </Field>
           <Field label={t.date}>
-            <input type="date" className={inputCls} value={dateInput} onChange={(e) => setDateInput(e.target.value)} />
+            <Input type="date" value={dateInput} onChange={(e) => setDateInput(e.target.value)} />
           </Field>
           <div className="flex flex-wrap gap-3 pt-1">
             <button type="button" onClick={download} className={btnPrimary} disabled={!hijri}>

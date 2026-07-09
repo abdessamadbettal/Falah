@@ -3,7 +3,12 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { useDict, useLocale } from "@/components/locale";
-import { brandCls, inputCls, lineCls, mutedCls } from "@/components/ui";
+import {
+  brandCls,
+  Input,
+  lineCls,
+  mutedCls,
+} from "@/components/ui";
 
 export type Place = {
   name: string;
@@ -89,7 +94,7 @@ export function CitySearch({ onPick }: { onPick: (p: Place) => void }) {
         icon={searching ? "ph:circle-notch" : "ph:magnifying-glass"}
         className={`pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 ${mutedCls} ${searching ? "animate-spin" : ""} rtl:left-auto rtl:right-3`}
       />
-      <input
+      <Input
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -98,7 +103,7 @@ export function CitySearch({ onPick }: { onPick: (p: Place) => void }) {
         placeholder={d.common.searchCityPh}
         aria-label={d.common.searchCityPh}
         autoComplete="off"
-        className={`${inputCls} pl-9 rtl:pr-9 rtl:pl-3`}
+        className="pl-9 rtl:pr-9 rtl:pl-3"
       />
       {open && query.trim().length >= 2 ? (
         <ul

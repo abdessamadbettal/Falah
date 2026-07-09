@@ -1,27 +1,20 @@
 import type { Metadata } from "next";
-import { getDict, type Locale } from "@/lib/i18n";
-import { ABOUT_PATH, JsonLd, aboutJsonLd, pageMeta } from "@/lib/seo";
+import type { Locale } from "@/lib/i18n";
+import { AboutJsonLd, aboutMetadata } from "@/lib/tool-page";
 import Client from "./client";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}): Promise<Metadata> {
+type Props = { params: Promise<{ locale: Locale }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const m = getDict(locale).about.meta;
-  return pageMeta(locale, ABOUT_PATH, m.title, m.description);
+  return aboutMetadata(locale);
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
+export default async function Page({ params }: Props) {
   const { locale } = await params;
   return (
     <>
-      <JsonLd data={aboutJsonLd(locale)} />
+      <AboutJsonLd locale={locale} />
       <Client />
     </>
   );

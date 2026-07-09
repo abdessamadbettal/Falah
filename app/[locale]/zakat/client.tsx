@@ -7,13 +7,14 @@ import { Article } from "@/components/article";
 import { Faq } from "@/components/faq";
 import { useDict } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   brandCls,
   cardCls,
-  inputCls,
+  Field,
+  Input,
   lineCls,
   mutedCls,
+  Select,
+  ToolShell,
 } from "@/components/ui";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
 
@@ -98,28 +99,28 @@ export default function ZakatClient() {
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label={t.currency}>
-              <input className={inputCls} value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase().slice(0, 4))} />
+              <Input value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase().slice(0, 4))} />
             </Field>
             <Field label={t.cash}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={cash} onChange={(e) => setCash(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={cash} onChange={(e) => setCash(e.target.value)} />
             </Field>
             <Field label={t.goldGrams}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={goldGrams} onChange={(e) => setGoldGrams(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={goldGrams} onChange={(e) => setGoldGrams(e.target.value)} />
             </Field>
             <Field label={t.goldPrice(currency)} hint={t.goldPriceHint}>
-              <input className={inputCls} inputMode="decimal" value={goldPrice} onChange={(e) => setGoldPrice(e.target.value)} />
+              <Input inputMode="decimal" value={goldPrice} onChange={(e) => setGoldPrice(e.target.value)} />
             </Field>
             <Field label={t.silverGrams}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={silverGrams} onChange={(e) => setSilverGrams(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={silverGrams} onChange={(e) => setSilverGrams(e.target.value)} />
             </Field>
             <Field label={t.silverPrice(currency)}>
-              <input className={inputCls} inputMode="decimal" value={silverPrice} onChange={(e) => setSilverPrice(e.target.value)} />
+              <Input inputMode="decimal" value={silverPrice} onChange={(e) => setSilverPrice(e.target.value)} />
             </Field>
             <Field label={t.investments} hint={t.investmentsHint}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={investments} onChange={(e) => setInvestments(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={investments} onChange={(e) => setInvestments(e.target.value)} />
             </Field>
             <Field label={t.business} hint={t.businessHint}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={business} onChange={(e) => setBusiness(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={business} onChange={(e) => setBusiness(e.target.value)} />
             </Field>
           </div>
 
@@ -129,13 +130,13 @@ export default function ZakatClient() {
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label={t.liabilities} hint={t.liabilitiesHint}>
-              <input className={inputCls} inputMode="decimal" placeholder="0" value={liabilities} onChange={(e) => setLiabilities(e.target.value)} />
+              <Input inputMode="decimal" placeholder="0" value={liabilities} onChange={(e) => setLiabilities(e.target.value)} />
             </Field>
             <Field label={t.nisabBasis} hint={t.nisabHint}>
-              <select className={inputCls} value={nisabBasis} onChange={(e) => setNisabBasis(e.target.value as "gold" | "silver")}>
+              <Select value={nisabBasis} onChange={(e) => setNisabBasis(e.target.value as "gold" | "silver")}>
                 <option value="silver">{t.silverOpt(NISAB_SILVER_GRAMS)}</option>
                 <option value="gold">{t.goldOpt(NISAB_GOLD_GRAMS)}</option>
-              </select>
+              </Select>
             </Field>
           </div>
         </div>

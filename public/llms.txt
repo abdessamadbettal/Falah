@@ -1,13 +1,13 @@
 # Falah.io — The Islamic Toolkit
 
-> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls, no analytics or tracking of any kind. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (/en), French (/fr), and Arabic (/ar, RTL).
+> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls, no analytics or tracking of any kind. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (served unprefixed at the site root) and Arabic (/ar, right-to-left).
 
 Key facts:
 - All calculations (prayer times, Qibla, Zakat, inheritance, Hijri dates) execute locally on the user's device; coordinates and financial inputs never leave the browser.
 - Hijri dates use the Umm al-Qura calendar via the browser's Intl API. Prayer times and Qibla bearings use the `adhan` astronomical library.
 - Quran and tafsir text is fetched read-only from the open AlQuran.cloud API; mosque search queries the OpenStreetMap Overpass API.
 - Static Next.js export — fast, offline-capable, deployable on any static host.
-- Source code: https://github.com/abdessamadbettal/falah.io
+- Source code: https://github.com/abdessamadbettal/falah
 
 ## Tools
 
@@ -31,4 +31,4 @@ Key facts:
 
 - The inheritance and zakat tools cover common cases and always advise consulting a qualified scholar for complex situations.
 - Ramadan and Hijri dates follow Umm al-Qura and may differ by one day from local moonsighting.
-- French pages live under https://falah.io/fr/…, Arabic pages under https://falah.io/ar/… with identical functionality.
+- Arabic pages live under https://falah.io/ar/… with identical functionality.

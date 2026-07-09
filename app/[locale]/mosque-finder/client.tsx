@@ -7,15 +7,15 @@ import { Faq } from "@/components/faq";
 import { useDict } from "@/components/locale";
 import { OsmMap } from "@/components/osm-map";
 import {
-  Field,
-  ToolShell,
   brandCls,
   btnGhost,
   btnPrimary,
   cardCls,
-  inputCls,
+  Field,
   lineCls,
   mutedCls,
+  Select,
+  ToolShell,
 } from "@/components/ui";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
 
@@ -164,8 +164,7 @@ out center tags 60;`;
             />
           </Field>
           <Field label={t.radius}>
-            <select
-              className={inputCls}
+            <Select
               value={radius}
               onChange={(e) => {
                 const r = Number(e.target.value);
@@ -176,7 +175,7 @@ out center tags 60;`;
               {[2, 5, 10, 20].map((r) => (
                 <option key={r} value={r}>{r} km</option>
               ))}
-            </select>
+            </Select>
           </Field>
           <button
             type="button"

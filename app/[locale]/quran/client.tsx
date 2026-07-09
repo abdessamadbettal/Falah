@@ -5,15 +5,15 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useDict } from "@/components/locale";
 import {
-  Star8,
-  StarField,
-  ToolShell,
   brandCls,
   cardCls,
   goldCls,
-  inputCls,
   lineCls,
   mutedCls,
+  Select,
+  Star8,
+  StarField,
+  ToolShell,
 } from "@/components/ui";
 import { type Ayah, fetchSurahEditions, useSurahs } from "@/lib/quran";
 
@@ -197,8 +197,7 @@ export default function QuranClient() {
             >
               <Icon icon="ph:caret-left" className="size-4 rtl:rotate-180" />
             </button>
-            <select
-              className={inputCls}
+            <Select
               value={surahNumber}
               onChange={(e) => goToSurah(Number(e.target.value))}
               disabled={!surahs}
@@ -209,7 +208,7 @@ export default function QuranClient() {
                   {s.number}. {s.englishName} — {s.englishNameTranslation}
                 </option>
               ))}
-            </select>
+            </Select>
             <button
               type="button"
               onClick={() => goToSurah(surahNumber + 1)}

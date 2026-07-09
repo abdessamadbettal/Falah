@@ -1,55 +1,75 @@
-# Contributing to MyApp
+# Contributing to Falah.io
 
-Thank you for your interest in contributing to MyApp! This document provides a guideline for contributing to our Laravel application using GitHub, ensuring a smooth workflow for everyone involved.
+Thank you for helping build Falah.io! Every contribution — code, translation, bug report, or documentation — counts as part of this Sadaqah Jariyah. This guide gets you from clone to merged PR without guesswork.
 
-## Workflow Overview
+## Local setup
 
-Our workflow is designed to ensure that the codebase remains clean, well-documented, and easy to understand. We use GitHub Issues for task management and a Kanban board for tracking progress.
+- **Node.js 20+** and **npm** (pnpm and yarn work too).
 
-## Getting Started
+```bash
+git clone https://github.com/abdessamadbettal/falah.git
+cd falah.io
+npm install
+npm run dev        # http://localhost:3000
+```
 
-1. **Fork the Repository**: Start by forking the repository to your GitHub account. This will be your private workspace.
+The site is a **static export** (`output: "export"` in `next.config.ts`): there is no server, no middleware, and no API routes. Every tool runs entirely in the browser.
 
-2. **Clone the Forked Repository**: Clone the repository to your local machine to start working on the changes.
+## Project layout
 
-3. **Set Up the Development Environment**: Follow the setup instructions in the README.md to set up your local development environment.
+```text
+app/
+  (en)/           English pages, served unprefixed at the site root ("/zakat")
+  [locale]/       Prefixed locales ("/ar/zakat") + the client components
+  (redirect)/     Meta-refresh redirects for legacy pre-i18n URLs
+components/
+  ui/             Design system: styles.ts, ornaments, primitives, chrome
+lib/
+  dict/           One dictionary per language (en.ts, ar.ts) — all copy lives here
+  seo.tsx         Tool registry (TOOL_PATHS), metadata + JSON-LD builders
+  tool-page.tsx   Shared page helpers both route trees wrap
+  site.ts         SITE_URL / GITHUB_URL — the single source of identity
+```
 
-## Making Changes
+**Why two route trees?** English must live unprefixed at the root (it doubles as the `hreflang` `x-default`), and a static export has no middleware to rewrite URLs. Both trees are thin wrappers over the same helpers in `lib/tool-page.tsx` — page files contain no logic of their own.
 
-1. **Create a New Issue**: Before starting work on a new feature or a bug fix, make sure there is an issue created for it. If not, create a new issue describing the feature or bug.
+## Before opening a PR
 
-2. **Start with a Fresh Branch**: For each new feature or bug fix, create a new branch from the latest version of the main branch. Use a descriptive name for your branch, such as `feature/add-login-button` or `fix/header-alignment`.
+Run the same checks CI runs:
 
-3. **Commit Your Changes**: Make your changes locally and commit them to your branch. Use clear and concise commit messages, following the conventional commit format.
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-4. **Keep Your Branch Updated**: Regularly rebase your branch from the main branch to keep it up to date with the latest changes.
+Keep each PR focused on one tool or one concern, and use conventional commit messages (`feat:`, `fix:`, `docs:`, …).
 
-## Submitting Changes
+## Adding or changing copy
 
-1. **Run Tests and Linters**: Before submitting your changes, make sure to run tests and linters to ensure that your code adheres to the project standards.
+All user-facing text lives in `lib/dict/`. Any string you add or change must be updated in **every** dictionary (`en.ts` and `ar.ts`). `ar` is typed as `typeof en`, so a missing key is a compile error — `npx tsc --noEmit` will catch it.
 
-2. **Open a Pull Request (PR)**: Once your changes are ready and tested, push your branch to your fork and open a pull request against the original repository's main branch. Provide a clear description of the changes and link the related issue(s).
+## Adding a new tool
 
-3. **Review Process**: The team will review your PR. Be open to feedback and make necessary adjustments. Your PR might go through several rounds of review before merging.
+1. **Strings** — add the tool's section to `tools` and its card to `home.toolCards` in *every* `lib/dict/*.ts`.
+2. **Register it** — add a path to `TOOL_PATHS` and an entry (with icon) to `TOOL_CATEGORIES` in `lib/seo.tsx`. The `ToolKey` type makes step 1 ↔ step 2 mismatches a compile error.
+3. **Build the tool** — create `app/[locale]/<slug>/client.tsx` (the interactive component, wrapped in `<ToolShell>`) and `page.tsx` (copy any existing tool's `page.tsx` and change the key).
+4. **English wrapper** — create `app/(en)/<slug>/page.tsx` the same way (see any sibling).
+5. Done — the sitemap, footer directory, home grid, and JSON-LD all read from the registry automatically.
 
-4. **Merge**: Once your PR is approved, a maintainer will merge it into the main branch.
+## Adding a new language
 
-## After Your Changes Are Merged
+1. Create `lib/dict/<code>.ts` exporting a dict typed `typeof en` (copy `ar.ts` as a template).
+2. Add the code to `locales` in `lib/i18n.ts`.
+3. If the language is RTL, extend `dirFor()`.
+4. Everything else — routes, sitemap, hreflang, language switcher — derives from `locales`.
 
-1. **Update Your Local Main Branch**: After your changes have been merged, make sure to pull the latest changes from the main branch of the original repository to your local main branch.
+## Ground rules
 
-2. **Delete Your Feature Branch**: If your branch was merged or closed, you can safely delete your branch.
+- **Privacy is non-negotiable.** No analytics, no tracking, no data leaving the browser. PRs that add any of these will be declined.
+- **Islamic content must be sourced.** Cite the reference (e.g. hadith collection and number) for any dua, ruling, or calculation method you add or change.
+- **Both directions, both themes.** Test your UI in Arabic (RTL) and in dark mode before submitting.
 
-## Using the Kanban Board
+## Questions?
 
-- **Pick Up Tasks**: Check the Kanban board for available tasks. Move the issue you are working on to the "In Progress" column.
-
-- **Update Task Status**: Regularly update the issue status to reflect the current state, moving it through "In Review" when you have a PR open, and finally to "Done" when the task is completed.
-
-## Best Practices
-
-- **Communicate**: Use GitHub comments to communicate progress, ask questions, and clarify requirements.
-- **Small PRs**: Aim to keep your pull requests small and focused on a single feature or bug fix to simplify the review process.
-- **Documentation**: Update the documentation to reflect any changes in the setup process or feature usage.
-
-Thank you for contributing to MyApp! Your efforts help make our project better for everyone.
+Open a [GitHub issue](https://github.com/abdessamadbettal/falah/issues) — bug reports, feature ideas, and translation offers are all welcome.

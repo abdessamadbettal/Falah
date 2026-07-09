@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useDict } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   cardCls,
+  Field,
   goldCls,
-  inputCls,
   lineCls,
   mutedCls,
+  Select,
+  ToolShell,
 } from "@/components/ui";
 import { fetchSurahEditions, useSurahs, type Ayah } from "@/lib/quran";
 
@@ -48,8 +48,7 @@ export default function TafseerClient() {
     <ToolShell icon="ph:scroll" title={t.title} side={t.side} intro={t.intro} wide>
       <div className={`${cardCls} grid gap-4 p-5 sm:grid-cols-2`}>
         <Field label={d.tools.quran.surah}>
-          <select
-            className={inputCls}
+          <Select
             value={surahNumber}
             onChange={(e) => setSurahNumber(Number(e.target.value))}
             disabled={!surahs}
@@ -59,14 +58,14 @@ export default function TafseerClient() {
                 {s.number}. {s.englishName} — {s.englishNameTranslation}
               </option>
             ))}
-          </select>
+          </Select>
         </Field>
         <Field label={t.commentary}>
-          <select className={inputCls} value={tafsir} onChange={(e) => setTafsir(e.target.value)}>
+          <Select value={tafsir} onChange={(e) => setTafsir(e.target.value)}>
             {t.tafsirs.map((option) => (
               <option key={option.id} value={option.id}>{option.label}</option>
             ))}
-          </select>
+          </Select>
         </Field>
       </div>
 

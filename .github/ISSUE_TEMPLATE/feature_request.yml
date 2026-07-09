@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a new tool or an improvement to an existing one
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should Falah.io do, and who benefits?
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Islamic sources (if applicable)
+      description: For religious content or calculation methods, cite the reference (hadith collection, fiqh ruling, calculation authority).
+  - type: checkboxes
+    id: fit
+    attributes:
+      label: Project fit
+      options:
+        - label: This works fully client-side — no accounts, tracking, or server required
+          required: true

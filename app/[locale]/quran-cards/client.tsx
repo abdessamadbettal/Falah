@@ -4,12 +4,13 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { useDict } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   btnPrimary,
   cardCls,
-  inputCls,
+  Field,
+  Input,
   mutedCls,
+  Select,
+  ToolShell,
 } from "@/components/ui";
 import { fetchAyah, useSurahs } from "@/lib/quran";
 
@@ -178,8 +179,7 @@ export default function QuranCardsClient() {
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className={`${cardCls} space-y-4 self-start p-5`}>
           <Field label={t.surah}>
-            <select
-              className={inputCls}
+            <Select
               value={surahNumber}
               onChange={(e) => { setSurahNumber(Number(e.target.value)); setAyahNumber(1); }}
               disabled={!surahs}
@@ -189,24 +189,23 @@ export default function QuranCardsClient() {
                   {s.number}. {s.englishName}
                 </option>
               ))}
-            </select>
+            </Select>
           </Field>
           <Field label={t.ayah(maxAyah)}>
-            <input
+            <Input
               type="number"
               min={1}
               max={maxAyah}
-              className={inputCls}
               value={ayahNumber}
               onChange={(e) => setAyahNumber(Math.max(1, Math.min(maxAyah, Number(e.target.value) || 1)))}
             />
           </Field>
           <Field label={t.style}>
-            <select className={inputCls} value={style} onChange={(e) => setStyle(e.target.value as StyleKey)}>
+            <Select value={style} onChange={(e) => setStyle(e.target.value as StyleKey)}>
               {(Object.keys(STYLES) as StyleKey[]).map((key) => (
                 <option key={key} value={key}>{t.styles[key]}</option>
               ))}
-            </select>
+            </Select>
           </Field>
           <div className="flex flex-wrap gap-3 pt-1">
             <button type="button" onClick={render} disabled={status === "loading" || !surahs} className={btnPrimary}>

@@ -8,14 +8,14 @@ import { CitySearch, type Place, detectIpPlace } from "@/components/city-search"
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   brandCls,
   cardCls,
+  Field,
   goldCls,
-  inputCls,
   lineCls,
   mutedCls,
+  Select,
+  ToolShell,
   useMounted,
 } from "@/components/ui";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
@@ -177,8 +177,7 @@ export default function PrayerTimesClient() {
             <CitySearch onPick={pick} />
           </Field>
           <Field label={t.calcMethod}>
-            <select
-              className={inputCls}
+            <Select
               value={method}
               onChange={(e) => {
                 touched.current = true;
@@ -190,7 +189,7 @@ export default function PrayerTimesClient() {
                   {t.methods[key as keyof typeof t.methods]}
                 </option>
               ))}
-            </select>
+            </Select>
           </Field>
         </div>
         <p className={`mt-4 flex items-center gap-2 text-xs ${mutedCls}`}>

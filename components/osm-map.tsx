@@ -98,9 +98,14 @@ export function OsmMap({
     }
   }
 
+  // Mirrors drag.current's truthiness: the ref drives the pan math, the
+  // state drives the cursor (refs must not be read during render).
+  const [dragging, setDragging] = useState(false);
+
   function onPointerDown(e: React.PointerEvent) {
     const c = project(center.lat, center.lng, zoom);
     drag.current = { x: e.clientX, y: e.clientY, cx: c.x, cy: c.y, moved: false };
+    setDragging(true);
     e.currentTarget.setPointerCapture(e.pointerId);
   }
   function onPointerMove(e: React.PointerEvent) {
@@ -113,6 +118,7 @@ export function OsmMap({
   }
   function onPointerUp() {
     drag.current = null;
+    setDragging(false);
   }
 
   // radius ring (metres → pixels at this latitude/zoom)
@@ -131,7 +137,7 @@ export function OsmMap({
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerUp}
       onDoubleClick={() => onZoomChange(Math.min(MAX_Z, zoom + 1))}
-      className={`relative touch-none select-none overflow-hidden bg-zinc-100 dark:bg-zinc-800 ${drag.current ? "cursor-grabbing" : "cursor-grab"} ${className ?? ""}`}
+      className={`relative touch-none select-none overflow-hidden bg-zinc-100 dark:bg-zinc-800 ${dragging ? "cursor-grabbing" : "cursor-grab"} ${className ?? ""}`}
     >
       {/* tiles */}
       {tiles.map((tl) => (

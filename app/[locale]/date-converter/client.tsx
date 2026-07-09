@@ -6,14 +6,15 @@ import { useState } from "react";
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   brandCls,
   cardCls,
+  Field,
   goldCls,
-  inputCls,
+  Input,
   lineCls,
   mutedCls,
+  Select,
+  ToolShell,
   useMounted,
 } from "@/components/ui";
 import {
@@ -74,9 +75,8 @@ export default function DateConverterClient() {
           <h2 className="font-display text-xl">{t.g2h}</h2>
           <div className="mt-4">
             <Field label={t.gregDate}>
-              <input
+              <Input
                 type="date"
-                className={inputCls}
                 value={gregInput}
                 onChange={(e) => setGregInput(e.target.value)}
               />
@@ -107,22 +107,21 @@ export default function DateConverterClient() {
           <h2 className="font-display text-xl">{t.h2g}</h2>
           <div className="mt-4 grid grid-cols-3 gap-3">
             <Field label={t.day}>
-              <select className={inputCls} value={hDay} onChange={(e) => setHDay(Number(e.target.value))}>
+              <Select value={hDay} onChange={(e) => setHDay(Number(e.target.value))}>
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
                   <option key={day} value={day}>{day}</option>
                 ))}
-              </select>
+              </Select>
             </Field>
             <Field label={t.month}>
-              <select className={inputCls} value={hMonth} onChange={(e) => setHMonth(Number(e.target.value))}>
+              <Select value={hMonth} onChange={(e) => setHMonth(Number(e.target.value))}>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                   <option key={m} value={m}>{hijriMonthName(m, locale)}</option>
                 ))}
-              </select>
+              </Select>
             </Field>
             <Field label={t.yearAH}>
-              <input
-                className={inputCls}
+              <Input
                 inputMode="numeric"
                 value={hYear}
                 onChange={(e) => setHYear(e.target.value)}

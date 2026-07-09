@@ -1,7 +1,7 @@
 # 🌙 Falah.io — The Islamic Toolkit
 
-[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-brightgreen)](https://github.com)
-[![Built with Next.js](https://img.shields.io/badge/Next.js-14%2B-black?logo=next.js)](https://nextjs.org)
+[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-brightgreen)](https://github.com/abdessamadbettal/falah)
+[![Built with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Iconify](https://img.shields.io/badge/Iconify-1769FF?logo=iconify&logoColor=white)](https://iconify.design)
 [![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Client--Side-blue)](https://falah.io)
@@ -11,6 +11,8 @@
 > **Every Muslim deserves access to accurate Islamic tools without creating accounts, handing over location data, or hitting paywalls.**
 
 **Falah.io** is an open-source, zero-tracking, ad-free suite of essential Islamic utilities. Built purely as **Sadaqah Jariyah** (continuous charity), everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
+
+![Falah.io — home page](.github/screenshot.png)
 
 ---
 
@@ -22,7 +24,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 - 🚫 **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
 - ⚡ **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
 - 🌍 **No Accounts Required:** Open the app and instantly access every feature without signing up.
-- 🌐 **Multilingual Support:** Available in **English**, **Arabic (العربية)**, and **French (Français)**.
+- 🌐 **Multilingual Support:** Available in **English** and **Arabic (العربية)** with full right-to-left layout. French is on the roadmap.
 
 ---
 
@@ -115,7 +117,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 | Technology | Purpose |
 |------------|---------|
-| **Next.js 14+** | React framework using Static Export for fast client-side performance |
+| **Next.js 16** | React framework using Static Export for fast client-side performance |
 | **Tailwind CSS** | Responsive modern UI with dark mode support |
 | **Iconify** | Lightweight SVG icons |
 | **HTML5 Geolocation** | Local-only mosque finding |
@@ -127,7 +129,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ## Prerequisites
 
-- Node.js **18+**
+- Node.js **20+**
 - npm, pnpm, or yarn
 
 ## Installation
@@ -135,7 +137,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/abdessamadbettal/falah.io.git
+git clone https://github.com/abdessamadbettal/falah.git
 cd falah.io
 ```
 
@@ -184,12 +186,12 @@ Falah.io is a community-driven project built as **Sadaqah Jariyah**.
 There are many ways to contribute:
 
 - 💻 Submit code improvements.
-- 🌐 Help translate the project.
+- 🌐 Help translate the project (Arabic today — French is next).
 - 🐞 Report bugs.
 - 📖 Improve documentation.
 - 📢 Share the project with others.
 
-Pull Requests are always welcome.
+Pull Requests are always welcome — start with the **[Contributing Guide](CONTRIBUTING.md)**, which covers local setup, the pre-PR checklist, and a step-by-step recipe for adding a new tool or language.
 
 ---
 

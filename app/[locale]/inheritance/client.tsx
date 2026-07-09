@@ -6,13 +6,13 @@ import { Article } from "@/components/article";
 import { Faq } from "@/components/faq";
 import { useDict } from "@/components/locale";
 import {
-  Field,
-  ToolShell,
   brandCls,
   cardCls,
-  inputCls,
+  Field,
+  Input,
   lineCls,
   mutedCls,
+  ToolShell,
 } from "@/components/ui";
 import type { Dict } from "@/lib/i18n";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
@@ -204,11 +204,10 @@ export default function InheritanceClient() {
 
   const countInput = (label: string, key: keyof Heirs, max = 20) => (
     <Field label={label}>
-      <input
+      <Input
         type="number"
         min={0}
         max={max}
-        className={inputCls}
         value={heirs[key] as number}
         onChange={(e) => set(key, Math.max(0, Math.min(max, Number(e.target.value) || 0)) as never)}
       />
@@ -234,7 +233,7 @@ export default function InheritanceClient() {
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className={`${cardCls} space-y-5 p-5`}>
           <Field label={t.estate} hint={t.estateHint}>
-            <input className={inputCls} inputMode="decimal" value={estate} onChange={(e) => setEstate(e.target.value)} />
+            <Input inputMode="decimal" value={estate} onChange={(e) => setEstate(e.target.value)} />
           </Field>
           <div>
             <p className="mb-2 text-sm font-semibold">{t.spouse}</p>

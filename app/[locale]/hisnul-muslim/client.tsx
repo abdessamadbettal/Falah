@@ -9,7 +9,6 @@ import {
   ToolShell,
   brandCls,
   cardCls,
-  goldCls,
   lineCls,
   mutedCls,
 } from "@/components/ui";
