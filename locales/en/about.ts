@@ -18,7 +18,7 @@ export const about = {
     {
       icon: "ph:shield-check-duotone",
       title: "100% Private & Secure",
-      body: "All calculations happen locally in your browser. We never track your GPS location, and your personal data never leaves your device.",
+      body: "All calculations happen locally in your browser. We never track your GPS location, and your inputs never leave your device.",
     },
     {
       icon: "ph:hand-heart-duotone",

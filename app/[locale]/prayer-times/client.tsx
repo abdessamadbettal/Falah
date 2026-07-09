@@ -4,7 +4,7 @@ import { Icon } from "@iconify/react";
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CitySearch, type Place, detectIpPlace } from "@/components/city-search";
+import { CitySearch, type Place, detectIpPlace, reverseGeocode } from "@/components/city-search";
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
@@ -97,15 +97,22 @@ export default function PrayerTimesClient() {
     setMethod(methodForCountry(p.code));
   }
 
-  // Adopt an exact GPS fix. Shared by the on-load attempt and the button.
+  // Adopt an exact GPS fix. Shared by the on-load attempt and the button:
+  // show the coordinates immediately, then resolve them to a real city name
+  // (and its calculation method) in the background.
   const applyPosition = useCallback(
     (pos: GeolocationPosition) => {
+      const { latitude, longitude } = pos.coords;
       touched.current = true;
-      setPlace({ name: d.common.myLocation, country: "", lat: pos.coords.latitude, lng: pos.coords.longitude });
+      setPlace({ name: d.common.myLocation, country: "", lat: latitude, lng: longitude });
       setPrecise(true);
       setLocating(false);
+      reverseGeocode(latitude, longitude, locale, d.common.myLocation).then((p) => {
+        setPlace(p);
+        if (p.code) setMethod(methodForCountry(p.code));
+      });
     },
-    [d],
+    [d, locale],
   );
 
   /** The "Use my location" button: request precise coordinates, showing the

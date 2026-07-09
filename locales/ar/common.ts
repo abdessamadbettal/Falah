@@ -11,7 +11,7 @@ export const common: typeof en = {
   tagline: "دليلك اليومي للطاعة والنجاح",
   footerDua: "منصة إسلامية مفتوحة المصدر",
   mit: "رخصة MIT",
-  clientSide: "يعمل بالكامل على جهازك · بلا تتبع",
+  clientSide: "يعمل بالكامل على جهازك",
   loading: "جارٍ التحميل…",
   latitude: "خط العرض",
   longitude: "خط الطول",

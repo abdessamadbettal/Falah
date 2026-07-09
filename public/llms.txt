@@ -1,6 +1,6 @@
 # Falah.io — The Islamic Toolkit
 
-> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls, no analytics or tracking of any kind. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (served unprefixed at the site root) and Arabic (/ar, right-to-left).
+> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (/en) and Arabic (/ar, right-to-left).
 
 Key facts:
 - All calculations (prayer times, Qibla, Zakat, inheritance, Hijri dates) execute locally on the user's device; coordinates and financial inputs never leave the browser.

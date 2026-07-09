@@ -70,7 +70,7 @@ Any string you change must be updated in **every** language.
 
 ## Ground rules
 
-- **Privacy is non-negotiable.** No analytics, no tracking, no data leaving the browser. PRs that add any of these will be declined.
+- **Privacy is non-negotiable.** Your location, financial inputs, and calculations never leave the browser. The only telemetry is anonymized, aggregate page-view analytics; PRs that add any other tracking, fingerprinting, ads, or personal-data collection will be declined.
 - **Islamic content must be sourced.** Cite the reference (e.g. hadith collection and number) for any dua, ruling, or calculation method you add or change.
 - **Both directions, both themes.** Test your UI in Arabic (RTL) and in dark mode before submitting.
 

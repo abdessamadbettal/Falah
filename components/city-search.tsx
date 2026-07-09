@@ -19,26 +19,89 @@ export type Place = {
   lng: number;
 };
 
+function toPlace(
+  city: unknown,
+  region: unknown,
+  country: unknown,
+  code: unknown,
+  lat: unknown,
+  lng: unknown,
+): Place | null {
+  const latN = Number(lat);
+  const lngN = Number(lng);
+  if (!Number.isFinite(latN) || !Number.isFinite(lngN)) return null;
+  const countryStr = String(country ?? "");
+  return {
+    name: String(city ?? "") || countryStr,
+    admin1: region ? String(region) : undefined,
+    country: countryStr,
+    code: String(code ?? "").toUpperCase(),
+    lat: latN,
+    lng: lngN,
+  };
+}
+
+/** Key-less IP geolocation providers, tried in order. Free tiers rate-limit
+ * per IP, so a fallback chain keeps the default location working when the
+ * first provider returns 403. All are HTTPS + CORS-enabled. */
+const IP_PROVIDERS: { url: string; parse: (d: Record<string, unknown>) => Place | null }[] = [
+  {
+    url: "https://ipwho.is/",
+    parse: (d) =>
+      d.success === false
+        ? null
+        : toPlace(d.city, d.region, d.country, d.country_code, d.latitude, d.longitude),
+  },
+  {
+    url: "https://get.geojs.io/v1/ip/geo.json",
+    parse: (d) => toPlace(d.city, d.region, d.country, d.country_code, d.latitude, d.longitude),
+  },
+];
+
 /** Seed a default location from the visitor's IP. Only used to prefill the
- * tool — the coordinates come back with the response, nothing is stored. */
+ * tool — nothing is stored, and the tool still works (defaulting to Makkah)
+ * if every provider is blocked. */
 export async function detectIpPlace(): Promise<Place | null> {
+  for (const provider of IP_PROVIDERS) {
+    try {
+      const res = await fetch(provider.url);
+      if (!res.ok) continue;
+      const place = provider.parse(await res.json());
+      if (place) return place;
+    } catch {
+      // try the next provider
+    }
+  }
+  return null;
+}
+
+/** Turn exact GPS coordinates into a human place (city, region, country)
+ * with BigDataCloud's free, key-less client reverse-geocoder. Falls back to
+ * bare coordinates under the given label if the lookup fails. */
+export async function reverseGeocode(
+  lat: number,
+  lng: number,
+  locale: string,
+  fallbackLabel: string,
+): Promise<Place> {
+  const bare: Place = { name: fallbackLabel, country: "", lat, lng };
   try {
-    const res = await fetch("https://ipapi.co/json/");
-    if (!res.ok) return null;
-    const data = await res.json();
-    const lat = Number(data.latitude);
-    const lng = Number(data.longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-    return {
-      name: data.city || data.country_name || "",
-      admin1: data.region || undefined,
-      country: data.country_name || "",
-      code: String(data.country_code ?? "").toUpperCase(),
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=${locale}`,
+    );
+    if (!res.ok) return bare;
+    const d = await res.json();
+    const place = toPlace(
+      d.city || d.locality,
+      d.principalSubdivision,
+      d.countryName,
+      d.countryCode,
       lat,
       lng,
-    };
+    );
+    return place && place.name ? place : bare;
   } catch {
-    return null;
+    return bare;
   }
 }
 

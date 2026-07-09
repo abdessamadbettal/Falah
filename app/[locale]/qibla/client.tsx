@@ -4,9 +4,9 @@ import { Icon } from "@iconify/react";
 import { Coordinates, Qibla } from "adhan";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { CitySearch, type Place, detectIpPlace } from "@/components/city-search";
+import { CitySearch, type Place, detectIpPlace, reverseGeocode } from "@/components/city-search";
 import { Faq } from "@/components/faq";
-import { useDict } from "@/components/locale";
+import { useDict, useLocale } from "@/components/locale";
 import {
   Eyebrow,
   Field,
@@ -41,6 +41,7 @@ type Spot = { lat: number; lng: number; label: string };
 
 export default function QiblaClient() {
   const d = useDict();
+  const locale = useLocale();
   const t = d.tools.qibla;
   const reduce = useReducedMotion();
   const [spot, setSpot] = useState<Spot | null>(null);
@@ -81,8 +82,13 @@ export default function QiblaClient() {
     setGeoError(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setSpot({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: t.yourLocation });
+        const { latitude, longitude } = pos.coords;
+        setSpot({ lat: latitude, lng: longitude, label: t.yourLocation });
         setLocating(false);
+        reverseGeocode(latitude, longitude, locale, t.yourLocation).then((p) => {
+          const label = [p.name, p.country].filter(Boolean).join(", ");
+          if (label) setSpot({ lat: latitude, lng: longitude, label });
+        });
       },
       () => {
         setGeoError(d.common.geoDenied);

@@ -4,7 +4,7 @@
 [![Built with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Iconify](https://img.shields.io/badge/Iconify-1769FF?logo=iconify&logoColor=white)](https://iconify.design)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Client--Side-blue)](https://falah.io)
+[![Privacy First](https://img.shields.io/badge/Privacy-First-blue)](https://falah.io)
 [![Sadaqah Jariyah](https://img.shields.io/badge/Model-Sadaqah%20Jariyah-emerald)](https://falah.io)
 
 > *"Come to prayer, come to success (Falah)."*  
@@ -20,7 +20,7 @@
 
 Most modern Islamic apps rely on invasive location tracking, aggressive ads, or locking basic religious necessities behind paywalls. **Falah is different by design:**
 
-- 🔒 **100% Private & Client-Side:** All calculations (Prayer Times, Zakat, Qibla, and Inheritance) happen locally on your device. Your data never leaves your browser.
+- 🔒 **Private & Client-Side:** All calculations (Prayer Times, Zakat, Qibla, and Inheritance) happen locally on your device — your location and financial inputs never leave your browser.
 - 🚫 **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
 - ⚡ **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
 - 🌍 **No Accounts Required:** Open the app and instantly access every feature without signing up.
@@ -200,10 +200,10 @@ Pull Requests are always welcome — start with the **[Contributing Guide](CONTR
 This project will always remain:
 
 - ✅ Open Source
-- ✅ Privacy First
+- ✅ Privacy First (inputs stay on-device; anonymized analytics only)
 - ✅ No Ads
 - ✅ No Premium Tier
-- ✅ No User Tracking
+- ✅ No Selling of Your Data
 
 If you'd like to help cover hosting and domain costs, voluntary donations are appreciated as **Sadaqah Jariyah**.
 

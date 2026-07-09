@@ -9,7 +9,7 @@ export const common = {
   tagline: "Your daily guide to worship and success",
   footerDua: "Open-source Islamic platform",
   mit: "MIT License",
-  clientSide: "100% client-side · no tracking",
+  clientSide: "100% client-side",
   loading: "Loading…",
   latitude: "Latitude",
   longitude: "Longitude",
