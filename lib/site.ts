@@ -6,3 +6,7 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://falah.io";
 
 export const GITHUB_URL = "https://github.com/abdessamadbettal/falah";
+
+/** Google Analytics measurement ID. Set NEXT_PUBLIC_GA_ID to override per
+ * deploy, or leave the default. Empty string disables analytics entirely. */
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "";

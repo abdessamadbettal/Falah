@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
+    "@next/third-parties": "^16.2.10",
     "adhan": "^4.4.4",
     "motion": "^12.42.2",
     "next": "16.2.10",

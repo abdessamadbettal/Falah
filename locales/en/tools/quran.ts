@@ -4,7 +4,7 @@ export const quran = {
     description:
       "Read all 114 surahs of the Holy Quran in authentic Uthmani script, listen to renowned reciters, and reveal the translation on hover or tap. Free, private, no ads, no account.",
   },
-  title: "Al-Qur'an Explorer",
+  title: "Al-Qur'an",
   side: "القرآن الكريم",
   intro:
     "Read the Quran in the Uthmani script, listen to a reciter of your choice, and reveal each verse's translation on hover or tap. Text and audio from the open AlQuran.cloud API.",

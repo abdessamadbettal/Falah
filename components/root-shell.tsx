@@ -1,6 +1,8 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { LocaleProvider } from "@/components/locale";
 import { fontVariables } from "@/lib/fonts";
 import { dirFor, getDict, type Locale } from "@/lib/i18n";
+import { GA_ID } from "@/lib/site";
 
 const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;
 
@@ -31,6 +33,7 @@ export function RootShell({
         </a>
         <LocaleProvider locale={locale}>{children}</LocaleProvider>
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }

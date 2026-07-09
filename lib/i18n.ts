@@ -1,7 +1,7 @@
 import { en } from "@/locales/en";
 import { ar } from "@/locales/ar";
 
-// French (lib/dict/fr.ts) is on hold for now — not deleted, just not wired
+// French (locales/fr.ts) is on hold for now — not deleted, just not wired
 // up — and can be added back to this list once it's ready.
 export const locales = ["en", "ar"] as const;
 export type Locale = (typeof locales)[number];

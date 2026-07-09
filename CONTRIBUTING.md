@@ -49,21 +49,21 @@ Keep each PR focused on one tool or one concern, and use conventional commit mes
 
 ## Translating & editing copy
 
-- **UI strings** live in `lib/dict/<locale>/`, split by feature — `common.ts`, `home.ts`, `about.ts`, and one file per tool under `tools/`. Every Arabic module is typed against its English counterpart, so a missing or extra key is a **compile error**, not a runtime surprise.
+- **UI strings** live in `locales/<locale>/`, split by feature — `common.ts`, `home.ts`, `about.ts`, and one file per tool under `tools/`. Every Arabic module is typed against its English counterpart, so a missing or extra key is a **compile error**, not a runtime surprise.
 - **Long-form guides** (the Zakat and inheritance articles) are plain **markdown** in `content/tools/<slug>/<locale>.md` — frontmatter for the eyebrow/heading, `##` for sections, `-` for bullets. Edit prose without touching any TypeScript.
 
 Any string you change must be updated in **every** language.
 
 ## Adding a new tool
 
-1. **Strings** — create `lib/dict/en/tools/<key>.ts` and `lib/dict/ar/tools/<key>.ts` (copy a sibling), and register them in each locale's `tools/index.ts`.
+1. **Strings** — create `locales/en/tools/<key>.ts` and `locales/ar/tools/<key>.ts` (copy a sibling), and register them in each locale's `tools/index.ts`.
 2. **Register it** — add a path to `TOOL_PATHS` and an entry (with icon) to `TOOL_CATEGORIES` in `lib/seo.tsx`. The `ToolKey` type makes a step-1 ↔ step-2 mismatch a compile error.
 3. **Build it** — create `app/[locale]/<slug>/client.tsx` (the interactive component, wrapped in `<ToolShell>`) and `page.tsx` (copy any sibling's `page.tsx` and change the key).
 4. Done — the sitemap, footer directory, home grid, and JSON-LD all read from the registry automatically, in every language.
 
 ## Adding a new language
 
-1. Copy `lib/dict/ar/` to `lib/dict/<code>/` and translate each module (the `typeof` imports keep you honest).
+1. Copy `locales/ar/` to `locales/<code>/` and translate each module (the `typeof` imports keep you honest).
 2. Add the code to `locales` in `lib/i18n.ts`; extend `dirFor()` if the language is RTL.
 3. Translate the markdown guides in `content/tools/*/<code>.md`.
 4. Everything else — routes, sitemap, hreflang, language switcher — derives from `locales`.

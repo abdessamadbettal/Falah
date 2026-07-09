@@ -3,12 +3,13 @@
 import { Icon } from "@iconify/react";
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CitySearch, type Place, detectIpPlace } from "@/components/city-search";
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
 import {
   brandCls,
+  btnPrimary,
   cardCls,
   Field,
   goldCls,
@@ -69,6 +70,8 @@ function fmtTime(d: Date) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+const GEO_OPTS: PositionOptions = { timeout: 10000, enableHighAccuracy: true };
+
 export default function PrayerTimesClient() {
   const d = useDict();
   const locale = useLocale();
@@ -79,13 +82,49 @@ export default function PrayerTimesClient() {
   const [place, setPlace] = useState<Place>(FALLBACK);
   const [method, setMethod] = useState(() => methodForCountry(FALLBACK.code));
   const [detecting, setDetecting] = useState(true);
+  const [locating, setLocating] = useState(false);
+  const [precise, setPrecise] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  // Once the user picks a city or shares GPS, stop the IP guess from
+  // overriding it (this ref is read inside async callbacks).
   const touched = useRef(false);
 
   function pick(p: Place) {
     touched.current = true;
+    setPrecise(false);
     setPlace(p);
     setMethod(methodForCountry(p.code));
+  }
+
+  // Adopt an exact GPS fix. Shared by the on-load attempt and the button.
+  const applyPosition = useCallback(
+    (pos: GeolocationPosition) => {
+      touched.current = true;
+      setPlace({ name: d.common.myLocation, country: "", lat: pos.coords.latitude, lng: pos.coords.longitude });
+      setPrecise(true);
+      setLocating(false);
+    },
+    [d],
+  );
+
+  /** The "Use my location" button: request precise coordinates, showing the
+   * spinner and surfacing a denial as an inline note. */
+  function locate() {
+    if (!navigator.geolocation) {
+      setGeoError(d.common.geoUnavailable);
+      return;
+    }
+    setLocating(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      applyPosition,
+      () => {
+        setGeoError(d.common.geoDenied);
+        setLocating(false);
+      },
+      GEO_OPTS,
+    );
   }
 
   // Tick the countdown once a second.
@@ -94,7 +133,15 @@ export default function PrayerTimesClient() {
     return () => clearInterval(id);
   }, []);
 
-  // Detect the visitor's city by IP once and default to it.
+  // Prefer the visitor's exact location, requested silently on open. A denial
+  // here is expected and stays quiet; the IP guess below keeps the page useful.
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(applyPosition, () => {}, GEO_OPTS);
+  }, [applyPosition]);
+
+  // Approximate the visitor's city by IP as an immediate, permission-free
+  // default — skipped if GPS or a manual pick already set the location.
   useEffect(() => {
     let cancelled = false;
     detectIpPlace().then((p) => {
@@ -192,14 +239,33 @@ export default function PrayerTimesClient() {
             </Select>
           </Field>
         </div>
-        <p className={`mt-4 flex items-center gap-2 text-xs ${mutedCls}`}>
-          {detecting ? (
-            <Icon icon="ph:circle-notch" className="size-3.5 animate-spin" />
-          ) : (
-            <Icon icon="ph:shield-check" className={`size-3.5 ${brandCls}`} />
-          )}
-          {detecting ? t.detecting : t.autoNote}
-        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+          {!precise ? (
+            <button
+              type="button"
+              onClick={locate}
+              disabled={locating}
+              className={btnPrimary}
+            >
+              <Icon
+                icon={locating ? "ph:circle-notch" : "ph:crosshair"}
+                className={`size-4 ${locating ? "animate-spin" : ""}`}
+              />
+              {locating ? d.common.locating : d.common.useMyLocation}
+            </button>
+          ) : null}
+          <p className={`flex items-center gap-2 text-xs ${mutedCls}`}>
+            {detecting || locating ? (
+              <Icon icon="ph:circle-notch" className="size-3.5 animate-spin" />
+            ) : (
+              <Icon icon="ph:shield-check" className={`size-3.5 ${brandCls}`} />
+            )}
+            {detecting || locating ? t.detecting : t.autoNote}
+          </p>
+        </div>
+        {geoError ? (
+          <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">{geoError}</p>
+        ) : null}
       </div>
 
       {/* selected location heading — good for “prayer times in <city>” search */}
