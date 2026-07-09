@@ -150,7 +150,7 @@ function Hero() {
             drift={12}
           />
           <FloatingStar
-            className="-right-2 bottom-24 size-8 text-emerald-600/40 dark:text-emerald-400/40"
+            className="-right-8 bottom-24 size-8 text-emerald-600/40 dark:text-emerald-400/40"
             delay={1.6}
             drift={16}
           />
