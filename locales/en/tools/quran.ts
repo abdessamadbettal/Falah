@@ -10,6 +10,7 @@ export const quran = {
     "Read the Quran in the Uthmani script, listen to a reciter of your choice, and reveal each verse's translation on hover or tap. Text and audio from the open AlQuran.cloud API.",
   surah: "Surah",
   reciter: "Reciter",
+  speed: "Playback speed",
   translation: "Translation",
   translationMode: "Show translation",
   modeHover: "On hover",

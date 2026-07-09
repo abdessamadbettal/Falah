@@ -68,6 +68,45 @@ function AyahMark({ n }: { n: number }) {
   );
 }
 
+/** A compact pill dropdown for the reading controls: an icon for the category,
+ * the current value, and a clear chevron so it reads as an interactive select
+ * (the previous borderless selects looked like plain text). */
+function ControlSelect({
+  icon,
+  ariaLabel,
+  value,
+  onChange,
+  children,
+}: {
+  icon: string;
+  ariaLabel: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <label
+      className={`flex items-center gap-2 rounded-full border bg-white px-3 py-1.5 text-sm transition-colors ${lineCls} hover:border-emerald-600/60 focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20 dark:bg-zinc-900 dark:hover:border-emerald-400/60 dark:focus-within:border-emerald-400`}
+    >
+      <Icon icon={icon} className={`size-4 shrink-0 ${brandCls}`} />
+      <span className="relative flex items-center">
+        <select
+          aria-label={ariaLabel}
+          value={value}
+          onChange={onChange}
+          className="cursor-pointer appearance-none bg-transparent pe-5 font-medium text-zinc-900 focus:outline-none dark:text-zinc-100"
+        >
+          {children}
+        </select>
+        <Icon
+          icon="ph:caret-down"
+          className={`pointer-events-none absolute inset-e-0 size-3.5 ${mutedCls}`}
+        />
+      </span>
+    </label>
+  );
+}
+
 export default function QuranClient() {
   const d = useDict();
   const t = d.tools.quran;
@@ -186,6 +225,7 @@ export default function QuranClient() {
     <ToolShell icon="ph:book-open-text" title={t.title} side={t.side} intro={t.intro} wide>
       {/* ---- control deck ---- */}
       <div className={`${cardCls} p-4 sm:p-5`}>
+        {/* row 1 — surah navigation + play */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex min-w-56 flex-1 items-center gap-2">
             <button
@@ -197,18 +237,20 @@ export default function QuranClient() {
             >
               <Icon icon="ph:caret-left" className="size-4 rtl:rotate-180" />
             </button>
-            <Select
-              value={surahNumber}
-              onChange={(e) => goToSurah(Number(e.target.value))}
-              disabled={!surahs}
-              aria-label={t.surah}
-            >
-              {(surahs ?? []).map((s) => (
-                <option key={s.number} value={s.number}>
-                  {s.number}. {s.englishName} — {s.englishNameTranslation}
-                </option>
-              ))}
-            </Select>
+            <div className="min-w-0 flex-1">
+              <Select
+                value={surahNumber}
+                onChange={(e) => goToSurah(Number(e.target.value))}
+                disabled={!surahs}
+                aria-label={t.surah}
+              >
+                {(surahs ?? []).map((s) => (
+                  <option key={s.number} value={s.number}>
+                    {s.number}. {s.englishName} — {s.englishNameTranslation}
+                  </option>
+                ))}
+              </Select>
+            </div>
             <button
               type="button"
               onClick={() => goToSurah(surahNumber + 1)}
@@ -231,87 +273,90 @@ export default function QuranClient() {
           </button>
         </div>
 
-        <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-3 border-t ${lineCls} pt-4`}>
-          {/* reciter */}
-          <label className="flex items-center gap-2 text-sm">
-            <Icon icon="ph:microphone-stage" className={`size-4 ${brandCls}`} />
-            <span className={mutedCls}>{t.reciter}</span>
-            <select
-              value={reciter}
-              onChange={(e) => {
-                audioRef.current?.pause();
-                setIsPlaying(false);
-                setReciter(e.target.value);
-              }}
-              className="rounded-lg border-0 bg-transparent py-1 pe-6 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            >
-              {RECITERS.map((r) => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
-            </select>
-          </label>
+        {/* row 2 — recitation + reading settings */}
+        <div className={`mt-4 flex flex-wrap items-center gap-2.5 border-t ${lineCls} pt-4`}>
+          <ControlSelect
+            icon="ph:microphone-stage"
+            ariaLabel={t.reciter}
+            value={reciter}
+            onChange={(e) => {
+              audioRef.current?.pause();
+              setIsPlaying(false);
+              setReciter(e.target.value);
+            }}
+          >
+            {RECITERS.map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </ControlSelect>
 
-          {/* speed */}
-          <label className="flex items-center gap-2 text-sm">
-            <Icon icon="ph:gauge" className={`size-4 ${brandCls}`} />
-            <select
-              value={speed}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                setSpeed(v);
-                if (audioRef.current) audioRef.current.playbackRate = v;
-              }}
-              className="rounded-lg border-0 bg-transparent py-1 pe-6 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            >
-              {SPEEDS.map((s) => (
-                <option key={s} value={s}>{s}×</option>
-              ))}
-            </select>
-          </label>
+          <ControlSelect
+            icon="ph:gauge"
+            ariaLabel={t.speed}
+            value={speed}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setSpeed(v);
+              if (audioRef.current) audioRef.current.playbackRate = v;
+            }}
+          >
+            {SPEEDS.map((s) => (
+              <option key={s} value={s}>{s}×</option>
+            ))}
+          </ControlSelect>
 
-          {/* translation edition */}
-          <label className="flex items-center gap-2 text-sm">
-            <Icon icon="ph:translate" className={`size-4 ${brandCls}`} />
-            <select
-              value={transEdition}
-              onChange={(e) => setTransEdition(e.target.value)}
-              className="rounded-lg border-0 bg-transparent py-1 pe-6 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600"
-            >
-              {TRANSLATIONS.map((tr) => (
-                <option key={tr.id} value={tr.id}>{tr.name}</option>
-              ))}
-            </select>
-          </label>
+          <ControlSelect
+            icon="ph:translate"
+            ariaLabel={t.translation}
+            value={transEdition}
+            onChange={(e) => setTransEdition(e.target.value)}
+          >
+            {TRANSLATIONS.map((tr) => (
+              <option key={tr.id} value={tr.id}>{tr.name}</option>
+            ))}
+          </ControlSelect>
 
-          {/* translation reveal mode */}
-          <div className="flex items-center gap-1.5">
-            <span className={`text-sm ${mutedCls}`}>{t.translationMode}</span>
-            <div className={`flex rounded-full border ${lineCls} p-0.5`}>
+          {/* reading settings, pushed to the trailing edge on wider screens */}
+          <div className="flex flex-wrap items-center gap-2.5 sm:ms-auto">
+            {/* translation reveal mode */}
+            <div
+              className={`flex items-center rounded-full border p-0.5 ${lineCls}`}
+              role="group"
+              aria-label={t.translationMode}
+            >
               <button type="button" onClick={() => setTransMode("hover")} className={seg(transMode === "hover")}>{t.modeHover}</button>
               <button type="button" onClick={() => setTransMode("click")} className={seg(transMode === "click")}>{t.modeClick}</button>
               <button type="button" onClick={() => setTransMode("off")} className={seg(transMode === "off")}>{t.modeOff}</button>
             </div>
-          </div>
 
-          {/* text size */}
-          <div className="flex items-center gap-1.5">
-            <span className={`text-sm ${mutedCls}`}>{t.textSize}</span>
-            <button
-              type="button"
-              onClick={() => setScale((s) => Math.max(0.7, +(s - 0.1).toFixed(2)))}
-              aria-label="A-"
-              className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+            {/* text size, with a live readout */}
+            <div
+              className={`flex items-center gap-0.5 rounded-full border bg-white p-0.5 ${lineCls} dark:bg-zinc-900`}
+              role="group"
+              aria-label={t.textSize}
             >
-              <Icon icon="ph:minus" className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setScale((s) => Math.min(1.8, +(s + 0.1).toFixed(2)))}
-              aria-label="A+"
-              className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
-            >
-              <Icon icon="ph:plus" className="size-3.5" />
-            </button>
+              <button
+                type="button"
+                onClick={() => setScale((s) => Math.max(0.7, +(s - 0.1).toFixed(2)))}
+                disabled={scale <= 0.7}
+                aria-label={`${t.textSize} −`}
+                className={`grid size-7 place-items-center rounded-full ${mutedCls} transition-colors hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-40 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400`}
+              >
+                <Icon icon="ph:text-aa" className="size-3" />
+              </button>
+              <span className={`min-w-11 text-center text-xs tabular-nums ${mutedCls}`}>
+                {Math.round(scale * 100)}%
+              </span>
+              <button
+                type="button"
+                onClick={() => setScale((s) => Math.min(1.8, +(s + 0.1).toFixed(2)))}
+                disabled={scale >= 1.8}
+                aria-label={`${t.textSize} +`}
+                className={`grid size-7 place-items-center rounded-full ${mutedCls} transition-colors hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-40 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400`}
+              >
+                <Icon icon="ph:text-aa" className="size-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ export const quran: typeof en = {
     "اقرأ القرآن بالرسم العثماني، واستمع لقارئ تختاره، وأظهِر تفسير كل آية عند المرور أو النقر. النص والصوت من واجهة AlQuran.cloud المفتوحة.",
   surah: "السورة",
   reciter: "القارئ",
+  speed: "سرعة التلاوة",
   translation: "التفسير",
   translationMode: "إظهار التفسير",
   modeHover: "عند المرور",
