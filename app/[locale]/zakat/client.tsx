@@ -17,6 +17,7 @@ import {
   ToolShell,
 } from "@/components/ui";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
+import type { ToolArticle } from "@/lib/articles";
 
 const NISAB_GOLD_GRAMS = 85;
 const NISAB_SILVER_GRAMS = 595;
@@ -38,7 +39,7 @@ const DEFAULTS = {
   liabilities: "",
 };
 
-export default function ZakatClient() {
+export default function ZakatClient({ article }: { article: ToolArticle }) {
   const d = useDict();
   const t = d.tools.zakat;
   const reduce = useReducedMotion();
@@ -195,12 +196,7 @@ export default function ZakatClient() {
         </div>
       </div>
 
-      <Article
-        eyebrow={t.content.eyebrow}
-        heading={t.content.heading}
-        intro={t.content.intro}
-        sections={t.content.sections}
-      />
+      <Article {...article} />
       <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>
   );

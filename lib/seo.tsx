@@ -4,8 +4,8 @@ import { GITHUB_URL, SITE_URL } from "./site";
 
 const OG_LOCALES: Record<Locale, string> = { en: "en_US", ar: "ar_MA" };
 
-/** Canonical + hreflang + OG metadata for one page in one locale. English is
- * unprefixed at the root, so it doubles as the x-default. */
+/** Canonical + hreflang + OG metadata for one page in one locale.
+ * English (/en) doubles as the x-default. */
 export function pageMeta(
   locale: Locale,
   path: string,
@@ -53,8 +53,7 @@ const KEYWORDS = [
   "open source",
 ];
 
-/** Shared <head> metadata for the two root layouts (English at "/" and
- * [locale] for /fr, /ar) so they can't drift apart. */
+/** Site-wide <head> metadata, built per locale by the [locale] layout. */
 export function siteMetadata(d: Dict): Metadata {
   return {
     metadataBase: new URL(SITE_URL),

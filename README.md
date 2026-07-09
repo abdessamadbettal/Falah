@@ -138,7 +138,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ```bash
 git clone https://github.com/abdessamadbettal/falah.git
-cd falah.io
+cd falah
 ```
 
 ### 2. Install dependencies

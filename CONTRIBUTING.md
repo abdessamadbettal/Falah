@@ -8,7 +8,7 @@ Thank you for helping build Falah.io! Every contribution — code, translation, 
 
 ```bash
 git clone https://github.com/abdessamadbettal/falah.git
-cd falah.io
+cd falah
 npm install
 npm run dev        # http://localhost:3000
 ```
@@ -19,19 +19,21 @@ The site is a **static export** (`output: "export"` in `next.config.ts`): there 
 
 ```text
 app/
-  (en)/           English pages, served unprefixed at the site root ("/zakat")
-  [locale]/       Prefixed locales ("/ar/zakat") + the client components
-  (redirect)/     Meta-refresh redirects for legacy pre-i18n URLs
+  [locale]/         The one route tree: /en/… and /ar/… (page.tsx + client.tsx per tool)
+  (redirect)/       "/" picks the visitor's language; legacy URLs forward to /en/…
 components/
-  ui/             Design system: styles.ts, ornaments, primitives, chrome
+  ui/               Design system — one component per file (button, input, header, …)
+content/
+  tools/<slug>/     Long-form tool guides as markdown, one file per language
 lib/
-  dict/           One dictionary per language (en.ts, ar.ts) — all copy lives here
-  seo.tsx         Tool registry (TOOL_PATHS), metadata + JSON-LD builders
-  tool-page.tsx   Shared page helpers both route trees wrap
-  site.ts         SITE_URL / GITHUB_URL — the single source of identity
+  dict/<locale>/    UI strings split by feature: common, home, about, tools/<tool>.ts
+  seo.tsx           Tool registry (TOOL_PATHS) + metadata & JSON-LD builders
+  tool-page.tsx     Shared page helpers every route wraps
+  articles.ts       Markdown guide loader (build-time)
+  site.ts           SITE_URL / GITHUB_URL — the single source of identity
 ```
 
-**Why two route trees?** English must live unprefixed at the root (it doubles as the `hreflang` `x-default`), and a static export has no middleware to rewrite URLs. Both trees are thin wrappers over the same helpers in `lib/tool-page.tsx` — page files contain no logic of their own.
+**How i18n routing works:** every locale lives under its prefix (`/en/zakat`, `/ar/zakat`) from the single `app/[locale]` tree. The bare root `/` is a tiny page that redirects to the visitor's saved or browser language (English for crawlers and no-JS visitors). Adding a locale never adds a route file.
 
 ## Before opening a PR
 
@@ -45,23 +47,25 @@ npm run build
 
 Keep each PR focused on one tool or one concern, and use conventional commit messages (`feat:`, `fix:`, `docs:`, …).
 
-## Adding or changing copy
+## Translating & editing copy
 
-All user-facing text lives in `lib/dict/`. Any string you add or change must be updated in **every** dictionary (`en.ts` and `ar.ts`). `ar` is typed as `typeof en`, so a missing key is a compile error — `npx tsc --noEmit` will catch it.
+- **UI strings** live in `lib/dict/<locale>/`, split by feature — `common.ts`, `home.ts`, `about.ts`, and one file per tool under `tools/`. Every Arabic module is typed against its English counterpart, so a missing or extra key is a **compile error**, not a runtime surprise.
+- **Long-form guides** (the Zakat and inheritance articles) are plain **markdown** in `content/tools/<slug>/<locale>.md` — frontmatter for the eyebrow/heading, `##` for sections, `-` for bullets. Edit prose without touching any TypeScript.
+
+Any string you change must be updated in **every** language.
 
 ## Adding a new tool
 
-1. **Strings** — add the tool's section to `tools` and its card to `home.toolCards` in *every* `lib/dict/*.ts`.
-2. **Register it** — add a path to `TOOL_PATHS` and an entry (with icon) to `TOOL_CATEGORIES` in `lib/seo.tsx`. The `ToolKey` type makes step 1 ↔ step 2 mismatches a compile error.
-3. **Build the tool** — create `app/[locale]/<slug>/client.tsx` (the interactive component, wrapped in `<ToolShell>`) and `page.tsx` (copy any existing tool's `page.tsx` and change the key).
-4. **English wrapper** — create `app/(en)/<slug>/page.tsx` the same way (see any sibling).
-5. Done — the sitemap, footer directory, home grid, and JSON-LD all read from the registry automatically.
+1. **Strings** — create `lib/dict/en/tools/<key>.ts` and `lib/dict/ar/tools/<key>.ts` (copy a sibling), and register them in each locale's `tools/index.ts`.
+2. **Register it** — add a path to `TOOL_PATHS` and an entry (with icon) to `TOOL_CATEGORIES` in `lib/seo.tsx`. The `ToolKey` type makes a step-1 ↔ step-2 mismatch a compile error.
+3. **Build it** — create `app/[locale]/<slug>/client.tsx` (the interactive component, wrapped in `<ToolShell>`) and `page.tsx` (copy any sibling's `page.tsx` and change the key).
+4. Done — the sitemap, footer directory, home grid, and JSON-LD all read from the registry automatically, in every language.
 
 ## Adding a new language
 
-1. Create `lib/dict/<code>.ts` exporting a dict typed `typeof en` (copy `ar.ts` as a template).
-2. Add the code to `locales` in `lib/i18n.ts`.
-3. If the language is RTL, extend `dirFor()`.
+1. Copy `lib/dict/ar/` to `lib/dict/<code>/` and translate each module (the `typeof` imports keep you honest).
+2. Add the code to `locales` in `lib/i18n.ts`; extend `dirFor()` if the language is RTL.
+3. Translate the markdown guides in `content/tools/*/<code>.md`.
 4. Everything else — routes, sitemap, hreflang, language switcher — derives from `locales`.
 
 ## Ground rules

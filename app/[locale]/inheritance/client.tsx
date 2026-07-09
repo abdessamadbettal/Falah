@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 import type { Dict } from "@/lib/i18n";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
+import type { ToolArticle } from "@/lib/articles";
 
 /* ------------------------- exact fraction helpers ------------------------- */
 
@@ -174,7 +175,7 @@ function distributeRadd(shares: Share[], residue: Frac, notes: string[], t: T) {
 
 /* ---------------------------------- page ---------------------------------- */
 
-export default function InheritanceClient() {
+export default function InheritanceClient({ article }: { article: ToolArticle }) {
   const d = useDict();
   const t = d.tools.inheritance;
   const [estate, setEstate] = useState("100000");
@@ -318,12 +319,7 @@ export default function InheritanceClient() {
         </div>
       </div>
 
-      <Article
-        eyebrow={t.content.eyebrow}
-        heading={t.content.heading}
-        intro={t.content.intro}
-        sections={t.content.sections}
-      />
+      <Article {...article} />
       <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>
   );

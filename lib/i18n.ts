@@ -1,5 +1,5 @@
-import { en } from "./dict/en";
-import { ar } from "./dict/ar";
+import { en } from "@/locales/en";
+import { ar } from "@/locales/ar";
 
 // French (lib/dict/fr.ts) is on hold for now — not deleted, just not wired
 // up — and can be added back to this list once it's ready.
@@ -21,8 +21,8 @@ export function dirFor(locale: string): "rtl" | "ltr" {
   return locale === "ar" ? "rtl" : "ltr";
 }
 
-/** English is served unprefixed at the site root; other locales live
- * under their own subdirectory (e.g. /ar). */
+/** Every locale lives under its own prefix (/en, /ar); the bare root "/"
+ * only redirects to the visitor's language. One rule, no special cases. */
 export function localePath(locale: Locale, path = ""): string {
-  return locale === "en" ? path || "/" : `/${locale}${path}`;
+  return `/${locale}${path}`;
 }

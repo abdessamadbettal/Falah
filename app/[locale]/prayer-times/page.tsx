@@ -7,14 +7,14 @@ type Props = { params: Promise<{ locale: Locale }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return toolMetadata(locale, "stamp");
+  return toolMetadata(locale, "prayer");
 }
 
 export default async function Page({ params }: Props) {
   const { locale } = await params;
   return (
     <>
-      <ToolJsonLd locale={locale} toolKey="stamp" />
+      <ToolJsonLd locale={locale} toolKey="prayer" />
       <Client />
     </>
   );

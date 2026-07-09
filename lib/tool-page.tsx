@@ -11,10 +11,8 @@ import {
   type ToolKey,
 } from "@/lib/seo";
 
-/** Shared metadata + JSON-LD for every page, used by both route trees —
- * app/(en)/<slug> passes a literal "en", app/[locale]/<slug> passes the
- * segment param — so the two trees are mechanically identical wrappers
- * and can't drift apart. */
+/** Shared metadata + JSON-LD builders. Every app/[locale] page is a thin,
+ * mechanical wrapper over these — page files contain no logic of their own. */
 export function toolMetadata(locale: Locale, key: ToolKey): Metadata {
   const m = getDict(locale).tools[key].meta;
   return pageMeta(locale, TOOL_PATHS[key], m.title, m.description);

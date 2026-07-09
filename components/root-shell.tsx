@@ -4,9 +4,8 @@ import { dirFor, getDict, type Locale } from "@/lib/i18n";
 
 const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;
 
-/** The single <html>/<body> shell shared by every root layout (the
- * English tree at "/" and the [locale] tree for /fr, /ar) so the two
- * stay visually and technically identical. */
+/** The <html>/<body> shell the [locale] layout renders for every
+ * language — direction, fonts, theme bootstrap and skip link live here. */
 export function RootShell({
   locale,
   children,

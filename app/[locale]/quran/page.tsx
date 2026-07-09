@@ -1,28 +1,20 @@
 import type { Metadata } from "next";
-import { getDict, type Locale } from "@/lib/i18n";
-import { JsonLd, TOOL_PATHS, pageMeta, toolJsonLd } from "@/lib/seo";
+import type { Locale } from "@/lib/i18n";
+import { ToolJsonLd, toolMetadata } from "@/lib/tool-page";
 import Client from "./client";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}): Promise<Metadata> {
+type Props = { params: Promise<{ locale: Locale }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const m = getDict(locale).tools.quran.meta;
-  return pageMeta(locale, TOOL_PATHS.quran, m.title, m.description);
+  return toolMetadata(locale, "quran");
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
+export default async function Page({ params }: Props) {
   const { locale } = await params;
-  const m = getDict(locale).tools.quran.meta;
   return (
     <>
-      <JsonLd data={toolJsonLd(locale, TOOL_PATHS.quran, m.title, m.description)} />
+      <ToolJsonLd locale={locale} toolKey="quran" />
       <Client />
     </>
   );

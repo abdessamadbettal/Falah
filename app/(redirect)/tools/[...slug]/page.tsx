@@ -15,16 +15,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }) {
   const { slug } = await params;
-  return legacyMetadata(`/${slug[slug.length - 1]}`);
+  return legacyMetadata(`/en/${slug[slug.length - 1]}`);
 }
 
 /** The pre-i18n site served tools at /tools/<slug> (English only); English
- * now lives unprefixed at the root, so redirect straight there. */
+ * now lives under /en, so redirect there. */
 export default async function LegacyToolRedirect({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
   const { slug } = await params;
-  return <LegacyRedirect target={`/${slug[slug.length - 1]}`} />;
+  return <LegacyRedirect target={`/en/${slug[slug.length - 1]}`} />;
 }

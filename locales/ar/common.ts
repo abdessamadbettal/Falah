@@ -1,0 +1,27 @@
+import type { common as en } from "../en/common";
+
+export const common: typeof en = {
+  nav: { toolkit: "الأدوات", principles: "المبادئ", contribute: "المساهمة", about: "عن فلاح" },
+  allTools: "كل الأدوات",
+  skipToContent: "تخطَّ إلى المحتوى",
+  themeToLight: "التبديل إلى الوضع الفاتح",
+  themeToDark: "التبديل إلى الوضع الداكن",
+  githubAria: "فلاح على GitHub",
+  langAria: "تغيير اللغة",
+  tagline: "دليلك اليومي للطاعة والنجاح",
+  footerDua: "تقبّل الله هذا العمل وجعله نافعًا للأمة. آمين.",
+  mit: "رخصة MIT",
+  clientSide: "يعمل بالكامل على جهازك · بلا تتبع",
+  loading: "جارٍ التحميل…",
+  latitude: "خط العرض",
+  longitude: "خط الطول",
+  latPh: "مثال: 33.5731",
+  lngPh: "مثال: -7.5898",
+  useMyLocation: "استخدام موقعي",
+  locating: "جارٍ تحديد الموقع…",
+  geoUnavailable: "تحديد الموقع غير متاح في هذا المتصفح. أدخل الإحداثيات أدناه.",
+  geoDenied: "تم رفض تحديد الموقع. أدخل الإحداثيات يدويًا — تبقى على هذا الجهاز.",
+  searchCityPh: "ابحث عن مدينتك…",
+  searching: "جارٍ البحث…",
+  noCityMatch: "لا توجد مدينة مطابقة. جرّب تهجئة أخرى.",
+};

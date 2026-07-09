@@ -1,13 +1,7 @@
-/** Barrel for the design system, split by hydration cost:
- *
- *  - ui/styles.ts     — class recipes + cn()          (server-safe)
- *  - ui/ornaments.tsx — Star8, StarField, Eyebrow     (server-safe)
- *  - ui/primitives.tsx — Button, Input, Select, …     (server-safe)
- *  - ui/chrome.tsx    — Header, Footer, ToolShell, …  ("use client")
- *
- * Import from here for convenience; only what a page actually uses ends up
- * in its bundle, and only chrome.tsx ships client JS of its own.
- */
+/** Barrel for the design system — one component per file under
+ * components/ui/. Import from here for convenience; only what a page
+ * actually uses ends up in its bundle, and only the files that declare
+ * "use client" ship client JS of their own. */
 export {
   brandCls,
   btnGhost,
@@ -19,7 +13,18 @@ export {
   lineCls,
   mutedCls,
 } from "./ui/styles";
-export { Eyebrow, Star8, StarField } from "./ui/ornaments";
-export { Button, Checkbox, Field, Input, Select } from "./ui/primitives";
-export { Footer, Header, ThemeToggle, ToolShell, useMounted } from "./ui/chrome";
+export { Star8 } from "./ui/star8";
+export { StarField } from "./ui/star-field";
+export { Eyebrow } from "./ui/eyebrow";
+export { Button } from "./ui/button";
+export { Input } from "./ui/input";
+export { Select } from "./ui/select";
+export { Checkbox } from "./ui/checkbox";
+export { Field } from "./ui/field";
+export { useMounted } from "./ui/use-mounted";
+export { ThemeToggle } from "./ui/theme-toggle";
+export { LanguageSwitcher } from "./ui/language-switcher";
+export { Header } from "./ui/header";
+export { Footer } from "./ui/footer";
+export { ToolShell } from "./ui/tool-shell";
 export { GITHUB_URL } from "@/lib/site";

@@ -5,13 +5,14 @@ import { getDict, isLocale, locales, type Locale } from "@/lib/i18n";
 import { siteMetadata, siteViewport } from "@/lib/seo";
 import "../globals.css";
 
-/** English is served unprefixed at the site root (see app/(en)/layout.tsx);
- * this tree only handles the prefixed locales. */
-const PREFIXED_LOCALES = locales.filter((l) => l !== "en");
-
+/** The only route tree: every locale is served under its prefix (/en, /ar).
+ * The bare root "/" (see app/(redirect)) just forwards to the visitor's
+ * language. `dynamicParams = false` makes anything else a 404. */
 export function generateStaticParams() {
-  return PREFIXED_LOCALES.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
+
+export const dynamicParams = false;
 
 export async function generateMetadata({
   params,
