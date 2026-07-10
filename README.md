@@ -7,7 +7,7 @@
 [![Privacy First](https://img.shields.io/badge/Privacy-First-blue)](https://falah.io)
 [![Sadaqah Jariyah](https://img.shields.io/badge/Model-Sadaqah%20Jariyah-emerald)](https://falah.io)
 
-> *"Come to prayer, come to success (Falah)."*  
+> *"Come to success (Falah)” — the daily call we answer, and a platform built to serve your worship."*  
 > **Every Muslim deserves access to accurate Islamic tools without creating accounts, handing over location data, or hitting paywalls.**
 
 **Falah.io** is an open-source Islamic toolkit (Quraan explorer, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, and Inheritance & Zakat calculators and +15 tools more). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
