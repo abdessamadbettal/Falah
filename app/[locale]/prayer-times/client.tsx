@@ -221,7 +221,7 @@ export default function PrayerTimesClient() {
   const CIRC = 2 * Math.PI * R;
 
   return (
-    <ToolShell icon="ph:mosque" title={t.title} side={t.side} intro={t.intro}>
+    <ToolShell icon="ph:mosque" title={t.title} side={t.side} intro={t.intro} wide>
       <JsonLd data={faqJsonLd(t.faq)} />
 
       {/* city search + method */}
