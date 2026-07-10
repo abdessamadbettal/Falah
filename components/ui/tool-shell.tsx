@@ -35,7 +35,7 @@ export function ToolShell({
       <Header />
       <main id="main" className="flex-1">
         <div
-          className={`mx-auto ${wide ? "max-w-5xl" : "max-w-3xl"} px-5 py-10 sm:py-14`}
+          className={`mx-auto ${wide ? "max-w-6xl" : "max-w-3xl"} px-5 py-10 sm:py-14`}
         >
           <Link
             href={`${localePath(locale)}#toolkit`}

@@ -11,7 +11,7 @@
 !.yarn/versions
 
 # testing
-/coverage
+
 
 # next.js
 /.next/
@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# video
+*.mp4
