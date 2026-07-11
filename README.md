@@ -67,6 +67,14 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 - **Al-Qur'an Explorer**
   - Beautiful Quran reader.
   - Clean Arabic typography.
+  - 📖 Uthmani Quran script
+  - 🎧 Audio recitation from multiple reciters
+  - 🌍 Multiple translations
+  - 💡 Instant translation on hover or tap (so you can read without leaving the Arabic text)
+  - ⏯️ Verse-by-verse playback
+  - ⚡ Playback speed control
+  - 🔤 Adjustable Arabic font size
+  - 🌙 Dark mode and responsive design
 
 - **Tafseer Explorer**
   - Read explanations and commentary alongside verses.
