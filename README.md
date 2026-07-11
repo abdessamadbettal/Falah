@@ -144,29 +144,13 @@ cd falah
 ### 2. Install dependencies
 
 ```bash
-npm install
-
-# or
-
-pnpm install
-
-# or
-
-yarn install
+npm install # or pnpm install # or yarn install
 ```
 
 ### 3. Start the development server
 
 ```bash
-npm run dev
-
-# or
-
-pnpm dev
-
-# or
-
-yarn dev
+npm run dev # or pnpm dev # or yarn dev
 ```
 
 ### 4. Open your browser
