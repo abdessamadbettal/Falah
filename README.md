@@ -1,4 +1,4 @@
-# 🌙 Falah.io — The Islamic Toolkit
+# 🌙 Falah.io — Open-source Islamic Tools
 
 [![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-brightgreen)](https://github.com/abdessamadbettal/falah)
 [![Built with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)

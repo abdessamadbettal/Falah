@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: ["ar_MA"],
     images: [
-      { url: OG_IMAGE, width: 1200, height: 630, alt: "Falah.io — The Islamic Toolkit" },
+      { url: OG_IMAGE, width: 1200, height: 630, alt: "Falah.io — Open-source Islamic Tools" },
     ],
   },
   twitter: {

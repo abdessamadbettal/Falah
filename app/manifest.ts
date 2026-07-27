@@ -4,7 +4,7 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Falah.io — The Islamic Toolkit",
+    name: "Falah.io — Open-source Islamic Tools",
     short_name: "Falah",
     description:
       "15 free Islamic tools that run entirely in your browser: prayer times, Qibla, Hijri calendar, Zakat, Quran, inheritance and more.",

@@ -32,7 +32,7 @@ export function pageMeta(
       type: "website",
       locale: OG_LOCALES[locale],
       alternateLocale: locales.filter((l) => l !== locale).map((l) => OG_LOCALES[l]),
-      images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "Falah.io — The Islamic Toolkit" }],
+      images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "Falah.io — Open-source Islamic Tools" }],
     },
     twitter: {
       card: "summary_large_image",
@@ -200,7 +200,7 @@ export function homeJsonLd(locale: Locale) {
       {
         "@type": "WebSite",
         name: "Falah.io",
-        alternateName: "Falah — The Islamic Toolkit",
+        alternateName: "Falah — Open-source Islamic Tools",
         url: SITE_URL,
         inLanguage: locale,
         description: d.meta.siteDescription,
