@@ -16,21 +16,21 @@
 
 ---
 
-## ✨ Why Falah.io?
+## Why Falah.io?
 
 Most modern Islamic apps rely on invasive location tracking, aggressive ads, or locking basic religious necessities behind paywalls. **Falah is different by design:**
 
-- 🔒 **Private & Client-Side:** All calculations (Prayer Times, Quran Explorer, Qibla, and Inheritance & Zakat calculators) happen locally on your device — your location and financial inputs never leave your browser.
-- 🚫 **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
-- ⚡ **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
-- 🌍 **No Accounts Required:** Open the app and instantly access every feature without signing up.
-- 🌐 **Multilingual Support:** Available in [**English**](https://falah.io/en) and [**Arabic (العربية)**](https://falah.io/ar) with full right-to-left layout. French is on the roadmap.
+- **Private & Client-Side:** All calculations (Prayer Times, Quran Explorer, Qibla, and Inheritance & Zakat calculators) happen locally on your device — your location and financial inputs never leave your browser.
+- **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
+- **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
+- **No Accounts Required:** Open the app and instantly access every feature without signing up.
+- **Multilingual Support:** Available in [**English**](https://falah.io/en) and [**Arabic (العربية)**](https://falah.io/ar) with full right-to-left layout. French is on the roadmap.
 
 ---
 
-# 🧰 The Toolkit
+# The Toolkit
 
-## ⏳ Time & Daily Worship
+## Time & Daily Worship
 
 - **Prayer Times & Adhan**
   - Accurate prayer times for your location or any city worldwide.
@@ -50,7 +50,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-## 🧭 Direction & Local Community
+## Direction & Local Community
 
 - **Qibla Finder**
   - Compass-based Qibla direction.
@@ -62,7 +62,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-## 📖 Quran & Islamic Knowledge
+## Quran & Islamic Knowledge
 
 - **Al-Qur'an Explorer**
   - Beautiful Quran reader.
@@ -90,7 +90,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-## 🧮 Islamic Calculators
+## Islamic Calculators
 
 - **Zakat Calculator**
   - Cash
@@ -109,7 +109,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-## 🎨 Creative & Utility Tools
+## Creative & Utility Tools
 
 - **Quran Card Maker**
   - Generate beautiful Quran verse cards.
@@ -121,7 +121,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-# 🛠️ Tech Stack
+# Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
@@ -133,7 +133,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ---
 
-# 🚀 Getting Started
+# Getting Started
 
 ## Prerequisites
 
@@ -171,7 +171,7 @@ http://localhost:3000
 
 ---
 
-# 🤝 Contributing
+# Contributing
 
 Falah.io is a community-driven project built as **Sadaqah Jariyah**.
 
@@ -187,7 +187,7 @@ Pull Requests are always welcome — start with the **[Contributing Guide](CONTR
 
 ---
 
-# ❤️ Sadaqah Jariyah
+# Sadaqah Jariyah
 
 This project will always remain:
 
@@ -201,7 +201,7 @@ If you'd like to help cover hosting and domain costs, voluntary donations are ap
 
 ---
 
-# 📄 License
+# License
 
 Licensed under the **MIT License**.
 
