@@ -127,7 +127,14 @@ export default function QuranClient() {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [playingIdx, setPlayingIdx] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<"off" | "ayah" | "surah">("off");
+
   const audioRef = useRef<HTMLAudioElement>(null);
+  const shouldAutoPlayFirstAyah = useRef(false);
 
   const contentKey = `${surahNumber}:${transEdition}`;
   const audioKey = `${surahNumber}:${reciter}`;
@@ -167,6 +174,16 @@ export default function QuranClient() {
 
   const ready = content?.key === contentKey ? content : null;
   const audioReady = audio?.key === audioKey ? audio : null;
+
+  // Autoplay first verse when advancing to next surah automatically
+  useEffect(() => {
+    if (shouldAutoPlayFirstAyah.current && audioReady && audioReady.ayahs.length > 0) {
+      shouldAutoPlayFirstAyah.current = false;
+      playIdx(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioReady]);
+
   const loading = !ready && !err;
   const surah = surahs?.find((s) => s.number === surahNumber);
   const showBismillah = surahNumber !== 1 && surahNumber !== 9;
@@ -188,7 +205,8 @@ export default function QuranClient() {
     if (!src || !el) return;
     el.src = src;
     el.playbackRate = speed;
-    void el.play().catch(() => {});
+    el.muted = isMuted;
+    void el.play().catch(() => { });
     setPlayingIdx(idx);
     setActiveIdx(idx);
     document
@@ -204,21 +222,109 @@ export default function QuranClient() {
     }
   }
 
+  function cycleSpeed() {
+    const currentIndex = SPEEDS.indexOf(speed);
+    const nextSpeed = SPEEDS[(currentIndex + 1) % SPEEDS.length];
+    setSpeed(nextSpeed);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = nextSpeed;
+    }
+  }
+
+  function toggleMute() {
+    const next = !isMuted;
+    setIsMuted(next);
+    if (audioRef.current) {
+      audioRef.current.muted = next;
+    }
+  }
+
+  function cycleRepeatMode() {
+    setRepeatMode((prev) => (prev === "off" ? "ayah" : prev === "ayah" ? "surah" : "off"));
+  }
+
+  function handlePrevAyah() {
+    if (playingIdx !== null && playingIdx > 0) {
+      playIdx(playingIdx - 1);
+    } else if (surahNumber > 1) {
+      shouldAutoPlayFirstAyah.current = true;
+      goToSurah(surahNumber - 1);
+    }
+  }
+
+  function handleNextAyah() {
+    if (playingIdx !== null && audioReady && playingIdx < audioReady.ayahs.length - 1) {
+      playIdx(playingIdx + 1);
+    } else if (surahNumber < 114) {
+      shouldAutoPlayFirstAyah.current = true;
+      goToSurah(surahNumber + 1);
+    }
+  }
+
   function onEnded() {
+    if (repeatMode === "ayah" && playingIdx !== null) {
+      playIdx(playingIdx);
+      return;
+    }
     const next = (playingIdx ?? -1) + 1;
     if (audioReady && next < audioReady.ayahs.length) {
       playIdx(next);
+    } else if (repeatMode === "surah") {
+      playIdx(0);
+    } else if (surahNumber < 114) {
+      shouldAutoPlayFirstAyah.current = true;
+      goToSurah(surahNumber + 1);
     } else {
       setIsPlaying(false);
       setPlayingIdx(null);
     }
   }
 
+  function onTimeUpdate() {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  }
+
+  function onLoadedMetadata() {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  }
+
+  function onSeek(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = Number(e.target.value);
+    if (!audioReady || audioReady.ayahs.length === 0) return;
+    const targetIdx = Math.min(
+      audioReady.ayahs.length - 1,
+      Math.max(0, Math.floor(val))
+    );
+    const fraction = val - targetIdx;
+
+    if (targetIdx !== playingIdx) {
+      playIdx(targetIdx);
+      setTimeout(() => {
+        if (audioRef.current && audioRef.current.duration) {
+          audioRef.current.currentTime = fraction * audioRef.current.duration;
+        }
+      }, 100);
+    } else if (audioRef.current && duration > 0) {
+      audioRef.current.currentTime = fraction * duration;
+      setCurrentTime(fraction * duration);
+    }
+  }
+
+  function formatTime(sec: number) {
+    if (isNaN(sec) || !isFinite(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? "0" : ""}${s}`;
+  }
+
   const seg = (on: boolean) =>
-    `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-      on
-        ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
-        : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
+    `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${on
+      ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
+      : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
     }`;
 
   return (
@@ -421,11 +527,10 @@ export default function QuranClient() {
                       id={`ayah-${i}`}
                       onMouseEnter={transMode === "hover" ? () => setActiveIdx(i) : undefined}
                       onClick={transMode !== "off" ? () => setActiveIdx(i) : undefined}
-                      className={`rounded-lg px-0.5 transition-colors ${transMode !== "off" ? "cursor-pointer" : ""} ${
-                        on
-                          ? "bg-emerald-200/70 dark:bg-emerald-400/25"
-                          : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
-                      }`}
+                      className={`rounded-lg px-0.5 transition-colors ${transMode !== "off" ? "cursor-pointer" : ""} ${on
+                        ? "bg-emerald-200/70 dark:bg-emerald-400/25"
+                        : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
+                        }`}
                     >
                       {text}
                       <AyahMark n={ayah.numberInSurah} />{" "}
@@ -483,11 +588,196 @@ export default function QuranClient() {
         </div>
       ) : null}
 
+      {/* ---- Floating Mini Audio Player ---- */}
+      {(playingIdx !== null || isPlaying) && (
+        <div className="fixed bottom-4 inset-x-3 sm:inset-x-auto sm:end-6 sm:w-[500px] max-w-full mx-auto z-50 transition-all duration-300">
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-600/30 bg-white/95 p-4 shadow-2xl backdrop-blur-xl dark:border-emerald-500/30 dark:bg-zinc-950/95 ring-1 ring-black/5 dark:ring-white/10">
+            {/* Top glowing gradient accent line */}
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 opacity-90" />
+
+            {isPlayerMinimized ? (
+              // Collapsed Mini Pill
+              <div className="flex items-center justify-between gap-3 pt-0.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="relative flex size-3 shrink-0 items-center justify-center">
+                    <span className="absolute size-3 rounded-full bg-emerald-500/40 animate-ping" />
+                    <span className="size-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                  </span>
+                  <span className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                    {surah?.name} ({surah?.englishName}) · {t.verseRef(surahNumber, (playingIdx ?? 0) + 1)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    className="grid size-8 place-items-center rounded-full bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
+                  >
+                    <Icon icon={isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPlayerMinimized(false)}
+                    aria-label={t.expand}
+                    className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`}
+                  >
+                    <Icon icon="ph:caret-up" className="size-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Full Ultra-Premium Player
+              <div className="flex flex-col gap-3 pt-1">
+                {/* Header Row: Reciter, Surah Info, Subtitle & Minimize */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 ring-1 ring-emerald-500/20">
+                      <Icon icon="ph:speaker-high-fill" className={`size-4.5 ${isPlaying ? "animate-bounce" : ""}`} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline gap-2">
+                        <p className="truncate text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                          {surah?.name} ({surah?.englishName})
+                        </p>
+                        <span className={`text-[10px] font-semibold ${goldCls}`}>
+                          {t.verseRef(surahNumber, (playingIdx ?? 0) + 1)}
+                        </span>
+                      </div>
+                      <p className={`truncate text-[11px] ${mutedCls}`}>
+                        {RECITERS.find((r) => r.id === reciter)?.name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsPlayerMinimized(true)}
+                      aria-label={t.minimize}
+                      className={`grid size-7 place-items-center rounded-full border ${lineCls} ${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`}
+                    >
+                      <Icon icon="ph:caret-down" className="size-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Live Arabic Verse Text Preview */}
+                {playingIdx !== null && ready?.arabic[playingIdx] ? (
+                  <div className="rounded-lg bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-500/10 px-3 py-1.5">
+                    <p lang="ar" dir="rtl" className="text-center font-arabic text-sm text-emerald-900 dark:text-emerald-200 truncate">
+                      {ready.arabic[playingIdx].text}
+                    </p>
+                  </div>
+                ) : null}
+
+                {/* Progress Bar Row */}
+                {(() => {
+                  const total = audioReady?.ayahs.length ?? 1;
+                  const currentVal = (playingIdx ?? 0) + (duration > 0 ? currentTime / duration : 0);
+                  const percent = Math.min(100, Math.round((currentVal / total) * 100));
+                  return (
+                    <div className="flex items-center gap-2.5 text-[11px] font-mono text-zinc-500 dark:text-zinc-400" dir="ltr">
+                      <span className="min-w-10 text-end font-sans text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                        {formatTime(currentTime)}
+                      </span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={total}
+                        step={0.01}
+                        value={currentVal}
+                        onChange={onSeek}
+                        className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-zinc-200 accent-emerald-600 dark:bg-zinc-800 dark:accent-emerald-400"
+                      />
+                      <span className="min-w-9 font-bold text-zinc-700 dark:text-zinc-300">
+                        {percent}%
+                      </span>
+                    </div>
+                  );
+                })()}
+
+                {/* Controls Row: Speed, Prev, Play/Pause, Next, Repeat, Mute */}
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  {/* Speed Pill Cycle */}
+                  <button
+                    type="button"
+                    onClick={cycleSpeed}
+                    title={t.speed}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold ${lineCls} ${mutedCls} hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+                  >
+                    <Icon icon="ph:gauge" className="size-3.5" />
+                    <span>{speed}×</span>
+                  </button>
+
+                  {/* Main Playback Controls */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handlePrevAyah}
+                      aria-label={t.prevAyah}
+                      className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+                    >
+                      <Icon icon="ph:skip-back-fill" className="size-4 rtl:rotate-180" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      aria-label={isPlaying ? t.pause : t.playSurah}
+                      className="grid size-10 place-items-center rounded-full bg-emerald-700 text-white shadow-lg transition-transform hover:scale-105 dark:bg-emerald-400 dark:text-emerald-950 ring-2 ring-emerald-600/30"
+                    >
+                      <Icon icon={isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextAyah}
+                      aria-label={t.nextAyah}
+                      className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+                    >
+                      <Icon icon="ph:skip-forward-fill" className="size-4 rtl:rotate-180" />
+                    </button>
+                  </div>
+
+                  {/* Right Action Icons: Repeat Mode + Mute Toggle */}
+                  <div className="flex items-center gap-1.5">
+                    {/* Repeat Mode Cycle */}
+                    <button
+                      type="button"
+                      onClick={cycleRepeatMode}
+                      title={repeatMode === "ayah" ? t.repeatAyah : repeatMode === "surah" ? t.repeatSurah : t.repeatOff}
+                      className={`relative grid size-8 place-items-center rounded-full border transition-colors ${repeatMode !== "off"
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-700 dark:border-emerald-400 dark:bg-emerald-500/10 dark:text-emerald-400 font-bold"
+                        : `${lineCls} ${mutedCls} hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`
+                        }`}
+                    >
+                      <Icon icon={repeatMode === "ayah" ? "ph:repeat-once" : "ph:repeat"} className="size-4" />
+                      {repeatMode !== "off" ? (
+                        <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                      ) : null}
+                    </button>
+
+                    {/* Mute Toggle */}
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      title={isMuted ? "Unmute" : "Mute"}
+                      className={`grid size-8 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+                    >
+                      <Icon icon={isMuted ? "ph:speaker-slash-fill" : "ph:speaker-high-fill"} className={`size-4 ${isMuted ? "text-red-500 dark:text-red-400" : ""}`} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <audio
         ref={audioRef}
         onEnded={onEnded}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onTimeUpdate={onTimeUpdate}
+        onLoadedMetadata={onLoadedMetadata}
         hidden
       />
     </ToolShell>
