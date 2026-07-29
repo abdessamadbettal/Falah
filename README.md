@@ -75,6 +75,29 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
   - ⚡ Playback speed control
   - 🔤 Adjustable Arabic font size
   - 🌙 Dark mode and responsive design
+  - 🔗 Every reading unit has its own prerendered page — see below
+
+### Quran URL structure
+
+Beyond the interactive reader at `/quran`, the whole Quran is prerendered as
+static, indexable pages — four views of the same text, one per way people
+actually look it up:
+
+| Route | Count | Example |
+|-------|-------|---------|
+| `/[locale]/quran/surah/[slug]` | 114 | [`/en/quran/surah/al-kahf`](https://falah.io/en/quran/surah/al-kahf/) |
+| `/[locale]/quran/juz/[n]` | 30 | [`/en/quran/juz/30`](https://falah.io/en/quran/juz/30/) |
+| `/[locale]/quran/hizb/[n]` | 60 | [`/en/quran/hizb/59`](https://falah.io/en/quran/hizb/59/) |
+| `/[locale]/quran/page/[n]` | 604 | [`/en/quran/page/255`](https://falah.io/en/quran/page/255/) |
+
+Each page ships the full Arabic text and translation in the HTML (no
+client-side fetch), with its own title, description, canonical, hreflang and
+`schema.org` `Chapter` / `Book` data. Surah slugs are fixed in
+`lib/quran-meta.ts` so URLs never shift with an upstream API's spelling.
+
+The text is downloaded once by `npm run prebuild` into `.quran-cache/`
+(git-ignored) — `next build` renders ~1,600 pages across parallel workers, so
+they read from disk rather than hitting the API each.
 
 - **Tafseer Explorer**
   - Read explanations and commentary alongside verses.

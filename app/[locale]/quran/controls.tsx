@@ -1,52 +1,36 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import Link from "next/link";
 import { useState } from "react";
 import { brandCls, cardCls, goldCls, lineCls, mutedCls, Select } from "@/components/ui";
-import type { Dict } from "@/lib/i18n";
-import { type Surah, TOTAL_PAGES } from "@/lib/quran";
+import type { Dict, Locale } from "@/lib/i18n";
+import { JUZ, SURAHS, TOTAL_PAGES } from "@/lib/quran-meta";
+import {
+  type BrowseMode,
+  RECITERS,
+  TRANSLATIONS,
+  UNIT_TOTAL,
+  unitPath,
+} from "@/lib/quran-reader";
 
-/** A curated set of well-known reciters available on AlQuran.cloud. */
-export const RECITERS = [
-  { id: "ar.alafasy", name: "Mishary Alafasy" },
-  { id: "ar.husary", name: "Mahmoud Al-Husary" },
-  { id: "ar.abdurrahmaansudais", name: "Abdul Rahman Al-Sudais" },
-  { id: "ar.mahermuaiqly", name: "Maher Al-Muaiqly" },
-  { id: "ar.shaatree", name: "Abu Bakr Al-Shatri" },
-  { id: "ar.ahmedajamy", name: "Ahmed Al-Ajamy" },
-  { id: "ar.hudhaify", name: "Ali Al-Hudhaify" },
-  { id: "ar.abdulsamad", name: "Abdul Basit Abdul Samad" },
-];
-
-export const TRANSLATIONS = [
-  { id: "en.sahih", name: "Saheeh International · EN" },
-  { id: "en.pickthall", name: "Pickthall · EN" },
-  { id: "en.yusufali", name: "Yusuf Ali · EN" },
-  { id: "en.asad", name: "Muhammad Asad · EN" },
-  { id: "en.transliteration", name: "Transliteration" },
-  { id: "fr.hamidullah", name: "Hamidullah · FR" },
-  { id: "ar.muyassar", name: "التفسير الميسّر · AR" },
-];
-
-export const SPEEDS = [0.75, 1, 1.25, 1.5];
-
-export type BrowseMode = "surah" | "page";
 export type TransMode = "hover" | "click" | "off";
 export type RepeatMode = "off" | "ayah" | "surah";
 
-/** Everything the control surfaces need. The state itself lives in the page
- * client; both the desktop sidebar and the mobile sheet render from this one
- * object so the two never drift apart. */
+/** Everything the control surfaces need. The state lives in the reader; both
+ * the desktop sidebar and the mobile sheet render from this one object so the
+ * two never drift apart. */
 export type QuranUi = {
+  /** Reader chrome (reciter, speed, play…). */
   t: Dict["tools"]["quran"];
-  surahs: Surah[] | null;
+  /** Browse vocabulary (surah, juz, hizb, page…), shared with the SEO copy. */
+  b: Dict["quranBrowse"];
+  locale: Locale;
+  /** Which division is being read, and which one of it. */
   mode: BrowseMode;
+  n: number;
   setMode: (m: BrowseMode) => void;
-  surahNumber: number;
-  pageNumber: number;
-  goToSurah: (n: number) => void;
-  goToPage: (n: number) => void;
-  /** e.g. "Al-Baqara · Medinan · 286 ayahs" or "Page 3 of 604 · Juz 1". */
+  goTo: (mode: BrowseMode, n: number) => void;
   metaLine: string;
   verseLabel: string;
   reciter: string;
@@ -88,7 +72,9 @@ export const iconBtnCls = `grid place-items-center rounded-full border ${lineCls
 
 function SectionTitle({ icon, label }: { icon: string; label: string }) {
   return (
-    <p className={`mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] ${mutedCls}`}>
+    <p
+      className={`mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] ${mutedCls}`}
+    >
       <Icon icon={icon} className={`size-3.5 ${brandCls}`} />
       {label}
     </p>
@@ -109,21 +95,29 @@ function Segmented<T extends string>({
   value,
   onChange,
   options,
+  compact = false,
 }: {
   label: string;
   value: T;
   onChange: (v: T) => void;
   options: { value: T; label: string }[];
+  compact?: boolean;
 }) {
   return (
-    <div role="group" aria-label={label} className={`flex items-center rounded-full border p-0.5 ${lineCls}`}>
+    <div
+      role="group"
+      aria-label={label}
+      className={`flex items-center rounded-full border p-0.5 ${lineCls}`}
+    >
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           aria-pressed={value === o.value}
-          className={`flex-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`flex-1 rounded-full py-1.5 font-medium transition-colors ${
+            compact ? "px-2 text-[11px]" : "px-3 text-xs"
+          } ${
             value === o.value
               ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
               : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
@@ -137,23 +131,29 @@ function Segmented<T extends string>({
 }
 
 /** Page jump box: free typing while focused, committed on blur or Enter. */
-function PageInput({ q }: { q: QuranUi }) {
-  const [draft, setDraft] = useState(String(q.pageNumber));
+function PageInput({ q, onNavigate }: { q: QuranUi; onNavigate?: () => void }) {
+  const [draft, setDraft] = useState(String(q.n));
   // Re-sync when the page changes from elsewhere (arrows, mode switch).
-  const [seen, setSeen] = useState(q.pageNumber);
-  if (seen !== q.pageNumber) {
-    setSeen(q.pageNumber);
-    setDraft(String(q.pageNumber));
+  const [seen, setSeen] = useState(q.n);
+  if (seen !== q.n) {
+    setSeen(q.n);
+    setDraft(String(q.n));
   }
 
   const commit = () => {
     const n = Number(draft);
-    if (Number.isFinite(n) && n >= 1 && n <= TOTAL_PAGES) q.goToPage(n);
-    else setDraft(String(q.pageNumber));
+    if (Number.isFinite(n) && n >= 1 && n <= TOTAL_PAGES && n !== q.n) {
+      onNavigate?.();
+      q.goTo("page", n);
+    } else if (n !== q.n) {
+      setDraft(String(q.n));
+    }
   };
 
   return (
-    <div className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border ${lineCls} bg-white px-2 py-2 dark:bg-zinc-900`}>
+    <div
+      className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border ${lineCls} bg-white px-2 py-2 dark:bg-zinc-900`}
+    >
       <input
         type="number"
         inputMode="numeric"
@@ -176,7 +176,7 @@ function PageInput({ q }: { q: QuranUi }) {
   );
 }
 
-/** Continuous scrubber across the whole surah or page: the value is
+/** Continuous scrubber across the whole unit: the value is
  * `verseIndex + fractionOfThatVerse`, so one drag walks the recitation. */
 export function SeekBar({ q, className = "" }: { q: QuranUi; className?: string }) {
   const value = (q.playingIdx ?? 0) + (q.duration > 0 ? q.currentTime / q.duration : 0);
@@ -205,13 +205,14 @@ function ProgressRow({ q }: { q: QuranUi }) {
         {formatTime(q.currentTime)}
       </span>
       <SeekBar q={q} className="h-1.5 w-full" />
-      <span className={`min-w-8 text-[11px] font-semibold tabular-nums ${mutedCls}`}>{percent}%</span>
+      <span className={`min-w-8 text-[11px] font-semibold tabular-nums ${mutedCls}`}>
+        {percent}%
+      </span>
     </div>
   );
 }
 
-/** Prev / play / next, plus speed, repeat and mute. Shared by the desktop
- * sidebar and the mobile sheet. */
+/** Prev / play / next, plus speed, repeat and mute. */
 export function Transport({ q }: { q: QuranUi }) {
   const { t } = q;
   return (
@@ -262,8 +263,20 @@ export function Transport({ q }: { q: QuranUi }) {
           <button
             type="button"
             onClick={q.cycleRepeat}
-            title={q.repeatMode === "ayah" ? t.repeatAyah : q.repeatMode === "surah" ? t.repeatSurah : t.repeatOff}
-            aria-label={q.repeatMode === "ayah" ? t.repeatAyah : q.repeatMode === "surah" ? t.repeatSurah : t.repeatOff}
+            title={
+              q.repeatMode === "ayah"
+                ? t.repeatAyah
+                : q.repeatMode === "surah"
+                  ? t.repeatSurah
+                  : t.repeatOff
+            }
+            aria-label={
+              q.repeatMode === "ayah"
+                ? t.repeatAyah
+                : q.repeatMode === "surah"
+                  ? t.repeatSurah
+                  : t.repeatOff
+            }
             className={
               q.repeatMode !== "off"
                 ? "grid size-8 place-items-center rounded-full border border-emerald-600 bg-emerald-50 text-emerald-700 dark:border-emerald-400 dark:bg-emerald-500/10 dark:text-emerald-400"
@@ -279,7 +292,10 @@ export function Transport({ q }: { q: QuranUi }) {
             aria-label={q.isMuted ? t.unmute : t.mute}
             className={`size-8 ${iconBtnCls} ${q.isMuted ? "text-red-500 dark:text-red-400" : ""}`}
           >
-            <Icon icon={q.isMuted ? "ph:speaker-slash-fill" : "ph:speaker-high-fill"} className="size-4" />
+            <Icon
+              icon={q.isMuted ? "ph:speaker-slash-fill" : "ph:speaker-high-fill"}
+              className="size-4"
+            />
           </button>
         </div>
       </div>
@@ -287,61 +303,110 @@ export function Transport({ q }: { q: QuranUi }) {
   );
 }
 
-function NavigatorCard({ q }: { q: QuranUi }) {
-  const { t } = q;
+/** Prev / next stepper. Real <Link>s, so the neighbouring unit is a crawlable
+ * URL and not just an onClick. */
+function Stepper({
+  q,
+  onNavigate,
+  children,
+}: {
+  q: QuranUi;
+  onNavigate?: () => void;
+  children: React.ReactNode;
+}) {
+  const max = UNIT_TOTAL[q.mode];
+  const arrow = (dir: -1 | 1) => {
+    const n = q.n + dir;
+    const disabled = n < 1 || n > max;
+    const icon = dir === -1 ? "ph:caret-left" : "ph:caret-right";
+    const label = dir === -1 ? q.b.prev : q.b.next;
+    if (disabled) {
+      return (
+        <span aria-hidden="true" className={`size-10 shrink-0 opacity-40 ${iconBtnCls}`}>
+          <Icon icon={icon} className="size-4 rtl:rotate-180" />
+        </span>
+      );
+    }
+    return (
+      <Link
+        href={unitPath(q.locale, q.mode, n)}
+        onClick={onNavigate}
+        aria-label={label}
+        className={`size-10 shrink-0 ${iconBtnCls}`}
+      >
+        <Icon icon={icon} className="size-4 rtl:rotate-180" />
+      </Link>
+    );
+  };
+
+  return (
+    <div className="mt-3 flex items-center gap-2">
+      {arrow(-1)}
+      {children}
+      {arrow(1)}
+    </div>
+  );
+}
+
+function NavigatorCard({ q, onNavigate }: { q: QuranUi; onNavigate?: () => void }) {
+  const { b } = q;
+  const isAr = q.locale === "ar";
+
+  const pick = (n: number) => {
+    onNavigate?.();
+    q.goTo(q.mode, n);
+  };
+
   return (
     <section className={`${cardCls} p-4`}>
-      <SectionTitle icon="ph:compass" label={t.navigate} />
+      <SectionTitle icon="ph:compass" label={b.navigate} />
       <Segmented
-        label={t.browseBy}
+        compact
+        label={b.browseBy}
         value={q.mode}
-        onChange={q.setMode}
+        onChange={(m) => {
+          onNavigate?.();
+          q.setMode(m);
+        }}
         options={[
-          { value: "surah", label: t.bySurah },
-          { value: "page", label: t.byPage },
+          { value: "surah" as const, label: b.bySurah },
+          { value: "juz" as const, label: b.byJuz },
+          { value: "hizb" as const, label: b.byHizb },
+          { value: "page" as const, label: b.byPage },
         ]}
       />
 
-      <div className="mt-3 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => (q.mode === "surah" ? q.goToSurah(q.surahNumber - 1) : q.goToPage(q.pageNumber - 1))}
-          disabled={q.mode === "surah" ? q.surahNumber <= 1 : q.pageNumber <= 1}
-          aria-label={q.mode === "surah" ? t.prev : t.prevPage}
-          className={`size-10 shrink-0 ${iconBtnCls}`}
-        >
-          <Icon icon="ph:caret-left" className="size-4 rtl:rotate-180" />
-        </button>
-
-        {q.mode === "surah" ? (
+      <Stepper q={q} onNavigate={onNavigate}>
+        {q.mode === "page" ? (
+          <PageInput q={q} onNavigate={onNavigate} />
+        ) : (
           <div className="min-w-0 flex-1">
             <Select
-              value={q.surahNumber}
-              onChange={(e) => q.goToSurah(Number(e.target.value))}
-              disabled={!q.surahs}
-              aria-label={t.surah}
+              value={q.n}
+              onChange={(e) => pick(Number(e.target.value))}
+              aria-label={q.mode === "surah" ? b.surah : q.mode === "juz" ? b.juz : b.hizb}
             >
-              {(q.surahs ?? []).map((s) => (
-                <option key={s.number} value={s.number}>
-                  {s.number}. {s.englishName}
-                </option>
-              ))}
+              {q.mode === "surah"
+                ? SURAHS.map((s) => (
+                    <option key={s.n} value={s.n}>
+                      {s.n}. {isAr ? s.arabic.replace(/^سُورَةُ\s*/, "") : s.translit}
+                    </option>
+                  ))
+                : q.mode === "juz"
+                  ? JUZ.map((j) => (
+                      <option key={j.n} value={j.n}>
+                        {b.juz} {j.n} · {isAr ? j.arabic : j.translit}
+                      </option>
+                    ))
+                  : Array.from({ length: UNIT_TOTAL.hizb }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n}>
+                        {b.hizb} {n}
+                      </option>
+                    ))}
             </Select>
           </div>
-        ) : (
-          <PageInput q={q} />
         )}
-
-        <button
-          type="button"
-          onClick={() => (q.mode === "surah" ? q.goToSurah(q.surahNumber + 1) : q.goToPage(q.pageNumber + 1))}
-          disabled={q.mode === "surah" ? q.surahNumber >= 114 : q.pageNumber >= TOTAL_PAGES}
-          aria-label={q.mode === "surah" ? t.next : t.nextPage}
-          className={`size-10 shrink-0 ${iconBtnCls}`}
-        >
-          <Icon icon="ph:caret-right" className="size-4 rtl:rotate-180" />
-        </button>
-      </div>
+      </Stepper>
 
       <p className={`mt-3 text-xs ${mutedCls}`}>{q.metaLine}</p>
     </section>
@@ -398,9 +463,9 @@ function ReadingCard({ q }: { q: QuranUi }) {
         value={q.transMode}
         onChange={q.setTransMode}
         options={[
-          { value: "hover", label: t.modeHover },
-          { value: "click", label: t.modeClick },
-          { value: "off", label: t.modeOff },
+          { value: "hover" as const, label: t.modeHover },
+          { value: "click" as const, label: t.modeClick },
+          { value: "off" as const, label: t.modeOff },
         ]}
       />
 
@@ -432,10 +497,10 @@ function ReadingCard({ q }: { q: QuranUi }) {
 
 /** The full control stack — the desktop sidebar renders it as-is, the mobile
  * sheet renders the same thing inside a bottom drawer. */
-export function ControlsPanel({ q }: { q: QuranUi }) {
+export function ControlsPanel({ q, onNavigate }: { q: QuranUi; onNavigate?: () => void }) {
   return (
     <div className="flex flex-col gap-4">
-      <NavigatorCard q={q} />
+      <NavigatorCard q={q} onNavigate={onNavigate} />
       <RecitationCard q={q} />
       <ReadingCard q={q} />
     </div>
