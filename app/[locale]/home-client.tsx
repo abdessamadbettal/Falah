@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
+import { Contribute } from "@/components/contribute";
 import { useDict, useLocale } from "@/components/locale";
 import {
   brandCls,
@@ -20,6 +21,7 @@ import {
   StarField,
   useMounted,
 } from "@/components/ui";
+import type { Community } from "@/lib/github";
 import { localePath } from "@/lib/i18n";
 import { TOOL_CATEGORIES, TOOL_PATHS, type ToolKey } from "@/lib/seo";
 
@@ -458,13 +460,14 @@ function Faq() {
   );
 }
 
-export default function HomeClient() {
+export default function HomeClient({ community }: { community: Community }) {
   return (
     <>
       <Header />
       <main id="main" className="flex-1">
         <Hero />
         <Toolkit />
+        <Contribute community={community} />
         <Faq />
       </main>
       <Footer />
