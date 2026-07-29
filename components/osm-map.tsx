@@ -132,6 +132,7 @@ export function OsmMap({
   return (
     <div
       ref={ref}
+      dir="ltr"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -199,7 +200,7 @@ export function OsmMap({
       </div>
 
       {/* zoom controls */}
-      <div className="absolute right-3 top-3 flex flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
+      <div className="absolute end-3 top-3 flex flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
         {([["ph:plus", 1], ["ph:minus", -1]] as const).map(([icon, delta]) => (
           <button
             key={icon}
@@ -219,7 +220,7 @@ export function OsmMap({
         target="_blank"
         rel="noreferrer"
         onPointerDown={(e) => e.stopPropagation()}
-        className="absolute bottom-0 right-0 bg-white/80 px-1.5 py-0.5 text-[10px] text-zinc-600 hover:underline dark:bg-zinc-900/80 dark:text-zinc-300"
+        className="absolute bottom-0 end-0 bg-white/80 px-1.5 py-0.5 text-[10px] text-zinc-600 hover:underline dark:bg-zinc-900/80 dark:text-zinc-300"
       >
         © OpenStreetMap
       </a>

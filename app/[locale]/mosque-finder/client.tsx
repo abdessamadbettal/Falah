@@ -194,8 +194,8 @@ out center tags 60;`;
       </div>
 
       {/* map + results */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
-        <div className="relative lg:sticky lg:top-20 lg:self-start">
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1.35fr_1fr] rtl:lg:grid-cols-[1fr_1.35fr]">
+        <div className="relative order-1 lg:order-1 rtl:lg:order-2 lg:sticky lg:top-20 lg:self-start">
           <OsmMap
             center={center}
             zoom={zoom}
@@ -226,7 +226,7 @@ out center tags 60;`;
           </button>
         </div>
 
-        <div>
+        <div className="order-2 lg:order-2 rtl:lg:order-1">
           {status === "done" && mosques.length > 0 ? (
             <>
               <p className={`mb-3 text-sm font-medium ${mutedCls}`}>{t.resultCount(mosques.length)}</p>
