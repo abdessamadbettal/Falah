@@ -42,3 +42,6 @@ next-env.d.ts
 
 # video
 *.mp4
+
+# Quran editions cached for the prerendered /quran routes (npm run prebuild)
+/.quran-cache/

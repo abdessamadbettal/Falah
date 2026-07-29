@@ -2,28 +2,25 @@
 
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useDict } from "@/components/locale";
+import { useDict, useLocale } from "@/components/locale";
 import { goldCls, lineCls, mutedCls, Star8, StarField, ToolShell } from "@/components/ui";
-import {
-  type Ayah,
-  fetchPageEditions,
-  fetchSurahEditions,
-  type Surah,
-  TOTAL_PAGES,
-  useSurahs,
-} from "@/lib/quran";
-import { type Anchor, anchorFromEvent, AyahTooltip } from "./ayah-tooltip";
+import { stripLeadingBasmala } from "@/lib/arabic";
+import { SURAHS, type SurahMeta, TOTAL_PAGES } from "@/lib/quran-meta";
 import {
   type BrowseMode,
-  ControlsPanel,
-  iconBtnCls,
-  type QuranUi,
+  fetchUnitTranslation,
+  type ReaderAyah,
+  type ReaderUnit,
   RECITERS,
-  SeekBar,
   SPEEDS,
-  type TransMode,
-} from "./controls";
+  audioUrl,
+  unitOf,
+  unitPath,
+} from "@/lib/quran-reader";
+import { type Anchor, anchorFromEvent, AyahTooltip } from "./ayah-tooltip";
+import { ControlsPanel, iconBtnCls, type QuranUi, SeekBar, type TransMode } from "./controls";
 
 const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
 const AR_DIGITS = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
@@ -33,15 +30,10 @@ const toArabicNum = (n: number) =>
     .map((c) => AR_DIGITS[Number(c)] ?? c)
     .join("");
 
-const DIACRITICS = /[ؐ-ًؚ-ٰٟۖ-ۭ]/g;
-
-/** For surahs other than Al-Fatiha, the Uthmani text prefixes the basmala to
- * the first verse. Drop it so it can be shown as its own ornamental line. */
-function stripLeadingBasmala(text: string): string {
-  const words = text.trim().split(/\s+/);
-  const bare = (words[0] ?? "").replace(DIACRITICS, "");
-  return bare === "بسم" ? words.slice(4).join(" ") : text;
-}
+/** Set just before navigating to the next unit, so the recitation picks back
+ * up on the other side. sessionStorage survives the navigation; React state
+ * does not. */
+const AUTOPLAY_KEY = "falah:quran:autoplay";
 
 /** The 8-pointed star medallion that closes each verse. */
 function AyahMark({ n }: { n: number }) {
@@ -53,38 +45,38 @@ function AyahMark({ n }: { n: number }) {
   );
 }
 
-/** A run of consecutive verses from one surah. A mushaf page can straddle two
- * surahs, so the text is drawn in runs rather than as a single block. */
-type Segment = { key: string; surah?: Surah; items: { ayah: Ayah; i: number }[] };
+/** A run of consecutive verses from one surah — a juz, hizb or mushaf page
+ * routinely straddles two, so the text is drawn in runs. */
+type Segment = { key: string; surah: SurahMeta; items: { ayah: ReaderAyah; i: number }[] };
 
-export default function QuranClient() {
+export default function QuranClient({
+  unit,
+  heading,
+  children,
+}: {
+  unit: ReaderUnit;
+  /** H1, Arabic ornament and intro prose for this URL — built server-side
+   * from the same strings the <title> and meta description use. */
+  heading: { title: string; side: string; intro: string };
+  /** Server-rendered links (the hub directory, or a unit's related units) —
+   * already HTML, so crawlers see them without running any JavaScript. */
+  children?: React.ReactNode;
+}) {
   const d = useDict();
+  const locale = useLocale();
   const t = d.tools.quran;
   const reduce = useReducedMotion();
-  const { surahs, error: listError } = useSurahs();
+  const router = useRouter();
 
-  const [mode, setMode] = useState<BrowseMode>("surah");
-  const [surahNumber, setSurahNumber] = useState(1);
-  const [pageNumber, setPageNumber] = useState(1);
   const [reciter, setReciter] = useState(RECITERS[0].id);
-  const [transEdition, setTransEdition] = useState(t.translationEdition);
+  const [transEdition, setTransEdition] = useState(unit.edition);
   const [transMode, setTransMode] = useState<TransMode>("hover");
   const [scale, setScale] = useState(1);
   const [speed, setSpeed] = useState(1);
 
-  const [content, setContent] = useState<{
-    key: string;
-    /** The browse mode and surah/page this text was fetched for — rendering
-     * reads these, not the live state, so a pending fetch can't relabel the
-     * text still on screen. */
-    mode: BrowseMode;
-    unit: number;
-    arabic: Ayah[];
-    translation: Ayah[];
-  } | null>(null);
-  const [audio, setAudio] = useState<{ key: string; ayahs: Ayah[] } | null>(null);
-  // Tagged with the request it belongs to, so navigating away retires it.
-  const [err, setErr] = useState<{ key: string; msg: string } | null>(null);
+  /** Only set when the reader switches away from the edition this page was
+   * built with; otherwise the prerendered translation is used as-is. */
+  const [override, setOverride] = useState<{ edition: string; texts: string[] } | null>(null);
 
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [anchor, setAnchor] = useState<Anchor | null>(null);
@@ -97,69 +89,41 @@ export default function QuranClient() {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const shouldAutoPlayFirstAyah = useRef(false);
   const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const unit = mode === "surah" ? surahNumber : pageNumber;
-  const contentKey = `${mode}:${unit}:${transEdition}`;
-  const audioKey = `${mode}:${unit}:${reciter}`;
+  const ayahs = unit.ayahs;
 
-  // Arabic text + translation, refetched when the surah/page or translation changes.
+  // A different translation is the one thing still worth a network call.
   useEffect(() => {
+    // The prerendered edition needs no fetch; translationAt() already ignores
+    // a stale override, so there is nothing to reset here.
+    if (transEdition === unit.edition) return;
     let cancelled = false;
-    const key = `${mode}:${unit}:${transEdition}`;
-    const editions = ["quran-uthmani", transEdition];
-    const load =
-      mode === "surah" ? fetchSurahEditions(unit, editions) : fetchPageEditions(unit, editions);
-    load
-      .then(([arabic, translation]) => {
-        if (!cancelled) {
-          setContent({ key, mode, unit, arabic, translation });
-          setErr(null);
+    fetchUnitTranslation(unit.mode, unit.n, transEdition)
+      .then((texts) => {
+        if (!cancelled && texts.length === ayahs.length) {
+          setOverride({ edition: transEdition, texts });
         }
       })
       .catch(() => {
-        if (!cancelled) setErr({ key, msg: t.errSurah });
+        if (!cancelled) setOverride(null);
       });
     return () => {
       cancelled = true;
     };
-  }, [mode, unit, transEdition, t.errSurah]);
+  }, [transEdition, unit.edition, unit.mode, unit.n, ayahs.length]);
 
-  // Recitation audio, refetched only when the surah/page or reciter changes.
+  const translationAt = (i: number) =>
+    override?.edition === transEdition ? (override.texts[i] ?? "") : (ayahs[i]?.translation ?? "");
+
+  // Resume the recitation after rolling into the next surah, juz, hizb or page.
   useEffect(() => {
-    let cancelled = false;
-    const key = `${mode}:${unit}:${reciter}`;
-    const load =
-      mode === "surah" ? fetchSurahEditions(unit, [reciter]) : fetchPageEditions(unit, [reciter]);
-    load
-      .then(([ayahs]) => {
-        if (!cancelled) setAudio({ key, ayahs });
-      })
-      .catch(() => {
-        if (!cancelled) setAudio(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [mode, unit, reciter]);
-
-  const ready = content?.key === contentKey ? content : null;
-  const audioReady = audio?.key === audioKey ? audio : null;
-  // While the next surah/page loads, keep the previous one on screen, dimmed —
-  // paging through the mushaf shouldn't flash a skeleton on every tap.
-  const shown = ready ?? content;
-  const errMsg = err?.key === contentKey ? err.msg : null;
-  const loading = !shown && !errMsg;
-
-  // Autoplay the first verse when playback rolls into the next surah or page.
-  useEffect(() => {
-    if (shouldAutoPlayFirstAyah.current && audioReady && audioReady.ayahs.length > 0) {
-      shouldAutoPlayFirstAyah.current = false;
-      playIdx(0);
-    }
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(AUTOPLAY_KEY) !== "1") return;
+    sessionStorage.removeItem(AUTOPLAY_KEY);
+    playIdx(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioReady]);
+  }, []);
 
   // Escape or a click elsewhere dismisses the translation bubble — on touch
   // there is no pointer-leave to close it with.
@@ -191,67 +155,59 @@ export default function QuranClient() {
     };
   }, [sheetOpen]);
 
-  const surahMeta = surahs?.find((s) => s.number === surahNumber);
-  const currentJuz = shown?.arabic[0]?.juz;
   const transIsRtl = transEdition.startsWith("ar");
+  const currentJuz = ayahs[0]?.juz;
 
   /** Split the loaded verses into per-surah runs. */
   const segments: Segment[] = [];
-  shown?.arabic.forEach((ayah, i) => {
-    const s = ayah.surah ?? (shown.mode === "surah" ? surahMeta : undefined);
+  for (const [i, ayah] of ayahs.entries()) {
+    const surah = SURAHS[ayah.surah - 1];
     const last = segments.at(-1);
-    if (last && last.surah?.number === s?.number) last.items.push({ ayah, i });
-    else segments.push({ key: `${s?.number ?? "x"}-${i}`, surah: s, items: [{ ayah, i }] });
-  });
+    if (last && last.surah.n === surah.n) last.items.push({ ayah, i });
+    else segments.push({ key: `${surah.n}-${i}`, surah, items: [{ ayah, i }] });
+  }
 
   const labelFor = (i: number) => {
-    const a = shown?.arabic[i];
-    return t.verseRef(a?.surah?.number ?? surahNumber, a?.numberInSurah ?? i + 1);
+    const a = ayahs[i];
+    return t.verseRef(a?.surah ?? 1, a?.ayah ?? i + 1);
   };
 
   const focusIdx = playingIdx ?? activeIdx ?? 0;
   const headerSurah = segments[0]?.surah;
 
-  function resetPlayback() {
+  // ---- navigation: every unit is a URL ----
+
+  function goTo(mode: BrowseMode, n: number, autoplay = false) {
+    if (mode === unit.mode && n === unit.n) return;
     audioRef.current?.pause();
-    setIsPlaying(false);
-    setPlayingIdx(null);
-    setActiveIdx(null);
-    setAnchor(null);
-    setCurrentTime(0);
-    setDuration(0);
+    if (autoplay) sessionStorage.setItem(AUTOPLAY_KEY, "1");
+    router.push(unitPath(locale, mode, n));
   }
 
-  function goToSurah(n: number) {
-    const next = Math.min(114, Math.max(1, n));
-    if (mode === "surah" && next === surahNumber) return;
-    resetPlayback();
-    setMode("surah");
-    setSurahNumber(next);
-  }
-
-  function goToPage(n: number) {
-    const next = Math.min(TOTAL_PAGES, Math.max(1, n));
-    if (mode === "page" && next === pageNumber) return;
-    resetPlayback();
-    setMode("page");
-    setPageNumber(next);
-  }
-
-  /** Switching browse mode keeps your place: surah → the page the current
-   * verse sits on, page → the surah that verse belongs to. */
+  /** Switching the browse mode keeps your place: whichever verse you are on
+   * decides which juz / hizb / page / surah you land in. */
   function switchMode(next: BrowseMode) {
-    if (next === mode) return;
-    const at = shown?.arabic[focusIdx];
-    if (next === "page") goToPage(at?.page ?? 1);
-    else goToSurah(at?.surah?.number ?? surahNumber);
+    if (next === unit.mode) return;
+    const at = ayahs[focusIdx] ?? ayahs[0];
+    goTo(next, at ? unitOf(next, at) : 1);
   }
+
+  /** Step to the neighbouring unit, carrying the recitation with it. Returns
+   * false at the very start or end of the mushaf. */
+  function stepUnit(dir: 1 | -1, autoplay = false) {
+    const next = unit.n + dir;
+    if (next < 1 || next > (unit.mode === "surah" ? 114 : Infinity)) return false;
+    goTo(unit.mode, next, autoplay);
+    return true;
+  }
+
+  // ---- playback ----
 
   function playIdx(idx: number) {
-    const src = audioReady?.ayahs[idx]?.audio;
+    const a = ayahs[idx];
     const el = audioRef.current;
-    if (!src || !el) return;
-    el.src = src;
+    if (!a || !el) return;
+    el.src = audioUrl(reciter, a.n);
     el.playbackRate = speed;
     el.muted = isMuted;
     void el.play().catch(() => {});
@@ -272,10 +228,6 @@ export default function QuranClient() {
     else playIdx(playingIdx ?? activeIdx ?? 0);
   }
 
-  function cycleSpeed() {
-    applySpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length]);
-  }
-
   function applySpeed(v: number) {
     setSpeed(v);
     if (audioRef.current) audioRef.current.playbackRate = v;
@@ -287,33 +239,14 @@ export default function QuranClient() {
     if (audioRef.current) audioRef.current.muted = next;
   }
 
-  function cycleRepeat() {
-    setRepeatMode((prev) => (prev === "off" ? "ayah" : prev === "ayah" ? "surah" : "off"));
-  }
-
-  /** Step to the neighbouring surah or page and pick the recitation back up.
-   * Returns false at the very start or end of the mushaf. */
-  function stepUnit(dir: 1 | -1) {
-    const next = (mode === "surah" ? surahNumber : pageNumber) + dir;
-    const max = mode === "surah" ? 114 : TOTAL_PAGES;
-    if (next < 1 || next > max) return false;
-    shouldAutoPlayFirstAyah.current = true;
-    if (mode === "surah") goToSurah(next);
-    else goToPage(next);
-    return true;
-  }
-
   function prevAyah() {
     if (playingIdx !== null && playingIdx > 0) playIdx(playingIdx - 1);
-    else stepUnit(-1);
+    else stepUnit(-1, true);
   }
 
   function nextAyah() {
-    if (audioReady && playingIdx !== null && playingIdx < audioReady.ayahs.length - 1) {
-      playIdx(playingIdx + 1);
-    } else {
-      stepUnit(1);
-    }
+    if (playingIdx !== null && playingIdx < ayahs.length - 1) playIdx(playingIdx + 1);
+    else stepUnit(1, true);
   }
 
   function onEnded() {
@@ -322,9 +255,9 @@ export default function QuranClient() {
       return;
     }
     const next = (playingIdx ?? -1) + 1;
-    if (audioReady && next < audioReady.ayahs.length) playIdx(next);
+    if (next < ayahs.length) playIdx(next);
     else if (repeatMode === "surah") playIdx(0);
-    else if (!stepUnit(1)) {
+    else if (!stepUnit(1, true)) {
       setIsPlaying(false);
       setPlayingIdx(null);
     }
@@ -332,8 +265,8 @@ export default function QuranClient() {
 
   function onSeek(e: React.ChangeEvent<HTMLInputElement>) {
     const val = Number(e.target.value);
-    if (!audioReady || audioReady.ayahs.length === 0) return;
-    const targetIdx = Math.min(audioReady.ayahs.length - 1, Math.max(0, Math.floor(val)));
+    if (ayahs.length === 0) return;
+    const targetIdx = Math.min(ayahs.length - 1, Math.max(0, Math.floor(val)));
     const fraction = val - targetIdx;
 
     if (targetIdx !== playingIdx) {
@@ -368,23 +301,15 @@ export default function QuranClient() {
     if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
   }
 
-  const metaLine =
-    mode === "surah"
-      ? surahMeta
-        ? `${surahMeta.englishName} · ${t.revelation[surahMeta.revelationType] ?? surahMeta.revelationType} · ${surahMeta.numberOfAyahs} ${t.ayahs}`
-        : ""
-      : `${t.pageOf(pageNumber, TOTAL_PAGES)}${currentJuz ? ` · ${t.juz(currentJuz)}` : ""}`;
-
   const q: QuranUi = {
     t,
-    surahs,
-    mode,
+    b: d.quranBrowse,
+    locale,
+    mode: unit.mode,
+    n: unit.n,
     setMode: switchMode,
-    surahNumber,
-    pageNumber,
-    goToSurah,
-    goToPage,
-    metaLine,
+    goTo: (mode, n) => goTo(mode, n),
+    metaLine: unitMeta(),
     verseLabel: labelFor(focusIdx),
     reciter,
     setReciter: (id) => {
@@ -403,155 +328,193 @@ export default function QuranClient() {
     setScale,
     speed,
     setSpeed: applySpeed,
-    cycleSpeed,
+    cycleSpeed: () => applySpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length]),
     repeatMode,
-    cycleRepeat,
+    cycleRepeat: () =>
+      setRepeatMode((p) => (p === "off" ? "ayah" : p === "ayah" ? "surah" : "off")),
     isMuted,
     toggleMute,
     isPlaying,
-    canPlay: !!audioReady,
+    canPlay: ayahs.length > 0,
     togglePlay,
     prevAyah,
     nextAyah,
     playingIdx,
-    totalAyahs: audioReady?.ayahs.length ?? shown?.arabic.length ?? 1,
+    totalAyahs: ayahs.length,
     currentTime,
     duration,
     onSeek,
   };
 
-  const tipText = anchor ? ready?.translation[anchor.idx]?.text : undefined;
+  function unitMeta() {
+    const b = d.quranBrowse;
+    if (unit.mode === "surah") {
+      const s = SURAHS[unit.n - 1];
+      const rev = s.revelation === "Meccan" ? b.meccan : b.medinan;
+      return `${rev} · ${b.ayahCount(s.ayahs)} · ${b.juz} ${s.juz}`;
+    }
+    if (unit.mode === "page") {
+      return `${b.page} ${unit.n} / ${TOTAL_PAGES} · ${b.juz} ${currentJuz ?? 1}`;
+    }
+    if (unit.mode === "hizb") {
+      return `${b.juz} ${Math.ceil(unit.n / 2)} · ${b.ayahCount(ayahs.length)}`;
+    }
+    return `${b.ayahCount(ayahs.length)} · ${b.hizb} ${ayahs[0]?.hizb ?? 1}`;
+  }
+
+  const tipText = anchor ? translationAt(anchor.idx) : undefined;
 
   return (
-    <ToolShell icon="ph:book-open-text" title={t.title} side={t.side} intro={t.intro} wide>
+    <ToolShell
+      icon="ph:book-open-text"
+      title={heading.title}
+      side={heading.side}
+      intro={heading.intro}
+      wide
+    >
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-6">
         {/* ---- the mushaf ---- */}
         <div className="min-w-0">
-          {listError ? <p className="mb-4 text-sm text-red-600 dark:text-red-400">{t.errList}</p> : null}
-          {errMsg ? <p className="mb-4 text-sm text-red-600 dark:text-red-400">{errMsg}</p> : null}
-          {loading && !listError ? (
-            <div className="h-96 animate-pulse rounded-3xl bg-zinc-100 dark:bg-zinc-900" aria-hidden="true" />
-          ) : null}
-
-          {shown ? (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={shown.key}
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                aria-busy={ready ? undefined : true}
-                className={`relative overflow-hidden rounded-2xl border-2 border-emerald-700/25 bg-[#fbfaf2] p-2 transition-opacity dark:border-emerald-400/20 dark:bg-zinc-900/60 ${
-                  ready ? "" : "opacity-50"
-                }`}
-              >
-                <StarField className="pointer-events-none absolute inset-0 size-full text-emerald-800/[0.05] dark:text-emerald-400/[0.06]" />
-                <div className="relative  px-2 py-4 sm:px-10 ">
-                  {segments.map((seg, si) => {
-                    const startsSurah = seg.items[0]?.ayah.numberInSurah === 1;
-                    const showBismillah =
-                      startsSurah && seg.surah?.number !== 1 && seg.surah?.number !== 9;
-                    return (
-                      <div key={seg.key} className={si > 0 ? "mt-10" : ""}>
-                        {seg.surah && startsSurah ? (
-                          <>
-                            {/* surah header cartouche */}
-                            <div className="flex items-center justify-center gap-3">
-                              <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
-                              <div className="rounded-2xl border border-emerald-700/30 bg-emerald-50/70 px-6 py-2 dark:border-emerald-400/25 dark:bg-emerald-500/10">
-                                <span
-                                  lang="ar"
-                                  dir="rtl"
-                                  className="font-arabic text-3xl text-emerald-800 sm:text-4xl dark:text-emerald-300"
-                                >
-                                  {seg.surah.name}
-                                </span>
-                              </div>
-                              <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
-                            </div>
-                            <p className={`mt-3 text-center text-sm ${mutedCls}`}>
-                              {seg.surah.englishName} ·{" "}
-                              {t.revelation[seg.surah.revelationType] ?? seg.surah.revelationType} ·{" "}
-                              {seg.surah.numberOfAyahs} {t.ayahs}
-                            </p>
-                          </>
-                        ) : seg.surah ? (
-                          // a surah carried over from the previous page
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${unit.mode}-${unit.n}`}
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="relative overflow-hidden rounded-2xl border-2 border-emerald-700/25 bg-[#fbfaf2] p-2 dark:border-emerald-400/20 dark:bg-zinc-900/60"
+            >
+              <StarField className="pointer-events-none absolute inset-0 size-full text-emerald-800/[0.05] dark:text-emerald-400/[0.06]" />
+              <div className="relative px-2 py-4 sm:px-10">
+                {segments.map((seg, si) => {
+                  const startsSurah = seg.items[0]?.ayah.ayah === 1;
+                  const showBismillah = startsSurah && seg.surah.n !== 1 && seg.surah.n !== 9;
+                  return (
+                    <div key={seg.key} className={si > 0 ? "mt-10" : ""}>
+                      {startsSurah ? (
+                        <>
+                          {/* surah header cartouche */}
                           <div className="flex items-center justify-center gap-3">
-                            <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
-                            <span lang="ar" dir="rtl" className={`font-arabic text-lg ${mutedCls}`}>
-                              {seg.surah.name}
-                              {si === 0 ? ` — ${t.continued}` : ""}
-                            </span>
-                            <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
+                            <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
+                            <div className="rounded-2xl border border-emerald-700/30 bg-emerald-50/70 px-6 py-2 dark:border-emerald-400/25 dark:bg-emerald-500/10">
+                              <span
+                                lang="ar"
+                                dir="rtl"
+                                className="font-arabic text-3xl text-emerald-800 sm:text-4xl dark:text-emerald-300"
+                              >
+                                {seg.surah.arabic}
+                              </span>
+                            </div>
+                            <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
                           </div>
-                        ) : null}
-
-                        {showBismillah ? (
-                          <p
-                            lang="ar"
-                            dir="rtl"
-                            className="mt-7 text-center font-arabic text-2xl text-emerald-900 sm:text-3xl dark:text-emerald-200"
-                          >
-                            {BISMILLAH}
+                          <p className={`mt-3 text-center text-sm ${mutedCls}`}>
+                            {seg.surah.translit} ·{" "}
+                            {t.revelation[seg.surah.revelation] ?? seg.surah.revelation} ·{" "}
+                            {seg.surah.ayahs} {t.ayahs}
                           </p>
-                        ) : null}
+                        </>
+                      ) : (
+                        // a surah carried over from the previous unit
+                        <div className="flex items-center justify-center gap-3">
+                          <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
+                          <span lang="ar" dir="rtl" className={`font-arabic text-lg ${mutedCls}`}>
+                            {seg.surah.arabic}
+                            {si === 0 ? ` — ${t.continued}` : ""}
+                          </span>
+                          <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
+                        </div>
+                      )}
 
-                        {/* flowing Uthmani text — each verse hoverable/tappable */}
-                        <div
+                      {showBismillah ? (
+                        <p
                           lang="ar"
                           dir="rtl"
-                          className="mt-7 text-right font-arabic text-zinc-900 dark:text-zinc-100"
-                          style={{ fontSize: `${1.7 * scale}rem`, lineHeight: 2.35 }}
+                          className="mt-7 text-center font-arabic text-2xl text-emerald-900 sm:text-3xl dark:text-emerald-200"
                         >
-                          {seg.items.map(({ ayah, i }) => {
-                            const text =
-                              ayah.numberInSurah === 1 && showBismillah
-                                ? stripLeadingBasmala(ayah.text)
-                                : ayah.text;
-                            const on = i === activeIdx || i === playingIdx;
-                            return (
-                              <span
-                                key={`${seg.key}-${ayah.numberInSurah}`}
-                                id={`ayah-${i}`}
-                                data-ayah={i}
-                                onMouseEnter={transMode === "hover" ? (e) => openTip(i, e) : undefined}
-                                onMouseLeave={transMode === "hover" ? scheduleTipClose : undefined}
-                                onClick={transMode !== "off" ? (e) => openTip(i, e) : undefined}
-                                className={`rounded-lg px-0.5 transition-colors ${
-                                  transMode !== "off" ? "cursor-pointer" : ""
-                                } ${
-                                  on
-                                    ? "bg-emerald-200/70 dark:bg-emerald-400/25"
-                                    : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
-                                }`}
-                              >
-                                {text}
-                                <AyahMark n={ayah.numberInSurah} />{" "}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
+                          {BISMILLAH}
+                        </p>
+                      ) : null}
 
-                  {shown.mode === "page" ? (
-                    <p className={`mt-8 text-center text-sm ${goldCls}`}>﴿ {toArabicNum(shown.unit)} ﴾</p>
-                  ) : null}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          ) : null}
+                      {/* flowing Uthmani text — each verse hoverable/tappable */}
+                      <div
+                        lang="ar"
+                        dir="rtl"
+                        className="mt-7 text-right font-arabic text-zinc-900 dark:text-zinc-100"
+                        style={{ fontSize: `${1.7 * scale}rem`, lineHeight: 2.35 }}
+                      >
+                        {seg.items.map(({ ayah, i }) => {
+                          const text =
+                            ayah.ayah === 1 && showBismillah
+                              ? stripLeadingBasmala(ayah.arabic)
+                              : ayah.arabic;
+                          const on = i === activeIdx || i === playingIdx;
+                          return (
+                            <span
+                              key={ayah.n}
+                              id={`ayah-${i}`}
+                              data-ayah={i}
+                              onMouseEnter={transMode === "hover" ? (e) => openTip(i, e) : undefined}
+                              onMouseLeave={transMode === "hover" ? scheduleTipClose : undefined}
+                              onClick={transMode !== "off" ? (e) => openTip(i, e) : undefined}
+                              className={`rounded-lg px-0.5 transition-colors ${
+                                transMode !== "off" ? "cursor-pointer" : ""
+                              } ${
+                                on
+                                  ? "bg-emerald-200/70 dark:bg-emerald-400/25"
+                                  : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
+                              }`}
+                            >
+                              {text}
+                              <AyahMark n={ayah.ayah} />{" "}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {unit.mode === "page" ? (
+                  <p className={`mt-8 text-center text-sm ${goldCls}`}>﴿ {toArabicNum(unit.n)} ﴾</p>
+                ) : null}
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
           {/* discoverability hint for the translation bubble */}
-          {shown && transMode !== "off" && !anchor ? (
+          {transMode !== "off" && !anchor ? (
             <p className={`mt-4 flex items-center justify-center gap-2 text-xs ${mutedCls}`}>
               <Icon icon="ph:hand-pointing" className="size-4" />
               {transMode === "hover" ? t.hoverHint : t.clickHint}
             </p>
           ) : null}
+
+          {/* The tooltip is the reading experience, but it only exists after a
+              pointer event — so the translation also ships as real text here,
+              where a crawler (and anyone who prefers a list) can read it. */}
+          <details className={`mt-6 rounded-2xl border ${lineCls} p-4`}>
+            <summary className="cursor-pointer text-sm font-semibold">
+              {d.quranBrowse.translationList}
+            </summary>
+            <ol className="mt-4 space-y-4">
+              {ayahs.map((a, i) => (
+                <li key={a.n} className="flex gap-3">
+                  <span className={`shrink-0 font-mono text-xs ${goldCls}`}>
+                    {a.surah}:{a.ayah}
+                  </span>
+                  <p
+                    lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
+                    dir={transIsRtl ? "rtl" : "ltr"}
+                    className={`leading-relaxed ${mutedCls} ${
+                      transIsRtl ? "text-right font-arabic text-base" : "text-sm"
+                    }`}
+                  >
+                    {translationAt(i)}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </details>
         </div>
 
         {/* ---- desktop sidebar ---- */}
@@ -559,6 +522,8 @@ export default function QuranClient() {
           <ControlsPanel q={q} />
         </aside>
       </div>
+
+      {children}
 
       {/* keeps the page footer clear of the fixed mobile bar */}
       <div className="h-20 lg:hidden" aria-hidden="true" />
@@ -573,7 +538,6 @@ export default function QuranClient() {
           <button
             type="button"
             onClick={prevAyah}
-            disabled={!audioReady}
             aria-label={t.prevAyah}
             className={`size-9 shrink-0 ${iconBtnCls}`}
           >
@@ -582,16 +546,14 @@ export default function QuranClient() {
           <button
             type="button"
             onClick={togglePlay}
-            disabled={!audioReady}
             aria-label={isPlaying ? t.pause : t.playSurah}
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-emerald-700 text-white shadow-lg shadow-emerald-700/25 disabled:opacity-50 dark:bg-emerald-400 dark:text-emerald-950"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-emerald-700 text-white shadow-lg shadow-emerald-700/25 dark:bg-emerald-400 dark:text-emerald-950"
           >
             <Icon icon={isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-5" />
           </button>
           <button
             type="button"
             onClick={nextAyah}
-            disabled={!audioReady}
             aria-label={t.nextAyah}
             className={`size-9 shrink-0 ${iconBtnCls}`}
           >
@@ -601,14 +563,14 @@ export default function QuranClient() {
           <div className="min-w-0 flex-1 leading-tight">
             <p className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">
               <span lang="ar" dir="rtl" className="font-arabic">
-                {headerSurah?.name ?? ""}
+                {headerSurah?.arabic ?? ""}
               </span>
-              {playingIdx !== null ? <span className={goldCls}> · {labelFor(playingIdx)}</span> : null}
+              {playingIdx !== null ? (
+                <span className={goldCls}> · {labelFor(playingIdx)}</span>
+              ) : null}
             </p>
             <p className={`truncate text-[11px] ${mutedCls}`}>
-              {mode === "page"
-                ? `${t.pageOf(pageNumber, TOTAL_PAGES)}${currentJuz ? ` · ${t.juz(currentJuz)}` : ""}`
-                : (RECITERS.find((r) => r.id === reciter)?.name ?? "")}
+              {RECITERS.find((r) => r.id === reciter)?.name ?? ""}
             </p>
           </div>
 
@@ -662,7 +624,7 @@ export default function QuranClient() {
                   <Icon icon="ph:x" className="size-4" />
                 </button>
               </div>
-              <ControlsPanel q={q} />
+              <ControlsPanel q={q} onNavigate={() => setSheetOpen(false)} />
             </motion.div>
           </>
         ) : null}
@@ -677,7 +639,7 @@ export default function QuranClient() {
           lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
           dir={transIsRtl ? "rtl" : "ltr"}
           playing={playingIdx === anchor.idx && isPlaying}
-          canPlay={!!audioReady}
+          canPlay={ayahs.length > 0}
           dismissible={transMode === "click"}
           playLabel={t.playVerse}
           closeLabel={t.close}
@@ -703,3 +665,4 @@ export default function QuranClient() {
     </ToolShell>
   );
 }
+
