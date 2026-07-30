@@ -120,8 +120,7 @@ inside it is prerendered as a static, indexable page:
 |-------|-------|---------|
 | `/[locale]/hadith` | 1 | [`/en/hadith`](https://falah.io/en/hadith/) |
 | `/[locale]/hadith/[collection]` | 10 | [`/en/hadith/sahih-bukhari`](https://falah.io/en/hadith/sahih-bukhari/) |
-| `/[locale]/hadith/[collection]/[book]` | 397 | [`/en/hadith/sahih-bukhari/book-of-belief`](https://falah.io/en/hadith/sahih-bukhari/book-of-belief/) |
-| `/[locale]/hadith/[collection]/[book]/part-[n]` | ~530 | [`/en/hadith/sahih-bukhari/military-expeditions-al-maghaazi/part-3`](https://falah.io/en/hadith/sahih-bukhari/military-expeditions-al-maghaazi/part-3/) |
+| `/[locale]/hadith/[collection]/[book]` | 397 | [`/en/hadith/sahih-bukhari/revelation`](https://falah.io/en/hadith/sahih-bukhari/revelation/) |
 | `/[locale]/hadith/[collection]/hadith-[n]` | 122 | [`/en/hadith/40-hadith-nawawi/hadith-13`](https://falah.io/en/hadith/40-hadith-nawawi/hadith-13/) |
 
 Every segment is words, never a bare id — the path is the clearest place to
