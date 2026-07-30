@@ -16,10 +16,10 @@ export type ToolArticle = {
 /** The subset of markdown the guides use: `key: value` frontmatter,
  * `## ` section headings, `- ` bullets, blank-line-separated paragraphs. */
 export function parseArticle(md: string): ToolArticle {
-  const fm = md.match(/^---\n([\s\S]*?)\n---\n/);
+  const fm = md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   if (!fm) throw new Error("article is missing its --- frontmatter block");
   const meta = Object.fromEntries(
-    fm[1].split("\n").map((line) => {
+    fm[1].split(/\r?\n/).map((line) => {
       const i = line.indexOf(":");
       return [line.slice(0, i).trim(), line.slice(i + 1).trim()];
     }),
@@ -29,19 +29,19 @@ export function parseArticle(md: string): ToolArticle {
   const introParas: string[] = [];
   let current: ArticleSection | null = null;
 
-  for (const block of md.slice(fm[0].length).split(/\n{2,}/)) {
+  for (const block of md.slice(fm[0].length).split(/(?:\r?\n){2,}/)) {
     const text = block.trim();
     if (!text) continue;
     if (text.startsWith("## ")) {
       current = { h: text.slice(3).trim() };
       sections.push(current);
     } else if (text.startsWith("- ")) {
-      const items = text.split("\n").map((l) => l.replace(/^- /, "").trim());
+      const items = text.split(/\r?\n/).map((l) => l.replace(/^- /, "").trim());
       if (current) current.list = [...(current.list ?? []), ...items];
     } else if (current) {
-      current.p = [...(current.p ?? []), text.replace(/\n/g, " ")];
+      current.p = [...(current.p ?? []), text.replace(/\r?\n/g, " ")];
     } else {
-      introParas.push(text.replace(/\n/g, " "));
+      introParas.push(text.replace(/\r?\n/g, " "));
     }
   }
 
