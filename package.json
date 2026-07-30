@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/fetch-quran.mjs",
+    "predev": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/fetch-quran.mjs",
+    "prebuild": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

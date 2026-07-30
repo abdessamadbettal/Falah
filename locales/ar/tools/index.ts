@@ -7,6 +7,7 @@ import { mosque } from "./mosque";
 import { quran } from "./quran";
 import { tafseer } from "./tafseer";
 import { names } from "./names";
+import { hadith } from "./hadith";
 import { hisnul } from "./hisnul";
 import { zakat } from "./zakat";
 import { inheritance } from "./inheritance";
@@ -24,6 +25,7 @@ export const tools = {
   quran,
   tafseer,
   names,
+  hadith,
   hisnul,
   zakat,
   inheritance,

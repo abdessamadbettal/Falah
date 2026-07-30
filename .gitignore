@@ -45,3 +45,8 @@ next-env.d.ts
 
 # Quran editions cached for the prerendered /quran routes (npm run prebuild)
 /.quran-cache/
+
+# Hadith collections, split per chapter, for the prerendered /hadith routes
+# (npm run prebuild). Includes _titles/, the one-off downloads that
+# scripts/build-hadith-chapters.mjs reads.
+/.hadith-cache/

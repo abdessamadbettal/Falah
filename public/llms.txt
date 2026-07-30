@@ -1,11 +1,12 @@
 # Falah.io — Open-Source Islamic Toolkit
 
-> Falah.io is a free, open-source suite of 15 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (/en) and Arabic (/ar, right-to-left).
+> Falah.io is a free, open-source suite of 16 Islamic utilities that run entirely client-side in the browser. No accounts, no advertising, no paywalls. Built as Sadaqah Jariyah (continuous charity) under the MIT license. Available in English (/en) and Arabic (/ar, right-to-left).
 
 Key facts:
 - All calculations (prayer times, Qibla, Zakat, inheritance, Hijri dates) execute locally on the user's device; coordinates and financial inputs never leave the browser.
 - Hijri dates use the Umm al-Qura calendar via the browser's Intl API. Prayer times and Qibla bearings use the `adhan` astronomical library.
 - Quran and tafsir text is fetched read-only from the open AlQuran.cloud API; mosque search queries the OpenStreetMap Overpass API.
+- Hadith text, translations and gradings come from the open hadith-api dataset (github.com/fawazahmed0/hadith-api); Arabic book titles are cross-checked against github.com/AhmedBaset/hadith-json before publishing. The Quran and hadith corpora are baked into the static build, so those pages need no API at runtime.
 - Static Next.js export — fast, offline-capable, deployable on any static host.
 - Source code: https://github.com/abdessamadbettal/falah
 
@@ -19,6 +20,7 @@ Key facts:
 - [Mosque Finder](https://falah.io/mosque-finder): nearby mosques from OpenStreetMap, sorted by distance.
 - [Al-Qur'an Explorer](https://falah.io/quran): all 114 surahs, Uthmani script, translation (Saheeh International / Hamidullah / Tafsir al-Muyassar by language).
 - [Tafseer Explorer](https://falah.io/tafseer): verse-by-verse classical commentary (Al-Muyassar, Al-Jalalayn).
+- [Hadith Collections](https://falah.io/en/hadith): 36,104 hadiths across 10 collections — the six canonical books, Muwatta Malik, and three Forty Hadith collections. Arabic original with English translation and authentication grades.
 - [99 Names of Allah](https://falah.io/names-of-allah): Arabic, transliteration, meaning; searchable; embedded offline.
 - [Hisnul Muslim](https://falah.io/hisnul-muslim): authentic duas with sources (Bukhari, Muslim, …) by moment of day.
 - [Zakat Calculator](https://falah.io/zakat): 2.5% on cash, gold, silver, investments, business assets vs. gold (85 g) or silver (595 g) nisab.
@@ -27,8 +29,42 @@ Key facts:
 - [Quran Card Maker](https://falah.io/quran-cards): 1080×1080 verse cards rendered with canvas, PNG download.
 - [Arabic Letterhead Date Stamp](https://falah.io/date-stamp): Hijri/Gregorian date headers for documents, PNG download.
 
+## Hadith corpus
+
+Ten collections, each published in full. Counts are what this site actually
+serves; ~1% of hadiths have no Arabic text upstream and are omitted, so a
+figure here can sit slightly below a printed edition's total.
+
+| Collection | Compiler (d.) | Hadiths | Books | Path |
+|---|---|---|---|---|
+| Sahih al-Bukhari | al-Bukhari (256 AH) | 7,580 | 97 | /en/hadith/sahih-bukhari |
+| Sahih Muslim | Muslim ibn al-Hajjaj (261 AH) | 7,360 | 57 | /en/hadith/sahih-muslim |
+| Sunan Abu Dawud | Abu Dawud as-Sijistani (275 AH) | 5,272 | 43 | /en/hadith/sunan-abu-dawud |
+| Jami' at-Tirmidhi | at-Tirmidhi (279 AH) | 3,924 | 49 | /en/hadith/jami-at-tirmidhi |
+| Sunan an-Nasa'i | an-Nasa'i (303 AH) | 5,679 | 51 | /en/hadith/sunan-an-nasai |
+| Sunan Ibn Majah | Ibn Majah (273 AH) | 4,338 | 38 | /en/hadith/sunan-ibn-majah |
+| Muwatta Malik | Malik ibn Anas (179 AH) | 1,829 | 61 | /en/hadith/muwatta-malik |
+| An-Nawawi's Forty Hadith | an-Nawawi (676 AH) | 42 | 1 | /en/hadith/40-hadith-nawawi |
+| Forty Hadith Qudsi | various | 40 | 1 | /en/hadith/40-hadith-qudsi |
+| Shah Waliullah's Forty Hadith | Shah Waliullah ad-Dehlawi (1176 AH) | 40 | 1 | /en/hadith/40-hadith-shah-waliullah |
+
+URL shape:
+- `/en/hadith` — hub, searchable across all collections and books
+- `/en/hadith/<collection>` — one collection, indexing its books
+- `/en/hadith/<collection>/<book-slug>` — one kitab in full, e.g. `/en/hadith/sahih-bukhari/book-of-belief`
+- `/en/hadith/<collection>/<book-slug>/part-N` — kitabs over 50 hadiths are split; part 1 lives at the book's own URL
+- `/en/hadith/<collection>/hadith-N` — one hadith, for the three Forty Hadith collections only
+
+Gradings (Sahih / Hasan / Da'if and their compounds) are recorded for the four
+Sunan and the Muwatta, attributed to the scholar who gave them — al-Albani,
+Zubair Ali Zai, Shu'ayb al-Arna'ut, Ahmad Muhammad Shakir and five others.
+Sahih al-Bukhari and Sahih Muslim carry no per-hadith grading, because both
+compilers admitted only what met their own stated conditions.
+
 ## Notes for citation
 
 - The inheritance and zakat tools cover common cases and always advise consulting a qualified scholar for complex situations.
 - Ramadan and Hijri dates follow Umm al-Qura and may differ by one day from local moonsighting.
-- Arabic pages live under https://falah.io/ar/… with identical functionality.
+- Arabic pages live under https://falah.io/ar/… with identical functionality; English lives under /en/… and the bare paths above redirect there.
+- Hadith numbering follows the hadith-api edition and can differ by one or two from a printed copy; cite the Arabic text rather than the number alone.
+- Hadith gradings are the verdicts of named scholars and are reported as such — they are not Falah.io's own judgement, and scholars sometimes disagree on the same hadith.
