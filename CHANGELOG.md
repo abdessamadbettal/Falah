@@ -9,10 +9,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Arabic (RTL) localization with English served unprefixed at the site root
-- 15 client-side tools: prayer times, Hijri calendar, Ramadan countdown, date
-  converter, Qibla finder, mosque finder, Quran explorer, tafseer, 99 Names,
-  Hisnul Muslim, Zakat calculator, inheritance calculator, Hijri age,
-  Quran card maker, and date stamp
+- 16 client-side tools: prayer times, Hijri calendar, Ramadan countdown, date
+  converter, Qibla finder, mosque finder, Quran explorer, tafseer, hadith
+  collections, 99 Names, Hisnul Muslim, Zakat calculator, inheritance
+  calculator, Hijri age, Quran card maker, and date stamp
+- Hadith collections: 36,000+ hadiths across the six canonical books, the
+  Muwatta and three Forty Hadith collections, prerendered as ~1,070 pages per
+  locale — a page per kitab (split into parts past 50 hadiths) and a page per
+  hadith for the Forty Hadith collections, with authentication grades,
+  `Book`/`Chapter`/`Quotation` structured data, and a client-side search over
+  every collection and book
 - Reusable form primitives (`Button`, `Input`, `Select`, `Checkbox`, `Field`)
 - Skip-to-content link and installable PWA icons
 - CI workflow (lint, typecheck, build) and contributor documentation

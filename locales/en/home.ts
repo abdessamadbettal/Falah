@@ -111,8 +111,12 @@ export const home = {
       name: "Quranic Tafseer Explorer", 
       description: "Read authoritative explanations and scholarly commentary verse by verse to deepen your understanding of the Quran." 
     },
-    names: { 
-      name: "99 Names of Allah (Asma ul Husna)", 
+    hadith: {
+      name: "Hadith Collections (Kutub as-Sittah)",
+      description: "Over 36,000 hadiths from Bukhari, Muslim, the four Sunan, the Muwatta and the Forty Hadith — full Arabic with translation and grading."
+    },
+    names: {
+      name: "99 Names of Allah (Asma ul Husna)",
       description: "Explore the Divine Names with deep meanings, spiritual significance, and audio pronunciations — completely offline." 
     },
     hisnul: { 

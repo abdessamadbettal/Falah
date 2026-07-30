@@ -10,7 +10,7 @@
 > *"Come to success (Falah)” — the daily call we answer, and a platform built to serve your worship."*  
 > **Every Muslim deserves access to accurate Islamic tools without creating accounts, handing over location data, or hitting paywalls.**
 
-**Falah.io** is an open-source Islamic toolkit (Quraan explorer, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, and Inheritance & Zakat calculators and +15 tools more). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
+**Falah.io** is an open-source Islamic toolkit (Quraan explorer, Hadith collections, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, and Inheritance & Zakat calculators and +16 tools more). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
 
 ![Falah.io — home page](.github/screenshot.png)
 
@@ -101,6 +101,55 @@ they read from disk rather than hitting the API each.
 
 - **Tafseer Explorer**
   - Read explanations and commentary alongside verses.
+
+- **Hadith Collections**
+  - 36,000+ hadiths, every collection in full.
+  - 📚 The six canonical books — Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasa'i, Ibn Majah
+  - 📜 Muwatta Malik, plus the Forty Hadith of an-Nawawi, the Forty Hadith Qudsi and Shah Waliullah's Forty
+  - 🕌 Original Arabic with an English translation, side by side or either alone
+  - ✅ Authentication grades (Al-Albani, Zubair Ali Zai, Shu'ayb al-Arna'ut and six others) with a colour for sahih / hasan / da'if
+  - 🔍 Instant filter within a book, matching Arabic with or without harakat
+  - 🔗 Every book of every collection has its own prerendered page — see below
+
+### Hadith URL structure
+
+Beyond the searchable hub at `/hadith`, every collection and every kitab
+inside it is prerendered as a static, indexable page:
+
+| Route | Count | Example |
+|-------|-------|---------|
+| `/[locale]/hadith` | 1 | [`/en/hadith`](https://falah.io/en/hadith/) |
+| `/[locale]/hadith/[collection]` | 10 | [`/en/hadith/sahih-bukhari`](https://falah.io/en/hadith/sahih-bukhari/) |
+| `/[locale]/hadith/[collection]/[book]` | 397 | [`/en/hadith/sahih-bukhari/book-of-belief`](https://falah.io/en/hadith/sahih-bukhari/book-of-belief/) |
+| `/[locale]/hadith/[collection]/[book]/part-[n]` | ~530 | [`/en/hadith/sahih-bukhari/military-expeditions-al-maghaazi/part-3`](https://falah.io/en/hadith/sahih-bukhari/military-expeditions-al-maghaazi/part-3/) |
+| `/[locale]/hadith/[collection]/hadith-[n]` | 122 | [`/en/hadith/40-hadith-nawawi/hadith-13`](https://falah.io/en/hadith/40-hadith-nawawi/hadith-13/) |
+
+Every segment is words, never a bare id — the path is the clearest place to
+say what a page is about, and `book-of-belief` is what someone looking for it
+actually types.
+
+A kitab with more than 50 hadiths is split into parts — Bukhari's *Kitab
+al-Maghazi* alone has 525, and one page of them would be ~1 MB of HTML. Part 1
+lives at the book's own URL, so a short kitab never gains a `/part-2`. The
+three Forty Hadith collections have a single kitab, so for them the segment
+after the collection is the **hadith** itself.
+
+Collection slugs live in `lib/hadith-meta.ts` and book slugs in
+`lib/hadith-chapters.ts` — generated once, committed, and checked for
+collisions, so a URL can never shift because an upstream dataset changed its
+spelling. Every page ships the full Arabic and translation in the HTML (no
+client-side fetch), with its own title, description, canonical, hreflang and
+`schema.org` `Book` / `Chapter` / `Quotation` data. Slugs are shared by both
+locales, because switching language only swaps the `/en` `/ar` prefix.
+
+**Where the text comes from.** Hadiths, translations and gradings are from the
+open [hadith-api](https://github.com/fawazahmed0/hadith-api) dataset. Arabic
+book titles come from a second, independent dataset
+([hadith-json](https://github.com/AhmedBaset/hadith-json)) and every one of the
+397 is cross-checked against the first before being committed — the generator
+refuses to emit a title whose chapter numbering disagrees between the two.
+Around 1% of hadiths have no Arabic text upstream and are not published at
+all, so a collection's count here can be slightly below its printed total.
 
 - **99 Names of Allah**
   - Meanings.
