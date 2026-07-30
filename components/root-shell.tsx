@@ -1,5 +1,8 @@
+import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { LocaleProvider } from "@/components/locale";
+import { PwaRegistration } from "@/components/pwa-registration";
+import { PwaUpdatePrompt } from "@/components/pwa-update-prompt";
 import { fontVariables } from "@/lib/fonts";
 import { dirFor, getDict, type Locale } from "@/lib/i18n";
 import { GA_ID } from "@/lib/site";
@@ -31,7 +34,15 @@ export function RootShell({
         >
           {getDict(locale).common.skipToContent}
         </a>
-        <LocaleProvider locale={locale}>{children}</LocaleProvider>
+        <PwaRegistration>
+          <PwaUpdatePrompt />
+          <LocaleProvider locale={locale}>{children}</LocaleProvider>
+        </PwaRegistration>
+        <Script
+          src="https://unpkg.com/pwacompat"
+          strategy="beforeInteractive"
+          crossOrigin="anonymous"
+        />
       </body>
       {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
