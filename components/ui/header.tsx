@@ -33,6 +33,13 @@ export function Header() {
 
         <div className="flex items-center gap-2.5">
           <nav className="hidden items-center gap-6 md:flex">
+            <Link
+            href={`${localePath(locale)}#toolkit`}
+            className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
+          >
+            <Icon icon="mdi:weather-night" className="size-4 rtl:rotate-180" />
+            {d.common.allTools}
+          </Link>
             {NAV.map(({ key, icon }) => {
               const href = localePath(locale, TOOL_PATHS[key]);
               const active = pathname === href;

@@ -48,18 +48,28 @@ export const home: typeof en = {
       a: "نعم. الكود كامل ومتاح للجميع على GitHub، فيمكن لأي شخص مراجعته والتأكد من خصوصيته أو المساهمة في تحسينه.",
     },
   ],
-  contributeEyebrow: "صدقة جارية",
-  contributeH2: "بناه المجتمع، لخدمة الأمة.",
+  contributeEyebrow: "باب المساهمة",
+  contributeH2: "زكاة علمك، تبني مستقبل أمتك.",
   contributeP:
-    "سيبقى «فلاح» دائمًا مفتوح المصدر، محترمًا للخصوصية، بلا إعلانات وبلا نسخة مدفوعة. إن أحببت المساعدة في تكاليف الاستضافة والنطاق فالتبرعات التطوعية مرحّب بها كصدقة جارية — لكن أثمن مساهمة هي وقتك.",
+    "سيظل «فلاح» مجانياً ومفتوح المصدر بلا إعلانات أو قيود. نُقدر تبرعاتكم لتغطية تكاليف التشغيل، لكن مساهمتكم بوقتكم وجهدكم هي أثمن ما نرجوه.",
   contributeCta: "افتح Pull Request",
+  contributeStar: "أضف نجمة على GitHub",
   contributions: [
-    { icon: "ph:code", label: "المساهمة بتحسينات برمجية" },
-    { icon: "ph:translate", label: "المساعدة في ترجمة المشروع" },
-    { icon: "ph:bug-beetle", label: "الإبلاغ عن الأخطاء" },
-    { icon: "ph:book-bookmark", label: "تحسين التوثيق" },
-    { icon: "ph:megaphone", label: "نشر المشروع بين الناس" },
+    { key: "code", icon: "ph:code", label: "المساهمة بتحسينات برمجية" },
+    { key: "translate", icon: "ph:translate", label: "المساعدة في ترجمة المشروع" },
+    { key: "bugs", icon: "ph:bug-beetle", label: "الإبلاغ عن الأخطاء" },
+    { key: "docs", icon: "ph:book-bookmark", label: "تحسين التوثيق" },
+    { key: "share", icon: "ph:megaphone", label: "نشر المشروع بين الناس" },
   ],
+  shareCopied: "تم نسخ الرابط",
+  contributorsTitle: "لوحة شرف المساهمين",
+  contributorsP: "ندعو الله أن يجعل كل جهدٍ يُبذل في هذا الموقع صدقةً جارية، وعلماً يُنتفع به إلى يوم الدين.",
+  commits: (n: number) => `${n} مساهمة`,
+  joinTitle: "اسمك هنا",
+  joinHint: "افتح Pull Request",
+  statStars: "نجمة",
+  statForks: "نسخة",
+  statPeople: "مساهمًا",
   categories: [
     { label: "العبادة اليومية", side: "Time & Worship" },
     { label: "القبلة والمساجد", side: "Direction" },
@@ -100,8 +110,12 @@ export const home: typeof en = {
       name: "تفاسير القرآن الكريم", 
       description: "اقرأ التفاسير المعتمدة والشروح العلمية الميسرة آيةً بآية، لتعينك على التدبر وفهم معاني كلام الله عز وجل." 
     },
-    names: { 
-      name: "موسوعة أسماء الله الحسنى", 
+    hadith: {
+      name: "كتب الحديث الشريف",
+      description: "أكثر من 36000 حديث من صحيحي البخاري ومسلم والسنن الأربعة والموطأ والأربعينيات، بالنص العربي كاملًا ودرجة كل حديث."
+    },
+    names: {
+      name: "موسوعة أسماء الله الحسنى",
       description: "تصفح الأسماء الحسنى مع شرح معانيها ودلالاتها الإيمانية، مدعومة بالنطق الصوتي وتعمل بالكامل دون اتصال بالإنترنت." 
     },
     hisnul: { 

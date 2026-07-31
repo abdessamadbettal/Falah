@@ -16,6 +16,7 @@ export function ToolShell({
   side,
   intro,
   wide = false,
+  above,
   children,
 }: {
   icon: string;
@@ -23,6 +24,9 @@ export function ToolShell({
   side: string;
   intro: string;
   wide?: boolean;
+  /** Rendered above the title row — for a breadcrumb, which belongs before
+   * the H1 rather than buried in the content. */
+  above?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const locale = useLocale();
@@ -37,14 +41,8 @@ export function ToolShell({
         <div
           className={`mx-auto ${wide ? "max-w-6xl" : "max-w-3xl"} px-5 py-10 sm:py-14`}
         >
-          <Link
-            href={`${localePath(locale)}#toolkit`}
-            className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
-          >
-            <Icon icon="ph:arrow-left" className="size-4 rtl:rotate-180" />
-            {d.common.allTools}
-          </Link>
-          <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
+          {above}
+          <div className=" flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* icon tile shaped like a miniature mihrab arch */}
               <span className="flex h-14 w-12 shrink-0 items-end justify-center rounded-t-full rounded-b-lg bg-emerald-50 pb-2.5 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">

@@ -16,6 +16,7 @@ export {
 export { Star8 } from "./ui/star8";
 export { StarField } from "./ui/star-field";
 export { Eyebrow } from "./ui/eyebrow";
+export { Reveal } from "./ui/reveal";
 export { Button } from "./ui/button";
 export { Input } from "./ui/input";
 export { Select } from "./ui/select";

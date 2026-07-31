@@ -2,44 +2,26 @@
 
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useDict } from "@/components/locale";
+import { useDict, useLocale } from "@/components/locale";
+import { goldCls, lineCls, mutedCls, Star8, StarField, ToolShell } from "@/components/ui";
+import { stripLeadingBasmala } from "@/lib/arabic";
+import { SURAHS, type SurahMeta, TOTAL_PAGES } from "@/lib/quran-meta";
 import {
-  brandCls,
-  cardCls,
-  goldCls,
-  lineCls,
-  mutedCls,
-  Select,
-  Star8,
-  StarField,
-  ToolShell,
-} from "@/components/ui";
-import { type Ayah, fetchSurahEditions, useSurahs } from "@/lib/quran";
+  type BrowseMode,
+  fetchUnitTranslation,
+  type ReaderAyah,
+  type ReaderUnit,
+  RECITERS,
+  SPEEDS,
+  audioUrl,
+  unitOf,
+  unitPath,
+} from "@/lib/quran-reader";
+import { type Anchor, anchorFromEvent, AyahTooltip } from "./ayah-tooltip";
+import { ControlsPanel, iconBtnCls, type QuranUi, SeekBar, type TransMode } from "./controls";
 
-/** A curated set of well-known reciters available on AlQuran.cloud. */
-const RECITERS = [
-  { id: "ar.alafasy", name: "Mishary Alafasy" },
-  { id: "ar.husary", name: "Mahmoud Al-Husary" },
-  { id: "ar.abdurrahmaansudais", name: "Abdul Rahman Al-Sudais" },
-  { id: "ar.mahermuaiqly", name: "Maher Al-Muaiqly" },
-  { id: "ar.shaatree", name: "Abu Bakr Al-Shatri" },
-  { id: "ar.ahmedajamy", name: "Ahmed Al-Ajamy" },
-  { id: "ar.hudhaify", name: "Ali Al-Hudhaify" },
-  { id: "ar.abdulsamad", name: "Abdul Basit Abdul Samad" },
-];
-
-const TRANSLATIONS = [
-  { id: "en.sahih", name: "Saheeh International · EN" },
-  { id: "en.pickthall", name: "Pickthall · EN" },
-  { id: "en.yusufali", name: "Yusuf Ali · EN" },
-  { id: "en.asad", name: "Muhammad Asad · EN" },
-  { id: "en.transliteration", name: "Transliteration" },
-  { id: "fr.hamidullah", name: "Hamidullah · FR" },
-  { id: "ar.muyassar", name: "التفسير الميسّر · AR" },
-];
-
-const SPEEDS = [0.75, 1, 1.25, 1.5];
 const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
 const AR_DIGITS = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
 const toArabicNum = (n: number) =>
@@ -48,15 +30,10 @@ const toArabicNum = (n: number) =>
     .map((c) => AR_DIGITS[Number(c)] ?? c)
     .join("");
 
-const DIACRITICS = /[ؐ-ًؚ-ٰٟۖ-ۭ]/g;
-
-/** For surahs other than Al-Fatiha, the Uthmani text prefixes the basmala to
- * the first verse. Drop it so it can be shown as its own ornamental line. */
-function stripLeadingBasmala(text: string): string {
-  const words = text.trim().split(/\s+/);
-  const bare = (words[0] ?? "").replace(DIACRITICS, "");
-  return bare === "بسم" ? words.slice(4).join(" ") : text;
-}
+/** Set just before navigating to the next unit, so the recitation picks back
+ * up on the other side. sessionStorage survives the navigation; React state
+ * does not. */
+const AUTOPLAY_KEY = "falah:quran:autoplay";
 
 /** The 8-pointed star medallion that closes each verse. */
 function AyahMark({ n }: { n: number }) {
@@ -68,419 +45,612 @@ function AyahMark({ n }: { n: number }) {
   );
 }
 
-/** A compact pill dropdown for the reading controls: an icon for the category,
- * the current value, and a clear chevron so it reads as an interactive select
- * (the previous borderless selects looked like plain text). */
-function ControlSelect({
-  icon,
-  ariaLabel,
-  value,
-  onChange,
+/** A run of consecutive verses from one surah — a juz, hizb or mushaf page
+ * routinely straddles two, so the text is drawn in runs. */
+type Segment = { key: string; surah: SurahMeta; items: { ayah: ReaderAyah; i: number }[] };
+
+export default function QuranClient({
+  unit,
+  heading,
   children,
 }: {
-  icon: string;
-  ariaLabel: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode;
+  unit: ReaderUnit;
+  /** H1, Arabic ornament and intro prose for this URL — built server-side
+   * from the same strings the <title> and meta description use. */
+  heading: { title: string; side: string; intro: string };
+  /** Server-rendered links (the hub directory, or a unit's related units) —
+   * already HTML, so crawlers see them without running any JavaScript. */
+  children?: React.ReactNode;
 }) {
-  return (
-    <label
-      className={`flex items-center gap-2 rounded-full border bg-white px-3 py-1.5 text-sm transition-colors ${lineCls} hover:border-emerald-600/60 focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20 dark:bg-zinc-900 dark:hover:border-emerald-400/60 dark:focus-within:border-emerald-400`}
-    >
-      <Icon icon={icon} className={`size-4 shrink-0 ${brandCls}`} />
-      <span className="relative flex items-center">
-        <select
-          aria-label={ariaLabel}
-          value={value}
-          onChange={onChange}
-          className="cursor-pointer appearance-none bg-transparent pe-5 font-medium text-zinc-900 focus:outline-none dark:text-zinc-100"
-        >
-          {children}
-        </select>
-        <Icon
-          icon="ph:caret-down"
-          className={`pointer-events-none absolute inset-e-0 size-3.5 ${mutedCls}`}
-        />
-      </span>
-    </label>
-  );
-}
-
-export default function QuranClient() {
   const d = useDict();
+  const locale = useLocale();
   const t = d.tools.quran;
   const reduce = useReducedMotion();
-  const { surahs, error: listError } = useSurahs();
+  const router = useRouter();
 
-  const [surahNumber, setSurahNumber] = useState(1);
   const [reciter, setReciter] = useState(RECITERS[0].id);
-  const [transEdition, setTransEdition] = useState(t.translationEdition);
-  const [transMode, setTransMode] = useState<"hover" | "click" | "off">("hover");
+  const [transEdition, setTransEdition] = useState(unit.edition);
+  const [transMode, setTransMode] = useState<TransMode>("hover");
   const [scale, setScale] = useState(1);
   const [speed, setSpeed] = useState(1);
 
-  const [content, setContent] = useState<{ key: string; arabic: Ayah[]; translation: Ayah[] } | null>(null);
-  const [audio, setAudio] = useState<{ key: string; ayahs: Ayah[] } | null>(null);
-  const [err, setErr] = useState<string | null>(null);
+  /** Only set when the reader switches away from the edition this page was
+   * built with; otherwise the prerendered translation is used as-is. */
+  const [override, setOverride] = useState<{ edition: string; texts: string[] } | null>(null);
 
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [anchor, setAnchor] = useState<Anchor | null>(null);
   const [playingIdx, setPlayingIdx] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<"off" | "ayah" | "surah">("off");
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement>(null);
+  const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const contentKey = `${surahNumber}:${transEdition}`;
-  const audioKey = `${surahNumber}:${reciter}`;
+  const ayahs = unit.ayahs;
 
-  // Arabic text + translation, refetched when the surah or translation changes.
+  // A different translation is the one thing still worth a network call.
   useEffect(() => {
+    // The prerendered edition needs no fetch; translationAt() already ignores
+    // a stale override, so there is nothing to reset here.
+    if (transEdition === unit.edition) return;
     let cancelled = false;
-    fetchSurahEditions(surahNumber, ["quran-uthmani", transEdition])
-      .then(([arabic, translation]) => {
-        if (!cancelled) {
-          setContent({ key: `${surahNumber}:${transEdition}`, arabic, translation });
-          setErr(null);
+    fetchUnitTranslation(unit.mode, unit.n, transEdition)
+      .then((texts) => {
+        if (!cancelled && texts.length === ayahs.length) {
+          setOverride({ edition: transEdition, texts });
         }
       })
       .catch(() => {
-        if (!cancelled) setErr(t.errSurah);
+        if (!cancelled) setOverride(null);
       });
     return () => {
       cancelled = true;
     };
-  }, [surahNumber, transEdition, t.errSurah]);
+  }, [transEdition, unit.edition, unit.mode, unit.n, ayahs.length]);
 
-  // Recitation audio, refetched only when the surah or reciter changes.
+  const translationAt = (i: number) =>
+    override?.edition === transEdition ? (override.texts[i] ?? "") : (ayahs[i]?.translation ?? "");
+
+  // Resume the recitation after rolling into the next surah, juz, hizb or page.
   useEffect(() => {
-    let cancelled = false;
-    fetchSurahEditions(surahNumber, [reciter])
-      .then(([ayahs]) => {
-        if (!cancelled) setAudio({ key: `${surahNumber}:${reciter}`, ayahs });
-      })
-      .catch(() => {
-        if (!cancelled) setAudio(null);
-      });
-    return () => {
-      cancelled = true;
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(AUTOPLAY_KEY) !== "1") return;
+    sessionStorage.removeItem(AUTOPLAY_KEY);
+    playIdx(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Escape or a click elsewhere dismisses the translation bubble — on touch
+  // there is no pointer-leave to close it with.
+  useEffect(() => {
+    if (!anchor) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAnchor(null);
     };
-  }, [surahNumber, reciter]);
+    const onDown = (e: MouseEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest('[role="tooltip"]') || el?.closest("[data-ayah]")) return;
+      setAnchor(null);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
+  }, [anchor]);
 
-  const ready = content?.key === contentKey ? content : null;
-  const audioReady = audio?.key === audioKey ? audio : null;
-  const loading = !ready && !err;
-  const surah = surahs?.find((s) => s.number === surahNumber);
-  const showBismillah = surahNumber !== 1 && surahNumber !== 9;
+  // Lock the page behind the mobile sheet so only the sheet scrolls.
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [sheetOpen]);
+
   const transIsRtl = transEdition.startsWith("ar");
+  const currentJuz = ayahs[0]?.juz;
 
-  function goToSurah(n: number) {
-    const next = Math.min(114, Math.max(1, n));
-    audioRef.current?.pause();
-    setIsPlaying(false);
-    setPlayingIdx(null);
-    setActiveIdx(null);
-    setSurahNumber(next);
+  /** Split the loaded verses into per-surah runs. */
+  const segments: Segment[] = [];
+  for (const [i, ayah] of ayahs.entries()) {
+    const surah = SURAHS[ayah.surah - 1];
+    const last = segments.at(-1);
+    if (last && last.surah.n === surah.n) last.items.push({ ayah, i });
+    else segments.push({ key: `${surah.n}-${i}`, surah, items: [{ ayah, i }] });
   }
 
+  const labelFor = (i: number) => {
+    const a = ayahs[i];
+    return t.verseRef(a?.surah ?? 1, a?.ayah ?? i + 1);
+  };
+
+  const focusIdx = playingIdx ?? activeIdx ?? 0;
+  const headerSurah = segments[0]?.surah;
+
+  // ---- navigation: every unit is a URL ----
+
+  function goTo(mode: BrowseMode, n: number, autoplay = false) {
+    if (mode === unit.mode && n === unit.n) return;
+    audioRef.current?.pause();
+    if (autoplay) sessionStorage.setItem(AUTOPLAY_KEY, "1");
+    router.push(unitPath(locale, mode, n));
+  }
+
+  /** Switching the browse mode keeps your place: whichever verse you are on
+   * decides which juz / hizb / page / surah you land in. */
+  function switchMode(next: BrowseMode) {
+    if (next === unit.mode) return;
+    const at = ayahs[focusIdx] ?? ayahs[0];
+    goTo(next, at ? unitOf(next, at) : 1);
+  }
+
+  /** Step to the neighbouring unit, carrying the recitation with it. Returns
+   * false at the very start or end of the mushaf. */
+  function stepUnit(dir: 1 | -1, autoplay = false) {
+    const next = unit.n + dir;
+    if (next < 1 || next > (unit.mode === "surah" ? 114 : Infinity)) return false;
+    goTo(unit.mode, next, autoplay);
+    return true;
+  }
+
+  // ---- playback ----
+
   function playIdx(idx: number) {
-    const list = audioReady?.ayahs;
-    const src = list?.[idx]?.audio;
+    const a = ayahs[idx];
     const el = audioRef.current;
-    if (!src || !el) return;
-    el.src = src;
+    if (!a || !el) return;
+    el.src = audioUrl(reciter, a.n);
     el.playbackRate = speed;
+    el.muted = isMuted;
     void el.play().catch(() => {});
     setPlayingIdx(idx);
     setActiveIdx(idx);
+    // Follow along: park the translation bubble on the verse being recited.
+    if (transMode !== "off") {
+      if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
+      setAnchor({ idx, rect: 0, xRatio: 0.5 });
+    }
     document
       .getElementById(`ayah-${idx}`)
       ?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   }
 
   function togglePlay() {
-    if (isPlaying) {
-      audioRef.current?.pause();
-    } else {
-      playIdx(playingIdx ?? activeIdx ?? 0);
-    }
+    if (isPlaying) audioRef.current?.pause();
+    else playIdx(playingIdx ?? activeIdx ?? 0);
+  }
+
+  function applySpeed(v: number) {
+    setSpeed(v);
+    if (audioRef.current) audioRef.current.playbackRate = v;
+  }
+
+  function toggleMute() {
+    const next = !isMuted;
+    setIsMuted(next);
+    if (audioRef.current) audioRef.current.muted = next;
+  }
+
+  function prevAyah() {
+    if (playingIdx !== null && playingIdx > 0) playIdx(playingIdx - 1);
+    else stepUnit(-1, true);
+  }
+
+  function nextAyah() {
+    if (playingIdx !== null && playingIdx < ayahs.length - 1) playIdx(playingIdx + 1);
+    else stepUnit(1, true);
   }
 
   function onEnded() {
+    if (repeatMode === "ayah" && playingIdx !== null) {
+      playIdx(playingIdx);
+      return;
+    }
     const next = (playingIdx ?? -1) + 1;
-    if (audioReady && next < audioReady.ayahs.length) {
-      playIdx(next);
-    } else {
+    if (next < ayahs.length) playIdx(next);
+    else if (repeatMode === "surah") playIdx(0);
+    else if (!stepUnit(1, true)) {
       setIsPlaying(false);
       setPlayingIdx(null);
     }
   }
 
-  const seg = (on: boolean) =>
-    `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-      on
-        ? "bg-emerald-700 text-white dark:bg-emerald-400 dark:text-emerald-950"
-        : `${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`
-    }`;
+  function onSeek(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = Number(e.target.value);
+    if (ayahs.length === 0) return;
+    const targetIdx = Math.min(ayahs.length - 1, Math.max(0, Math.floor(val)));
+    const fraction = val - targetIdx;
+
+    if (targetIdx !== playingIdx) {
+      playIdx(targetIdx);
+      setTimeout(() => {
+        if (audioRef.current?.duration) {
+          audioRef.current.currentTime = fraction * audioRef.current.duration;
+        }
+      }, 100);
+    } else if (audioRef.current && duration > 0) {
+      audioRef.current.currentTime = fraction * duration;
+      setCurrentTime(fraction * duration);
+    }
+  }
+
+  // ---- translation bubble ----
+
+  function openTip(i: number, e: React.MouseEvent<HTMLElement>) {
+    if (transMode === "off") return;
+    if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
+    setActiveIdx(i);
+    setAnchor(anchorFromEvent(i, e));
+  }
+
+  function scheduleTipClose() {
+    if (transMode !== "hover") return;
+    if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
+    hoverCloseTimer.current = setTimeout(() => setAnchor(null), 220);
+  }
+
+  function cancelTipClose() {
+    if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
+  }
+
+  const q: QuranUi = {
+    t,
+    b: d.quranBrowse,
+    locale,
+    mode: unit.mode,
+    n: unit.n,
+    setMode: switchMode,
+    goTo: (mode, n) => goTo(mode, n),
+    metaLine: unitMeta(),
+    verseLabel: labelFor(focusIdx),
+    reciter,
+    setReciter: (id) => {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+      setReciter(id);
+    },
+    transEdition,
+    setTransEdition,
+    transMode,
+    setTransMode: (m) => {
+      setTransMode(m);
+      if (m === "off") setAnchor(null);
+    },
+    scale,
+    setScale,
+    speed,
+    setSpeed: applySpeed,
+    cycleSpeed: () => applySpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length]),
+    repeatMode,
+    cycleRepeat: () =>
+      setRepeatMode((p) => (p === "off" ? "ayah" : p === "ayah" ? "surah" : "off")),
+    isMuted,
+    toggleMute,
+    isPlaying,
+    canPlay: ayahs.length > 0,
+    togglePlay,
+    prevAyah,
+    nextAyah,
+    playingIdx,
+    totalAyahs: ayahs.length,
+    currentTime,
+    duration,
+    onSeek,
+  };
+
+  function unitMeta() {
+    const b = d.quranBrowse;
+    if (unit.mode === "surah") {
+      const s = SURAHS[unit.n - 1];
+      const rev = s.revelation === "Meccan" ? b.meccan : b.medinan;
+      return `${rev} · ${b.ayahCount(s.ayahs)} · ${b.juz} ${s.juz}`;
+    }
+    if (unit.mode === "page") {
+      return `${b.page} ${unit.n} / ${TOTAL_PAGES} · ${b.juz} ${currentJuz ?? 1}`;
+    }
+    if (unit.mode === "hizb") {
+      return `${b.juz} ${Math.ceil(unit.n / 2)} · ${b.ayahCount(ayahs.length)}`;
+    }
+    return `${b.ayahCount(ayahs.length)} · ${b.hizb} ${ayahs[0]?.hizb ?? 1}`;
+  }
+
+  const tipText = anchor ? translationAt(anchor.idx) : undefined;
 
   return (
-    <ToolShell icon="ph:book-open-text" title={t.title} side={t.side} intro={t.intro} wide>
-      {/* ---- control deck ---- */}
-      <div className={`${cardCls} p-4 sm:p-5`}>
-        {/* row 1 — surah navigation + play */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex min-w-56 flex-1 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => goToSurah(surahNumber - 1)}
-              disabled={surahNumber <= 1}
-              aria-label={t.prev}
-              className={`grid size-10 shrink-0 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 disabled:opacity-40 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
+    <ToolShell
+      icon="ph:book-open-text"
+      title={heading.title}
+      side={heading.side}
+      intro={heading.intro}
+      wide
+    >
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-6">
+        {/* ---- the mushaf ---- */}
+        <div className="min-w-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${unit.mode}-${unit.n}`}
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="relative overflow-hidden rounded-2xl border-2 border-emerald-700/25 bg-[#fbfaf2] p-2 dark:border-emerald-400/20 dark:bg-zinc-900/60"
             >
-              <Icon icon="ph:caret-left" className="size-4 rtl:rotate-180" />
-            </button>
-            <div className="min-w-0 flex-1">
-              <Select
-                value={surahNumber}
-                onChange={(e) => goToSurah(Number(e.target.value))}
-                disabled={!surahs}
-                aria-label={t.surah}
-              >
-                {(surahs ?? []).map((s) => (
-                  <option key={s.number} value={s.number}>
-                    {s.number}. {s.englishName} — {s.englishNameTranslation}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <button
-              type="button"
-              onClick={() => goToSurah(surahNumber + 1)}
-              disabled={surahNumber >= 114}
-              aria-label={t.next}
-              className={`grid size-10 shrink-0 place-items-center rounded-full border ${lineCls} ${mutedCls} transition-colors hover:border-emerald-600 hover:text-emerald-700 disabled:opacity-40 dark:hover:border-emerald-400 dark:hover:text-emerald-400`}
-            >
-              <Icon icon="ph:caret-right" className="size-4 rtl:rotate-180" />
-            </button>
+              <StarField className="pointer-events-none absolute inset-0 size-full text-emerald-800/[0.05] dark:text-emerald-400/[0.06]" />
+              <div className="relative px-2 py-4 sm:px-10">
+                {segments.map((seg, si) => {
+                  const startsSurah = seg.items[0]?.ayah.ayah === 1;
+                  const showBismillah = startsSurah && seg.surah.n !== 1 && seg.surah.n !== 9;
+                  return (
+                    <div key={seg.key} className={si > 0 ? "mt-10" : ""}>
+                      {startsSurah ? (
+                        <>
+                          {/* surah header cartouche */}
+                          <div className="flex items-center justify-center gap-3">
+                            <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
+                            <div className="rounded-2xl border border-emerald-700/30 bg-emerald-50/70 px-6 py-2 dark:border-emerald-400/25 dark:bg-emerald-500/10">
+                              <span
+                                lang="ar"
+                                dir="rtl"
+                                className="font-arabic text-3xl text-emerald-800 sm:text-4xl dark:text-emerald-300"
+                              >
+                                {seg.surah.arabic}
+                              </span>
+                            </div>
+                            <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
+                          </div>
+                          <p className={`mt-3 text-center text-sm ${mutedCls}`}>
+                            {seg.surah.translit} ·{" "}
+                            {t.revelation[seg.surah.revelation] ?? seg.surah.revelation} ·{" "}
+                            {seg.surah.ayahs} {t.ayahs}
+                          </p>
+                        </>
+                      ) : (
+                        // a surah carried over from the previous unit
+                        <div className="flex items-center justify-center gap-3">
+                          <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
+                          <span lang="ar" dir="rtl" className={`font-arabic text-lg ${mutedCls}`}>
+                            {seg.surah.arabic}
+                            {si === 0 ? ` — ${t.continued}` : ""}
+                          </span>
+                          <span className="h-px flex-1 bg-emerald-700/15 dark:bg-emerald-400/15" />
+                        </div>
+                      )}
+
+                      {showBismillah ? (
+                        <p
+                          lang="ar"
+                          dir="rtl"
+                          className="mt-7 text-center font-arabic text-2xl text-emerald-900 sm:text-3xl dark:text-emerald-200"
+                        >
+                          {BISMILLAH}
+                        </p>
+                      ) : null}
+
+                      {/* flowing Uthmani text — each verse hoverable/tappable */}
+                      <div
+                        lang="ar"
+                        dir="rtl"
+                        className="mt-7 text-right font-arabic text-zinc-900 dark:text-zinc-100"
+                        style={{ fontSize: `${1.7 * scale}rem`, lineHeight: 2.35 }}
+                      >
+                        {seg.items.map(({ ayah, i }) => {
+                          const text =
+                            ayah.ayah === 1 && showBismillah
+                              ? stripLeadingBasmala(ayah.arabic)
+                              : ayah.arabic;
+                          const on = i === activeIdx || i === playingIdx;
+                          return (
+                            <span
+                              key={ayah.n}
+                              id={`ayah-${i}`}
+                              data-ayah={i}
+                              onMouseEnter={transMode === "hover" ? (e) => openTip(i, e) : undefined}
+                              onMouseLeave={transMode === "hover" ? scheduleTipClose : undefined}
+                              onClick={transMode !== "off" ? (e) => openTip(i, e) : undefined}
+                              className={`rounded-lg px-0.5 transition-colors ${
+                                transMode !== "off" ? "cursor-pointer" : ""
+                              } ${
+                                on
+                                  ? "bg-emerald-200/70 dark:bg-emerald-400/25"
+                                  : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
+                              }`}
+                            >
+                              {text}
+                              <AyahMark n={ayah.ayah} />{" "}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {unit.mode === "page" ? (
+                  <p className={`mt-8 text-center text-sm ${goldCls}`}>﴿ {toArabicNum(unit.n)} ﴾</p>
+                ) : null}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* discoverability hint for the translation bubble */}
+          {transMode !== "off" && !anchor ? (
+            <p className={`mt-4 flex items-center justify-center gap-2 text-xs ${mutedCls}`}>
+              <Icon icon="ph:hand-pointing" className="size-4" />
+              {transMode === "hover" ? t.hoverHint : t.clickHint}
+            </p>
+          ) : null}
+
+          {/* The tooltip is the reading experience, but it only exists after a
+              pointer event — so the translation also ships as real text here,
+              where a crawler (and anyone who prefers a list) can read it. */}
+          <details className={`mt-6 rounded-2xl border ${lineCls} p-4`}>
+            <summary className="cursor-pointer text-sm font-semibold">
+              {d.quranBrowse.translationList}
+            </summary>
+            <ol className="mt-4 space-y-4">
+              {ayahs.map((a, i) => (
+                <li key={a.n} className="flex gap-3">
+                  <span className={`shrink-0 font-mono text-xs ${goldCls}`}>
+                    {a.surah}:{a.ayah}
+                  </span>
+                  <p
+                    lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
+                    dir={transIsRtl ? "rtl" : "ltr"}
+                    className={`leading-relaxed ${mutedCls} ${
+                      transIsRtl ? "text-right font-arabic text-base" : "text-sm"
+                    }`}
+                  >
+                    {translationAt(i)}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </div>
+
+        {/* ---- desktop sidebar ---- */}
+        <aside className="hidden lg:sticky lg:top-20 lg:block lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pb-2">
+          <ControlsPanel q={q} />
+        </aside>
+      </div>
+
+      {children}
+
+      {/* keeps the page footer clear of the fixed mobile bar */}
+      <div className="h-20 lg:hidden" aria-hidden="true" />
+
+      {/* ---- mobile: one bar with the controls and the player ---- */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-40 border-t ${lineCls} bg-white/95 backdrop-blur-md lg:hidden dark:bg-zinc-950/95`}
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <SeekBar q={q} className="m-0 block h-1 w-full rounded-none" />
+        <div className="flex items-center gap-2 px-3 py-2">
+          <button
+            type="button"
+            onClick={prevAyah}
+            aria-label={t.prevAyah}
+            className={`size-9 shrink-0 ${iconBtnCls}`}
+          >
+            <Icon icon="ph:skip-back-fill" className="size-4 rtl:rotate-180" />
+          </button>
+          <button
+            type="button"
+            onClick={togglePlay}
+            aria-label={isPlaying ? t.pause : t.playSurah}
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-emerald-700 text-white shadow-lg shadow-emerald-700/25 dark:bg-emerald-400 dark:text-emerald-950"
+          >
+            <Icon icon={isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-5" />
+          </button>
+          <button
+            type="button"
+            onClick={nextAyah}
+            aria-label={t.nextAyah}
+            className={`size-9 shrink-0 ${iconBtnCls}`}
+          >
+            <Icon icon="ph:skip-forward-fill" className="size-4 rtl:rotate-180" />
+          </button>
+
+          <div className="min-w-0 flex-1 leading-tight">
+            <p className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+              <span lang="ar" dir="rtl" className="font-arabic">
+                {headerSurah?.arabic ?? ""}
+              </span>
+              {playingIdx !== null ? (
+                <span className={goldCls}> · {labelFor(playingIdx)}</span>
+              ) : null}
+            </p>
+            <p className={`truncate text-[11px] ${mutedCls}`}>
+              {RECITERS.find((r) => r.id === reciter)?.name ?? ""}
+            </p>
           </div>
 
           <button
             type="button"
-            onClick={togglePlay}
-            disabled={!audioReady}
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:opacity-50 dark:bg-emerald-400 dark:text-emerald-950 dark:hover:bg-emerald-300"
+            onClick={() => setSheetOpen(true)}
+            aria-label={t.openControls}
+            aria-expanded={sheetOpen}
+            className={`size-9 shrink-0 ${iconBtnCls}`}
           >
-            <Icon icon={isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-4" />
-            {isPlaying ? t.pause : t.playSurah}
+            <Icon icon="ph:sliders-horizontal" className="size-4" />
           </button>
-        </div>
-
-        {/* row 2 — recitation + reading settings */}
-        <div className={`mt-4 flex flex-wrap items-center gap-2.5 border-t ${lineCls} pt-4`}>
-          <ControlSelect
-            icon="ph:microphone-stage"
-            ariaLabel={t.reciter}
-            value={reciter}
-            onChange={(e) => {
-              audioRef.current?.pause();
-              setIsPlaying(false);
-              setReciter(e.target.value);
-            }}
-          >
-            {RECITERS.map((r) => (
-              <option key={r.id} value={r.id}>{r.name}</option>
-            ))}
-          </ControlSelect>
-
-          <ControlSelect
-            icon="ph:gauge"
-            ariaLabel={t.speed}
-            value={speed}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              setSpeed(v);
-              if (audioRef.current) audioRef.current.playbackRate = v;
-            }}
-          >
-            {SPEEDS.map((s) => (
-              <option key={s} value={s}>{s}×</option>
-            ))}
-          </ControlSelect>
-
-          <ControlSelect
-            icon="ph:translate"
-            ariaLabel={t.translation}
-            value={transEdition}
-            onChange={(e) => setTransEdition(e.target.value)}
-          >
-            {TRANSLATIONS.map((tr) => (
-              <option key={tr.id} value={tr.id}>{tr.name}</option>
-            ))}
-          </ControlSelect>
-
-          {/* reading settings, pushed to the trailing edge on wider screens */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:ms-auto">
-            {/* translation reveal mode */}
-            <div
-              className={`flex items-center rounded-full border p-0.5 ${lineCls}`}
-              role="group"
-              aria-label={t.translationMode}
-            >
-              <button type="button" onClick={() => setTransMode("hover")} className={seg(transMode === "hover")}>{t.modeHover}</button>
-              <button type="button" onClick={() => setTransMode("click")} className={seg(transMode === "click")}>{t.modeClick}</button>
-              <button type="button" onClick={() => setTransMode("off")} className={seg(transMode === "off")}>{t.modeOff}</button>
-            </div>
-
-            {/* text size, with a live readout */}
-            <div
-              className={`flex items-center gap-0.5 rounded-full border bg-white p-0.5 ${lineCls} dark:bg-zinc-900`}
-              role="group"
-              aria-label={t.textSize}
-            >
-              <button
-                type="button"
-                onClick={() => setScale((s) => Math.max(0.7, +(s - 0.1).toFixed(2)))}
-                disabled={scale <= 0.7}
-                aria-label={`${t.textSize} −`}
-                className={`grid size-7 place-items-center rounded-full ${mutedCls} transition-colors hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-40 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400`}
-              >
-                <Icon icon="ph:text-aa" className="size-3" />
-              </button>
-              <span className={`min-w-11 text-center text-xs tabular-nums ${mutedCls}`}>
-                {Math.round(scale * 100)}%
-              </span>
-              <button
-                type="button"
-                onClick={() => setScale((s) => Math.min(1.8, +(s + 0.1).toFixed(2)))}
-                disabled={scale >= 1.8}
-                aria-label={`${t.textSize} +`}
-                className={`grid size-7 place-items-center rounded-full ${mutedCls} transition-colors hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-40 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400`}
-              >
-                <Icon icon="ph:text-aa" className="size-4" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
-      {listError ? <p className="mt-6 text-sm text-red-600 dark:text-red-400">{t.errList}</p> : null}
-      {err ? <p className="mt-6 text-sm text-red-600 dark:text-red-400">{err}</p> : null}
-      {loading && !listError && !err ? (
-        <div className="mt-6 h-96 animate-pulse rounded-3xl bg-zinc-100 dark:bg-zinc-900" aria-hidden="true" />
-      ) : null}
-
-      {/* ---- the mushaf page ---- */}
-      {ready && surah ? (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={surahNumber}
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative mt-6 overflow-hidden rounded-[1.75rem] border-2 border-emerald-700/25 bg-[#fbfaf2] p-2 dark:border-emerald-400/20 dark:bg-zinc-900/60"
-          >
-            <StarField className="pointer-events-none absolute inset-0 size-full text-emerald-800/[0.05] dark:text-emerald-400/[0.06]" />
-            <div className="relative rounded-[1.4rem] border border-emerald-700/20 px-4 py-8 sm:px-10 dark:border-emerald-400/15">
-              {/* surah header cartouche */}
-              <div className="flex items-center justify-center gap-3">
-                <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
-                <div className="rounded-full border border-emerald-700/30 bg-emerald-50/70 px-6 py-2 dark:border-emerald-400/25 dark:bg-emerald-500/10">
-                  <span lang="ar" dir="rtl" className="font-arabic text-3xl text-emerald-800 sm:text-4xl dark:text-emerald-300">
-                    {surah.name}
-                  </span>
-                </div>
-                <Star8 className="size-5 shrink-0 text-amber-500/70 dark:text-amber-300/60" />
-              </div>
-              <p className={`mt-3 text-center text-sm ${mutedCls}`}>
-                {surah.englishName} · {t.revelation[surah.revelationType] ?? surah.revelationType} ·{" "}
-                {surah.numberOfAyahs} {t.ayahs}
-              </p>
-
-              {showBismillah ? (
-                <p
-                  lang="ar"
-                  dir="rtl"
-                  className="mt-7 text-center font-arabic text-2xl text-emerald-900 sm:text-3xl dark:text-emerald-200"
-                >
-                  {BISMILLAH}
-                </p>
-              ) : null}
-
-              {/* flowing Uthmani text — each verse hoverable/clickable */}
-              <div
-                lang="ar"
-                dir="rtl"
-                className="mt-7 text-right font-arabic text-zinc-900 dark:text-zinc-100"
-                style={{ fontSize: `${1.7 * scale}rem`, lineHeight: 2.35 }}
-              >
-                {ready.arabic.map((ayah, i) => {
-                  const text = i === 0 && showBismillah ? stripLeadingBasmala(ayah.text) : ayah.text;
-                  const on = i === activeIdx || i === playingIdx;
-                  return (
-                    <span
-                      key={ayah.numberInSurah}
-                      id={`ayah-${i}`}
-                      onMouseEnter={transMode === "hover" ? () => setActiveIdx(i) : undefined}
-                      onClick={transMode !== "off" ? () => setActiveIdx(i) : undefined}
-                      className={`rounded-lg px-0.5 transition-colors ${transMode !== "off" ? "cursor-pointer" : ""} ${
-                        on
-                          ? "bg-emerald-200/70 dark:bg-emerald-400/25"
-                          : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
-                      }`}
-                    >
-                      {text}
-                      <AyahMark n={ayah.numberInSurah} />{" "}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      ) : null}
-
-      {/* ---- sticky translation box ---- */}
-      {ready && transMode !== "off" ? (
-        <div className="sticky bottom-4 z-10 mt-4">
-          <div className={`${cardCls} flex items-start gap-3 p-4 shadow-lg shadow-black/5 backdrop-blur`}>
-            {activeIdx != null && ready.translation[activeIdx] ? (
-              <>
+      {/* ---- mobile controls sheet ---- */}
+      <AnimatePresence>
+        {sheetOpen ? (
+          <>
+            <motion.button
+              key="backdrop"
+              type="button"
+              tabIndex={-1}
+              aria-label={t.close}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSheetOpen(false)}
+              className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+            />
+            <motion.div
+              key="sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label={t.controls}
+              initial={reduce ? { opacity: 0 } : { y: "100%" }}
+              animate={reduce ? { opacity: 1 } : { y: 0 }}
+              exit={reduce ? { opacity: 0 } : { y: "100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              className={`fixed inset-x-0 bottom-0 z-50 max-h-[86vh] overflow-y-auto rounded-t-3xl border-t ${lineCls} bg-zinc-50 px-4 pt-3 pb-8 lg:hidden dark:bg-zinc-950`}
+            >
+              <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              <div className="mb-3 flex items-center justify-between">
+                <p className="font-display text-lg">{t.controls}</p>
                 <button
                   type="button"
-                  onClick={() => (playingIdx === activeIdx && isPlaying ? audioRef.current?.pause() : playIdx(activeIdx))}
-                  disabled={!audioReady}
-                  aria-label={t.playVerse}
-                  className="grid size-10 shrink-0 place-items-center rounded-full bg-emerald-700 text-white transition-colors hover:bg-emerald-800 disabled:opacity-50 dark:bg-emerald-400 dark:text-emerald-950"
+                  onClick={() => setSheetOpen(false)}
+                  aria-label={t.close}
+                  className={`size-8 ${iconBtnCls}`}
                 >
-                  <Icon icon={playingIdx === activeIdx && isPlaying ? "ph:pause-fill" : "ph:play-fill"} className="size-4" />
+                  <Icon icon="ph:x" className="size-4" />
                 </button>
-                <div className="min-w-0">
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${goldCls}`}>
-                    {t.verseRef(surahNumber, activeIdx + 1)}
-                  </p>
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={activeIdx}
-                      initial={reduce ? false : { opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
-                      dir={transIsRtl ? "rtl" : "ltr"}
-                      className={`mt-1 leading-relaxed ${transIsRtl ? "font-arabic text-lg" : "text-sm"}`}
-                    >
-                      {ready.translation[activeIdx].text}
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
-              </>
-            ) : (
-              <p className={`flex items-center gap-2 text-sm ${mutedCls}`}>
-                <Icon icon="ph:hand-pointing" className="size-4" />
-                {transMode === "hover" ? t.hoverHint : t.clickHint}
-              </p>
-            )}
-          </div>
-        </div>
+              </div>
+              <ControlsPanel q={q} onNavigate={() => setSheetOpen(false)} />
+            </motion.div>
+          </>
+        ) : null}
+      </AnimatePresence>
+
+      {/* ---- the translation, as a bubble on the verse itself ---- */}
+      {anchor && tipText ? (
+        <AyahTooltip
+          anchor={anchor}
+          label={labelFor(anchor.idx)}
+          text={tipText}
+          lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
+          dir={transIsRtl ? "rtl" : "ltr"}
+          playing={playingIdx === anchor.idx && isPlaying}
+          canPlay={ayahs.length > 0}
+          dismissible={transMode === "click"}
+          playLabel={t.playVerse}
+          closeLabel={t.close}
+          onTogglePlay={() =>
+            playingIdx === anchor.idx && isPlaying ? audioRef.current?.pause() : playIdx(anchor.idx)
+          }
+          onClose={() => setAnchor(null)}
+          onPointerEnter={cancelTipClose}
+          onPointerLeave={scheduleTipClose}
+          reduce={reduce}
+        />
       ) : null}
 
       <audio
@@ -488,8 +658,11 @@ export default function QuranClient() {
         onEnded={onEnded}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
+        onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
         hidden
       />
     </ToolShell>
   );
 }
+

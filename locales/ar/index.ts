@@ -4,6 +4,8 @@ import { meta } from "./meta";
 import { home } from "./home";
 import { about } from "./about";
 import { tools } from "./tools";
+import { quranBrowse } from "./tools/quran-browse";
+import { hadithBrowse } from "./tools/hadith-browse";
 
 export const ar: typeof en = {
   code: "ar",
@@ -14,4 +16,6 @@ export const ar: typeof en = {
   home,
   about,
   tools,
+  quranBrowse,
+  hadithBrowse,
 };

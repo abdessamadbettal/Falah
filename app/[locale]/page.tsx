@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { fetchCommunity } from "@/lib/github";
 import type { Locale } from "@/lib/i18n";
 import { HomeJsonLd, homeMetadata } from "@/lib/tool-page";
 import HomeClient from "./home-client";
@@ -12,10 +13,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Home({ params }: Props) {
   const { locale } = await params;
+  const community = await fetchCommunity();
   return (
     <>
       <HomeJsonLd locale={locale} />
-      <HomeClient />
+      <HomeClient community={community} />
     </>
   );
 }

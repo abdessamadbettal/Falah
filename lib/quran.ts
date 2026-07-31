@@ -20,7 +20,16 @@ export type Ayah = {
   number?: number;
   /** Present on audio editions: the recitation mp3 URL for this ayah. */
   audio?: string;
+  /** Mushaf page this verse falls on (1–604). */
+  page?: number;
+  juz?: number;
+  /** Only on page responses: the surah this verse belongs to. A page can
+   * straddle two surahs, so the verse — not the request — carries it. */
+  surah?: Surah;
 };
+
+/** Pages in the standard Madani mushaf. */
+export const TOTAL_PAGES = 604;
 
 export function useSurahs() {
   const [surahs, setSurahs] = useState<Surah[] | null>(null);
@@ -57,6 +66,23 @@ export async function fetchSurahEditions(
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
   return (json.data as { ayahs: Ayah[] }[]).map((e) => e.ayahs);
+}
+
+/** Fetch one mushaf page in several editions, in the same shape as
+ * `fetchSurahEditions`. The page endpoint accepts a single edition only, so
+ * the editions go out in parallel. */
+export async function fetchPageEditions(
+  page: number,
+  editions: string[],
+): Promise<Ayah[][]> {
+  return Promise.all(
+    editions.map(async (edition) => {
+      const res = await fetch(`${API}/page/${page}/${edition}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      return (json.data as { ayahs: Ayah[] }).ayahs;
+    }),
+  );
 }
 
 export async function fetchAyah(

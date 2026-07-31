@@ -1,45 +1,19 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { motion, useReducedMotion } from "motion/react";
+import { Contribute } from "@/components/contribute";
 import { useDict } from "@/components/locale";
 import {
+  brandCls,
   Eyebrow,
   Footer,
-  GITHUB_URL,
   Header,
-  StarField,
-  brandCls,
-  btnPrimary,
-  cardCls,
   lineCls,
   mutedCls,
+  Reveal,
+  StarField,
 } from "@/components/ui";
-
-/** A reveal that respects reduced-motion — the About page's one recurring
- * gesture, staggered by index within each group. */
-function Reveal({
-  i = 0,
-  className,
-  children,
-}: {
-  i?: number;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay: reduce ? 0 : i * 0.06 }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+import type { Community } from "@/lib/github";
 
 function Intro() {
   const d = useDict();
@@ -122,48 +96,7 @@ function Story() {
   );
 }
 
-/** Closing invitation — reuses the Sadaqah Jariyah / contribute copy. */
-function Contribute() {
-  const d = useDict();
-  const reduce = useReducedMotion();
-  return (
-    <section className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-20 lg:grid-cols-2">
-      <Reveal>
-        <Eyebrow>{d.home.contributeEyebrow}</Eyebrow>
-        <h2 className="mt-6 font-display text-3xl sm:text-4xl">
-          {d.home.contributeH2}
-        </h2>
-        <p className={`mt-4 leading-relaxed ${mutedCls}`}>{d.home.contributeP}</p>
-        <a
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noreferrer"
-          className={`mt-8 ${btnPrimary}`}
-        >
-          <Icon icon="ph:git-pull-request" className="size-4" />
-          {d.home.contributeCta}
-        </a>
-      </Reveal>
-      <ul className="space-y-3 self-center">
-        {d.home.contributions.map((c, i) => (
-          <motion.li
-            key={c.label}
-            className={`flex items-center gap-4 ${cardCls} px-5 py-4`}
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: reduce ? 0 : i * 0.06 }}
-          >
-            <Icon icon={c.icon} className={`size-5 shrink-0 ${brandCls}`} />
-            <span className="text-sm font-medium">{c.label}</span>
-          </motion.li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-export default function AboutClient() {
+export default function AboutClient({ community }: { community: Community }) {
   return (
     <>
       <Header />
@@ -171,7 +104,7 @@ export default function AboutClient() {
         <Intro />
         <Principles />
         <Story />
-        <Contribute />
+        <Contribute community={community} />
       </main>
       <Footer />
     </>
