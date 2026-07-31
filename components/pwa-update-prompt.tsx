@@ -2,7 +2,7 @@
 
 import { useSerwist } from "@serwist/next/react";
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 const SPARKLE_D =
@@ -12,12 +12,15 @@ export function PwaUpdatePrompt() {
   const { serwist } = useSerwist();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const userRequestedUpdate = useRef(false);
 
   useEffect(() => {
     if (!serwist) return;
 
     const onWaiting = () => setUpdateAvailable(true);
-    const onControlling = () => window.location.reload();
+    const onControlling = () => {
+      if (userRequestedUpdate.current) window.location.reload();
+    };
 
     serwist.addEventListener("waiting", onWaiting);
     serwist.addEventListener("controlling", onControlling);
@@ -29,6 +32,7 @@ export function PwaUpdatePrompt() {
   }, [serwist]);
 
   const activate = () => {
+    userRequestedUpdate.current = true;
     serwist?.messageSkipWaiting();
   };
 
