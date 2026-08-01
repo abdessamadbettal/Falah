@@ -24,7 +24,7 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 - **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
 - **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
 - **No Accounts Required:** Open the app and instantly access every feature without signing up.
-- **Multilingual Support:** Available in [**English**](https://falah.io/en) and [**Arabic (العربية)**](https://falah.io/ar) with full right-to-left layout. French is on the roadmap.
+- **Multilingual Support:** Available in [**English**](https://falah.io/en), [**Arabic (العربية)**](https://falah.io/ar) with full right-to-left layout, and [**French (Français)**](https://falah.io/fr).
 
 ---
 
@@ -249,7 +249,7 @@ Falah.io is a community-driven project built as **Sadaqah Jariyah**.
 There are many ways to contribute:
 
 - 💻 Submit code improvements.
-- 🌐 Help translate the project (Arabic today — French is next).
+- 🌐 Help translate the project (English, Arabic and French today).
 - 🐞 Report bugs.
 - 📖 Improve documentation.
 - 📢 Share the project with others.
