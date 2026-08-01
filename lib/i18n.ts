@@ -1,13 +1,12 @@
 import { en } from "@/locales/en";
 import { ar } from "@/locales/ar";
+import { fr } from "@/locales/fr";
 
-// French (locales/fr.ts) is on hold for now — not deleted, just not wired
-// up — and can be added back to this list once it's ready.
-export const locales = ["en", "ar"] as const;
+export const locales = ["en", "ar", "fr"] as const;
 export type Locale = (typeof locales)[number];
 export type Dict = typeof en;
 
-const dicts: Record<Locale, Dict> = { en, ar };
+const dicts: Record<Locale, Dict> = { en, ar, fr };
 
 export function getDict(locale: string): Dict {
   return dicts[(isLocale(locale) ? locale : "en") as Locale];
