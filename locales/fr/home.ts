@@ -121,6 +121,10 @@ export const home = {
       name: "Hisnul Muslim (La Citadelle du Musulman)",
       description: "Une vaste collection catégorisée d'invocations authentiques et d'Azkar quotidiens pour chaque occasion et circonstance."
     },
+    khatam: {
+      name: "Planificateur de Khatam Al-Coran",
+      description: "Planifiez votre lecture du Coran pour terminer à une date précise. Calculez exactement combien de pages vous devez lire par jour et par prière."
+    },
     zakat: {
       name: "Calculatrice Complète de Zakat",
       description: "Un outil rapide et précis pour calculer la Zakat sur l'argent, l'or, l'argent, les investissements et les actifs commerciaux en fonction du Nissab en temps réel."
