@@ -13,6 +13,8 @@ import { inheritance } from "./inheritance";
 import { age } from "./age";
 import { cards } from "./cards";
 import { stamp } from "./stamp";
+import { hadith } from "./hadith";
+import { hadithBrowse } from "./hadith-browse";
 
 export const tools = {
   prayer,
@@ -30,4 +32,6 @@ export const tools = {
   age,
   cards,
   stamp,
+  hadith,
+  hadithBrowse,
 };

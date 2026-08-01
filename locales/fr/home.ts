@@ -107,7 +107,11 @@ export const home = {
     },
     tafseer: {
       name: "Explorateur de Tafsir Coranique",
-      description: "Lisez des explications authentiques et des commentaires savants verset par verset pour approfondir votre compréhension du Coran."
+      description: "Lisez des explications faisant autorité et des commentaires d'érudits verset par verset pour approfondir votre compréhension du Coran."
+    },
+    hadith: {
+      name: "Recueils de Hadiths (Kutub as-Sittah)",
+      description: "Plus de 36 000 hadiths de Bukhari, Mouslim, des quatre Sounan, de la Mouwatta et des Quarante Hadiths — texte intégral en arabe avec traduction et authentification."
     },
     names: {
       name: "99 Noms d'Allah (Asma ul Husna)",
