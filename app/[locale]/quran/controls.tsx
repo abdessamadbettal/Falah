@@ -39,6 +39,9 @@ export type QuranUi = {
   setTransEdition: (id: string) => void;
   transMode: TransMode;
   setTransMode: (m: TransMode) => void;
+  /** Opt-in: reveal each verse's translation as the reciter reaches it. */
+  followTrans: boolean;
+  toggleFollowTrans: () => void;
   scale: number;
   setScale: (next: (s: number) => number) => void;
   speed: number;
@@ -438,7 +441,51 @@ function RecitationCard({ q }: { q: QuranUi }) {
       <div className="mt-3">
         <Transport q={q} />
       </div>
+
+      <div className={`mt-4 border-t pt-3 ${lineCls}`}>
+        <FollowTransToggle q={q} />
+      </div>
     </section>
+  );
+}
+
+/** Reading along is a preference, not a default — the bubble stays shut during
+ * recitation until this is switched on. Meaningless while the translation is
+ * hidden altogether, so it disables itself and says why. */
+function FollowTransToggle({ q }: { q: QuranUi }) {
+  const { t } = q;
+  const disabled = q.transMode === "off";
+  const on = q.followTrans && !disabled;
+  return (
+    <div className={`flex items-start justify-between gap-3 ${disabled ? "opacity-50" : ""}`}>
+      <span className="min-w-0">
+        <span className="block text-xs font-medium text-zinc-900 dark:text-zinc-100">
+          {t.followTrans}
+        </span>
+        <span className={`mt-0.5 block text-[11px] leading-snug ${mutedCls}`}>
+          {disabled ? t.offHint : t.followTransHint}
+        </span>
+      </span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={on}
+        aria-label={t.followTrans}
+        disabled={disabled}
+        onClick={q.toggleFollowTrans}
+        className={`mt-0.5 inline-flex h-6 w-10 shrink-0 items-center rounded-full border p-0.5 transition-colors disabled:cursor-not-allowed ${
+          on
+            ? "border-emerald-600 bg-emerald-600 dark:border-emerald-400 dark:bg-emerald-400"
+            : `${lineCls} bg-zinc-200 dark:bg-zinc-800`
+        }`}
+      >
+        <span
+          className={`size-4 rounded-full bg-white shadow-sm transition-transform dark:bg-zinc-950 ${
+            on ? "translate-x-4 rtl:-translate-x-4" : ""
+          }`}
+        />
+      </button>
+    </div>
   );
 }
 

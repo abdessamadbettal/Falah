@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import { goldCls, lineCls, mutedCls, Star8, StarField, ToolShell } from "@/components/ui";
 import { stripLeadingBasmala } from "@/lib/arabic";
@@ -34,6 +34,42 @@ const toArabicNum = (n: number) =>
  * up on the other side. sessionStorage survives the navigation; React state
  * does not. */
 const AUTOPLAY_KEY = "falah:quran:autoplay";
+
+/** Same trick for the follow-along preference: the recitation rolls into the
+ * next unit on its own, and a toggle that quietly reset itself there would
+ * read as a bug rather than a default. sessionStorage is the source of truth
+ * rather than a copy of it, so there is no state to fall out of sync. */
+const FOLLOW_KEY = "falah:quran:followtrans";
+
+const followListeners = new Set<() => void>();
+
+function subscribeFollow(cb: () => void) {
+  followListeners.add(cb);
+  return () => {
+    followListeners.delete(cb);
+  };
+}
+
+function getFollow() {
+  try {
+    return sessionStorage.getItem(FOLLOW_KEY) === "1";
+  } catch {
+    // sessionStorage unavailable (private mode, etc.) — the default holds.
+    return false;
+  }
+}
+
+/** Prerendered HTML can't know the preference; it starts off, like a fresh visit. */
+function getFollowOnServer() {
+  return false;
+}
+
+function setFollow(on: boolean) {
+  try {
+    sessionStorage.setItem(FOLLOW_KEY, on ? "1" : "0");
+  } catch {}
+  for (const cb of followListeners) cb();
+}
 
 /** The 8-pointed star medallion that closes each verse. */
 function AyahMark({ n }: { n: number }) {
@@ -70,7 +106,7 @@ export default function QuranClient({
 
   const [reciter, setReciter] = useState(RECITERS[0].id);
   const [transEdition, setTransEdition] = useState(unit.edition);
-  const [transMode, setTransMode] = useState<TransMode>("hover");
+  const [transMode, setTransMode] = useState<TransMode>("click");
   const [scale, setScale] = useState(1);
   const [speed, setSpeed] = useState(1);
 
@@ -87,6 +123,12 @@ export default function QuranClient({
   const [isMuted, setIsMuted] = useState(false);
   const [repeatMode, setRepeatMode] = useState<"off" | "ayah" | "surah">("off");
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  /** Off by default: a bubble that opens itself on every verse covers the
+   * mushaf you came to read. Listeners who do want to read along turn it on
+   * in the player, and it follows the recitation from there — across the
+   * navigation into the next unit included. */
+  const followTrans = useSyncExternalStore(subscribeFollow, getFollow, getFollowOnServer);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -213,8 +255,11 @@ export default function QuranClient({
     void el.play().catch(() => {});
     setPlayingIdx(idx);
     setActiveIdx(idx);
-    // Follow along: park the translation bubble on the verse being recited.
-    if (transMode !== "off") {
+    // Follow along: park the translation bubble on the verse being recited —
+    // only for readers who asked for it in the player. Read straight from the
+    // store: the autoplay effect calls this on mount, before the subscription
+    // has had a chance to re-render with the restored value.
+    if (getFollow() && transMode !== "off") {
       if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
       setAnchor({ idx, rect: 0, xRatio: 0.5 });
     }
@@ -323,6 +368,17 @@ export default function QuranClient({
     setTransMode: (m) => {
       setTransMode(m);
       if (m === "off") setAnchor(null);
+    },
+    followTrans,
+    toggleFollowTrans: () => {
+      const next = !followTrans;
+      setFollow(next);
+      // Reflect the choice on the verse being recited right away, rather than
+      // making the reader wait for the next one to start.
+      if (!next) setAnchor(null);
+      else if (playingIdx !== null && transMode !== "off") {
+        setAnchor({ idx: playingIdx, rect: 0, xRatio: 0.5 });
+      }
     },
     scale,
     setScale,

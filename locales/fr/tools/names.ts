@@ -14,6 +14,7 @@ export const names = {
   searchAria: "Rechercher les 99 noms",
   noMatch: (q: string) => `Aucun nom ne correspond à « ${q} ». Essayez une recherche plus courte.`,
   nameLabel: (n: number) => `Nom ${n} sur 99`,
+  readMore: "En savoir plus",
   copy: "Copier",
   copied: "Copié",
   prev: "Nom précédent",
