@@ -18,16 +18,26 @@ const COPY = {
     body: "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
     retry: "إعادة المحاولة",
   },
+  fr: {
+    title: "Vous êtes hors ligne",
+    body: "Veuillez vérifier votre connexion Internet et réessayer.",
+    retry: "Réessayer",
+  },
 } as const;
+
+function isCopyLocale(value: string): value is keyof typeof COPY {
+  return value in COPY;
+}
 
 function detectLocale(): keyof typeof COPY {
   try {
     const stored = localStorage.getItem("locale");
-    if (stored === "ar" || stored === "en") return stored;
+    if (stored && isCopyLocale(stored)) return stored;
   } catch {
     // localStorage unavailable (private mode, etc.) — fall through to navigator
   }
-  return (navigator.language || "").slice(0, 2) === "ar" ? "ar" : "en";
+  const nav = (navigator.language || "").slice(0, 2);
+  return isCopyLocale(nav) ? nav : "en";
 }
 
 // No storage/language-change event fires while this page is open, so the

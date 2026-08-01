@@ -42,6 +42,13 @@ export function surahName(locale: Locale, s: SurahMeta): string {
   return locale === "ar" ? bareArabic(s.arabic).replace(/^سورة\s*/, "") : s.translit;
 }
 
+/** The gloss the reader's own language uses for that name: "The Cave" /
+ * "La Caverne". It is what people actually search for — "sourate la
+ * caverne" — so it has to be translated, never left in English. */
+export function surahMeaning(locale: Locale, s: SurahMeta): string {
+  return locale === "fr" ? s.meaningFr : s.meaning;
+}
+
 export function juzName(locale: Locale, n: number): string {
   const j = JUZ[n - 1];
   return locale === "ar" ? bareArabic(j.arabic) : j.translit;
@@ -68,10 +75,18 @@ export function shortSurahList(locale: Locale, numbers: number[]): string {
   return numbers.length > 2 ? `${label}…` : label;
 }
 
+/** Each language joins a list its own way: Arabic glues "و" to the last item,
+ * French spells out "et", English uses the ampersand titles have room for. */
+const LIST_JOIN: Record<Locale, { comma: string; tail: string }> = {
+  en: { comma: ", ", tail: " & " },
+  ar: { comma: "، ", tail: " و" },
+  fr: { comma: ", ", tail: " et " },
+};
+
 function joinNames(locale: Locale, names: string[]): string {
   if (names.length <= 1) return names[0] ?? "";
-  const tail = locale === "ar" ? " و" : " & ";
-  return `${names.slice(0, -1).join(locale === "ar" ? "، " : ", ")}${tail}${names.at(-1)}`;
+  const { comma, tail } = LIST_JOIN[locale];
+  return `${names.slice(0, -1).join(comma)}${tail}${names.at(-1)}`;
 }
 
 const BOOK_NAME: Record<Locale, string> = {

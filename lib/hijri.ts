@@ -117,7 +117,9 @@ export function formatHijri(h: HijriDate, locale: string = "en"): string {
   if (locale === "ar") {
     return `${toArabicDigits(h.day)} ${HIJRI_MONTHS_AR[h.month - 1]} ${toArabicDigits(h.year)} هـ`;
   }
-  return `${h.day} ${hijriMonthName(h.month, locale)} ${h.year} AH`;
+  // French writes the Hijri era "1447 H", not the English "1447 AH".
+  const era = locale === "fr" ? "H" : "AH";
+  return `${h.day} ${hijriMonthName(h.month, locale)} ${h.year} ${era}`;
 }
 
 export function toArabicDigits(n: number | string): string {

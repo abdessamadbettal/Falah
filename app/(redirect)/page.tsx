@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "Falah.io",
     type: "website",
     locale: "en_US",
-    alternateLocale: ["ar_MA"],
+    alternateLocale: ["ar_MA", "fr_FR"],
     images: [
       { url: OG_IMAGE, width: 1200, height: 630, alt: "Falah.io — Open-source Islamic Tools" },
     ],

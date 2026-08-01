@@ -17,6 +17,7 @@ import {
   shortSurahList,
   surahListLabel,
   surahName,
+  surahMeaning,
   surahPath,
   verseRef,
 } from "./quran-seo";
@@ -79,17 +80,18 @@ export async function buildQuranPage(
   if (mode === "surah") {
     const s = SURAHS[n - 1];
     const name = surahName(locale, s);
+    const meaning = surahMeaning(locale, s);
     const revelation = s.revelation === "Meccan" ? b.meccan : b.medinan;
     return {
       unit,
       path: surahPath(s.slug),
       crumb: `${b.surah} ${name}`,
-      title: b.surahTitle(name, s.meaning, s.n),
-      description: b.surahDesc(name, s.n, s.meaning, s.ayahs, revelation, s.juz),
+      title: b.surahTitle(name, meaning, s.n),
+      description: b.surahDesc(name, s.n, meaning, s.ayahs, revelation, s.juz),
       heading: {
         title: b.surahH1(name),
         side: locale === "ar" ? s.translit : s.arabic,
-        intro: b.surahIntro(name, s.n, s.meaning, s.ayahs, revelation, s.juz, s.page),
+        intro: b.surahIntro(name, s.n, meaning, s.ayahs, revelation, s.juz, s.page),
       },
       related: [...juzLinks, ...hizbLinks, ...pageLinks],
     };

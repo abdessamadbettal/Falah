@@ -8,7 +8,15 @@ import Link from "next/link";
 import { goldCls, lineCls, mutedCls, Star8 } from "@/components/ui";
 import { getDict, localePath, type Locale } from "@/lib/i18n";
 import { HIZB, JUZ, SURAHS, TOTAL_PAGES } from "@/lib/quran-meta";
-import { hizbPath, juzName, juzPath, mushafPath, surahName, surahPath } from "@/lib/quran-seo";
+import {
+  hizbPath,
+  juzName,
+  juzPath,
+  mushafPath,
+  surahMeaning,
+  surahName,
+  surahPath,
+} from "@/lib/quran-seo";
 
 /** The same passage seen as juz, hizb, mushaf page and surah. Real links, so
  * the four views of the Quran are reachable from one another. */
@@ -82,7 +90,7 @@ export function SurahIndex({ locale }: { locale: Locale }) {
                   {surahName(locale, s)}
                 </span>
                 <span className={`block truncate text-xs ${mutedCls}`}>
-                  {isAr ? b.ayahCount(s.ayahs) : `${s.meaning} · ${b.ayahCount(s.ayahs)}`}
+                  {isAr ? b.ayahCount(s.ayahs) : `${surahMeaning(locale, s)} · ${b.ayahCount(s.ayahs)}`}
                 </span>
               </span>
               {isAr ? null : (
