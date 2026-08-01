@@ -68,6 +68,14 @@ export function siteMetadata(d: Dict): Metadata {
     applicationName: "Falah.io",
     keywords: KEYWORDS,
     robots: { index: true, follow: true },
+    appleWebApp: {
+      statusBarStyle: "black-translucent",
+      title: "Falah.io",
+      startupImage: "/icon.png",
+    },
+    other: {
+      "apple-mobile-web-app-capable": "yes",
+    },
   };
 }
 

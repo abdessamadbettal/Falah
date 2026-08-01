@@ -1,3 +1,4 @@
+import withSerwist from "@serwist/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -5,4 +6,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
 };
 
-export default nextConfig;
+export default withSerwist({
+  swSrc: "sw/sw.ts",
+  swDest: "public/sw.js",
+  reloadOnOnline: true,
+})(nextConfig);
