@@ -27,4 +27,13 @@ export const khatam = {
   // States
   invalidDate: "La date de fin doit être postérieure à la date de début.",
   tooFast: "Vous ne pouvez pas terminer le Coran en moins d'un jour.",
+  
+  // Tracking
+  startKhatam: "Commencer ce Khatam",
+  resumeReading: "Reprendre la lecture",
+  cancelPlan: "Annuler le plan",
+  yourProgress: "Votre progression",
+  todayGoal: "Objectif d'aujourd'hui",
+  completed: "Terminé",
+  page: "Page",
 };

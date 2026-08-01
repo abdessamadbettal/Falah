@@ -53,6 +53,7 @@ export default function QuranClient({
   unit,
   heading,
   children,
+  isHub,
 }: {
   unit: ReaderUnit;
   /** H1, Arabic ornament and intro prose for this URL — built server-side
@@ -61,6 +62,8 @@ export default function QuranClient({
   /** Server-rendered links (the hub directory, or a unit's related units) —
    * already HTML, so crawlers see them without running any JavaScript. */
   children?: React.ReactNode;
+  /** Whether this is the root hub page (prevents auto-overwriting memory with Surah 1) */
+  isHub?: boolean;
 }) {
   const d = useDict();
   const locale = useLocale();
@@ -124,6 +127,54 @@ export default function QuranClient({
     playIdx(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const restoredUnit = useRef("");
+
+  // Save and restore the current reading location so other features can resume
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const currentUnitKey = `${unit.mode}-${unit.n}`;
+    let didRestore = false;
+
+    // Try to restore on first visit to this unit
+    if (!isHub && restoredUnit.current !== currentUnitKey) {
+      restoredUnit.current = currentUnitKey;
+      try {
+        const read = localStorage.getItem("falah:quran:last-read");
+        if (read) {
+          const parsed = JSON.parse(read);
+          if (parsed.mode === unit.mode && parsed.n === unit.n && parsed.ayah) {
+            const idx = ayahs.findIndex((a) => a.ayah === parsed.ayah);
+            if (idx !== -1) {
+              setTimeout(() => {
+                setActiveIdx(idx);
+                document
+                  .getElementById(`ayah-${idx}`)
+                  ?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+              }, 100);
+              didRestore = true;
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // Do not overwrite memory with Surah 1 just because they visited the hub,
+    // unless they actually interact with the text (play audio or click verse).
+    if (isHub && activeIdx === null && playingIdx === null) return;
+
+    // Skip saving on the exact render we restored, so we don't save a stale activeIdx
+    if (didRestore) return;
+
+    const idx = activeIdx ?? playingIdx ?? 0;
+    const ayah = ayahs[idx]?.ayah;
+
+    localStorage.setItem(
+      "falah:quran:last-read",
+      JSON.stringify({ mode: unit.mode, n: unit.n, ayah, timestamp: Date.now() })
+    );
+  }, [unit.mode, unit.n, isHub, activeIdx, playingIdx, ayahs, reduce]);
 
   // Escape or a click elsewhere dismisses the translation bubble — on touch
   // there is no pointer-leave to close it with.
@@ -210,7 +261,7 @@ export default function QuranClient({
     el.src = audioUrl(reciter, a.n);
     el.playbackRate = speed;
     el.muted = isMuted;
-    void el.play().catch(() => {});
+    void el.play().catch(() => { });
     setPlayingIdx(idx);
     setActiveIdx(idx);
     // Follow along: park the translation bubble on the verse being recited.
@@ -456,13 +507,11 @@ export default function QuranClient({
                               onMouseEnter={transMode === "hover" ? (e) => openTip(i, e) : undefined}
                               onMouseLeave={transMode === "hover" ? scheduleTipClose : undefined}
                               onClick={transMode !== "off" ? (e) => openTip(i, e) : undefined}
-                              className={`rounded-lg px-0.5 transition-colors ${
-                                transMode !== "off" ? "cursor-pointer" : ""
-                              } ${
-                                on
+                              className={`rounded-lg px-0.5 transition-colors ${transMode !== "off" ? "cursor-pointer" : ""
+                                } ${on
                                   ? "bg-emerald-200/70 dark:bg-emerald-400/25"
                                   : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
-                              }`}
+                                }`}
                             >
                               {text}
                               <AyahMark n={ayah.ayah} />{" "}
@@ -505,9 +554,8 @@ export default function QuranClient({
                   <p
                     lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
                     dir={transIsRtl ? "rtl" : "ltr"}
-                    className={`leading-relaxed ${mutedCls} ${
-                      transIsRtl ? "text-right font-arabic text-base" : "text-sm"
-                    }`}
+                    className={`leading-relaxed ${mutedCls} ${transIsRtl ? "text-right font-arabic text-base" : "text-sm"
+                      }`}
                   >
                     {translationAt(i)}
                   </p>

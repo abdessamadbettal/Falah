@@ -22,8 +22,8 @@ export function RootShell({
       suppressHydrationWarning
       className={`${fontVariables} h-full antialiased`}
     >
+      <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       <body className="flex min-h-full flex-col bg-white font-sans text-zinc-900 antialiased selection:bg-emerald-700 selection:text-white dark:bg-zinc-950 dark:text-zinc-100">
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {/* keyboard users skip the sticky header straight to <main id="main"> */}
         <a
           href="#main"

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n";
 import { ToolJsonLd, toolMetadata } from "@/lib/tool-page";
-import Client from "./client";
+import Client from "./client"; // trigger ts server refresh
 
 type Props = { params: Promise<{ locale: Locale }> };
 

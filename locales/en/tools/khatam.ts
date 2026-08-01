@@ -27,4 +27,13 @@ export const khatam = {
   // States
   invalidDate: "The end date must be after the start date.",
   tooFast: "You can't finish the Quran in less than 1 day.",
+  
+  // Tracking
+  startKhatam: "Start this Khatam",
+  resumeReading: "Resume Reading",
+  cancelPlan: "Cancel Plan",
+  yourProgress: "Your Progress",
+  todayGoal: "Today's Goal",
+  completed: "Completed",
+  page: "Page",
 };

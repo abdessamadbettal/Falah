@@ -27,4 +27,13 @@ export const khatam = {
   // States
   invalidDate: "يجب أن يكون تاريخ الختم بعد تاريخ البدء.",
   tooFast: "لا يمكنك ختم القرآن في أقل من يوم واحد.",
+  
+  // Tracking
+  startKhatam: "ابدأ هذه الختمة",
+  resumeReading: "متابعة القراءة",
+  cancelPlan: "إلغاء الخطة",
+  yourProgress: "تقدمك",
+  todayGoal: "هدف اليوم",
+  completed: "مكتمل",
+  page: "صفحة",
 };
