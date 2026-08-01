@@ -11,6 +11,11 @@ export function pageMeta(
   path: string,
   title: string,
   description: string,
+  /** Page-specific keywords, replacing the site-wide list for this page.
+   * Search engines have long ignored the keywords tag — the terms that
+   * actually work are the ones in the title, the H1 and the body copy — so
+   * pass real alternative names a reader might type, never a wish list. */
+  keywords?: string[],
 ): Metadata {
   const languages = Object.fromEntries(
     locales.map((l) => [l, `${SITE_URL}${localePath(l, path)}`]),
@@ -20,6 +25,7 @@ export function pageMeta(
   return {
     title,
     description,
+    ...(keywords?.length ? { keywords } : {}),
     alternates: {
       canonical: `${SITE_URL}${localePath(locale, path)}`,
       languages,
@@ -123,6 +129,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   mosque: "/mosque-finder",
   quran: "/quran",
   tafseer: "/tafseer",
+  hadith: "/hadith",
   names: "/names-of-allah",
   hisnul: "/hisnul-muslim",
   zakat: "/zakat",
@@ -149,6 +156,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
   [
     { key: "quran", icon: "ph:book-open-text" },
     { key: "tafseer", icon: "ph:scroll" },
+    { key: "hadith", icon: "ph:book-bookmark" },
     { key: "names", icon: "ph:sparkle" },
     { key: "hisnul", icon: "ph:hands-praying" },
   ],
