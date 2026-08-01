@@ -1,4 +1,3 @@
-import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { LocaleProvider } from "@/components/locale";
 import { PwaRegistration } from "@/components/pwa-registration";
@@ -38,11 +37,6 @@ export function RootShell({
           <PwaUpdatePrompt />
           <LocaleProvider locale={locale}>{children}</LocaleProvider>
         </PwaRegistration>
-        <Script
-          src="https://unpkg.com/pwacompat"
-          strategy="beforeInteractive"
-          crossOrigin="anonymous"
-        />
       </body>
       {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>

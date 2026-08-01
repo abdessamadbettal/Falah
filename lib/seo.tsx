@@ -71,7 +71,7 @@ export function siteMetadata(d: Dict): Metadata {
     appleWebApp: {
       statusBarStyle: "black-translucent",
       title: "Falah.io",
-      startupImage: "/splash.png",
+      startupImage: "/icon.png",
     },
     other: {
       "apple-mobile-web-app-capable": "yes",
