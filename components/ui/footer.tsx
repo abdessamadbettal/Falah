@@ -39,7 +39,7 @@ export function Footer() {
               {d.common.footerDua}
             </p>
             <div className="mt-6 flex items-center gap-2.5">
-              <LanguageSwitcher />
+              <LanguageSwitcher up />
               <a
                 href={GITHUB_URL}
                 target="_blank"
