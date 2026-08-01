@@ -17,7 +17,7 @@ const API = "https://api.alquran.cloud/v1/quran";
 const DIR = join(process.cwd(), ".quran-cache");
 
 // The Arabic text, plus the translation each locale's dictionary asks for.
-const EDITIONS = ["quran-uthmani", "en.sahih", "ar.muyassar"];
+const EDITIONS = ["quran-uthmani", "en.sahih", "ar.muyassar", "fr.hamidullah"];
 const TOTAL_AYAHS = 6236;
 
 async function fetchEdition(edition) {

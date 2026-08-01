@@ -5,7 +5,7 @@ import { SITE_URL } from "@/lib/site";
 
 /** Send the visitor to their language before the meta-refresh fires:
  * the switcher's saved preference wins, then the browser language. */
-const DETECT = `(function(){try{var l=localStorage.getItem("locale")||(navigator.language||"").slice(0,2);location.replace(l==="ar"?"/ar/":"/en/")}catch(e){location.replace("/en/")}})();`;
+const DETECT = `(function(){try{var l=localStorage.getItem("locale")||(navigator.language||"").slice(0,2);location.replace(l==="ar"?"/ar/":l==="fr"?"/fr/":"/en/")}catch(e){location.replace("/en/")}})();`;
 
 // The bare "/" is where people paste "falah.io", so it needs full social
 // cards even though it only redirects. English is the crawler default.
@@ -48,9 +48,8 @@ export default function RootRedirect() {
       <noscript>
         <p>
           Falah.io — <Link href="/en/">English</Link> ·{" "}
-          <Link href="/ar/" lang="ar">
-            العربية
-          </Link>
+          <Link href="/ar/" lang="ar">العربية</Link> ·{" "}
+          <Link href="/fr/" lang="fr">Français</Link>
         </p>
       </noscript>
     </>
