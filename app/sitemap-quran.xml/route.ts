@@ -1,5 +1,5 @@
 import { quranPaths } from "@/lib/quran-seo";
-import { urlsetXml, xmlResponse } from "@/lib/sitemap";
+import { CONTENT_REVISION, urlsetXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
@@ -7,5 +7,5 @@ export const dynamic = "force-static";
  * mushaf pages. Kept apart from the site sitemap so a crawl problem in the
  * mushaf pages can't hide behind the handful of pages that earn traffic. */
 export function GET() {
-  return xmlResponse(urlsetXml(quranPaths(), new Date().toISOString()));
+  return xmlResponse(urlsetXml(quranPaths(), CONTENT_REVISION));
 }

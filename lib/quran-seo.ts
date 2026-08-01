@@ -13,6 +13,7 @@ import { getDict, localePath, type Locale } from "./i18n";
 import { HIZB, JUZ, SURAHS, type SurahMeta, TOTAL_PAGES } from "./quran-meta";
 import { TOOL_PATHS } from "./seo";
 import { SITE_URL } from "./site";
+import type { SitemapEntry } from "./sitemap";
 
 export const QURAN_PATH = TOOL_PATHS.quran;
 
@@ -21,16 +22,66 @@ export const juzPath = (n: number) => `${QURAN_PATH}/juz/${n}`;
 export const hizbPath = (n: number) => `${QURAN_PATH}/hizb/${n}`;
 export const mushafPath = (n: number) => `${QURAN_PATH}/page/${n}`;
 
-/** Every Quran URL the site publishes, for the sitemap. */
-export function quranPaths(): { path: string; priority: number }[] {
+/** The surahs people actually search for by name, rather than reaching by
+ * reading order: the Friday and nightly sunnahs (Al-Kahf, Al-Mulk, As-Sajdah,
+ * Al-Jumuah), the ones recited from memory every day (the last three, Al-Asr,
+ * Al-Kawthar, Ad-Duha, Ash-Sharh), the long-form recitations (Yasin,
+ * Ar-Rahman, Al-Waqiah, Al-Muzzammil, Al-Insan) and the narrative surahs
+ * people look up by story (Yusuf, Maryam, Ta-Ha).
+ *
+ * These carry the demand in the /quran tree, so they are ranked with the hub
+ * rather than with the other 90 — a flat 0.8 across all 114 says nothing. */
+const NOTABLE_SURAHS = new Set([
+  "al-fatihah",
+  "al-baqarah",
+  "yusuf",
+  "al-kahf",
+  "maryam",
+  "taha",
+  "as-sajdah",
+  "yasin",
+  "ar-rahman",
+  "al-waqiah",
+  "al-jumuah",
+  "al-mulk",
+  "al-muzzammil",
+  "al-insan",
+  "an-naba",
+  "ad-duha",
+  "ash-sharh",
+  "al-asr",
+  "al-kawthar",
+  "al-ikhlas",
+  "al-falaq",
+  "an-nas",
+]);
+
+/** Every Quran URL the site publishes, for the sitemap.
+ *
+ * The four views are not equals in search: a surah is what people ask for by
+ * name, a juz mostly only as "juz amma", and a hizb almost never. The mushaf
+ * pages earn their place by completing the crawl of the text, not by demand.
+ * Revealed text does not change, so changefreq says so. */
+export function quranPaths(): SitemapEntry[] {
+  const freq = "yearly" as const;
   return [
-    { path: QURAN_PATH, priority: 0.9 },
-    ...SURAHS.map((s) => ({ path: surahPath(s.slug), priority: 0.8 })),
-    ...JUZ.map((j) => ({ path: juzPath(j.n), priority: 0.7 })),
-    ...HIZB.map((h) => ({ path: hizbPath(h.n), priority: 0.6 })),
+    { path: QURAN_PATH, priority: 0.9, changeFrequency: "monthly" },
+    ...SURAHS.map((s) => ({
+      path: surahPath(s.slug),
+      priority: NOTABLE_SURAHS.has(s.slug) ? 0.9 : 0.8,
+      changeFrequency: freq,
+    })),
+    ...JUZ.map((j) => ({
+      // Juz 30 is "juz amma" — the one juz with real standalone demand.
+      path: juzPath(j.n),
+      priority: j.n === 30 ? 0.8 : 0.5,
+      changeFrequency: freq,
+    })),
+    ...HIZB.map((h) => ({ path: hizbPath(h.n), priority: 0.5, changeFrequency: freq })),
     ...Array.from({ length: TOTAL_PAGES }, (_, i) => ({
       path: mushafPath(i + 1),
       priority: 0.5,
+      changeFrequency: freq,
     })),
   ];
 }

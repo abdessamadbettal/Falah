@@ -8,8 +8,20 @@
 import { localePath, locales, type Locale } from "./i18n";
 import { SITE_URL } from "./site";
 
+export type ChangeFreq = "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+
 /** One page, in every locale. Priorities are the caller's business. */
-export type SitemapEntry = { path: string; priority: number };
+export type SitemapEntry = { path: string; priority: number; changeFrequency?: ChangeFreq };
+
+/** Bump this when the content or the page template actually changes.
+ *
+ * It is deliberately a constant and not `new Date()`: stamping the build time
+ * on all 5,679 URLs tells Google the entire Quran changed today, on every
+ * deploy. Google spots a lastmod that is always "now", decides the signal is
+ * noise, and then discounts it site-wide — including on the pages where it
+ * would have been true. A date that only moves when something moved is worth
+ * more than a fresh one that means nothing. */
+export const CONTENT_REVISION = "2026-08-01";
 
 /** The children of /sitemap.xml, in the order Search Console will list them. */
 export const SITEMAPS = [
@@ -34,7 +46,7 @@ const esc = (s: string) =>
  * the same set the pages themselves declare in <head>, x-default included. */
 export function urlsetXml(entries: SitemapEntry[], lastmod: string): string {
   const body = entries
-    .flatMap(({ path, priority }) => {
+    .flatMap(({ path, priority, changeFrequency = "monthly" }) => {
       const alternates = [
         ...locales.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${esc(abs(l, path))}"/>`),
         `<xhtml:link rel="alternate" hreflang="x-default" href="${esc(abs("en", path))}"/>`,
@@ -42,7 +54,7 @@ export function urlsetXml(entries: SitemapEntry[], lastmod: string): string {
       return locales.map(
         (locale) =>
           `<url><loc>${esc(abs(locale, path))}</loc>${alternates}` +
-          `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
+          `<lastmod>${lastmod}</lastmod><changefreq>${changeFrequency}</changefreq>` +
           `<priority>${priority}</priority></url>`,
       );
     })

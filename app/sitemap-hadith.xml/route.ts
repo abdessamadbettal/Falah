@@ -1,5 +1,5 @@
 import { hadithPaths } from "@/lib/hadith-page";
-import { urlsetXml, xmlResponse } from "@/lib/sitemap";
+import { CONTENT_REVISION, urlsetXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
@@ -7,5 +7,5 @@ export const dynamic = "force-static";
  * long ones are split into, and a page per hadith in the three Forty Hadith
  * collections. */
 export async function GET() {
-  return xmlResponse(urlsetXml(await hadithPaths(), new Date().toISOString()));
+  return xmlResponse(urlsetXml(await hadithPaths(), CONTENT_REVISION));
 }

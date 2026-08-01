@@ -1,4 +1,4 @@
-import { SITEMAPS, sitemapIndexXml, xmlResponse } from "@/lib/sitemap";
+import { CONTENT_REVISION, SITEMAPS, sitemapIndexXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
@@ -6,5 +6,5 @@ export const dynamic = "force-static";
  * submitted to Search Console keeps working — it now hands over three
  * sitemaps instead of one list, and Console reports each separately. */
 export function GET() {
-  return xmlResponse(sitemapIndexXml(SITEMAPS, new Date().toISOString()));
+  return xmlResponse(sitemapIndexXml(SITEMAPS, CONTENT_REVISION));
 }

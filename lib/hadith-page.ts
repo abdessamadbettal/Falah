@@ -26,6 +26,7 @@ import {
 } from "./hadith-meta";
 import { collectionPath, HADITH_PATH, partPath, unitPath } from "./hadith-seo";
 import { getDict, localePath, type Locale } from "./i18n";
+import type { SitemapEntry } from "./sitemap";
 
 export type Link = { href: string; label: string };
 
@@ -350,16 +351,40 @@ export async function partsOf(
   });
 }
 
-/** Every hadith URL the site publishes, for the sitemap. */
-export async function hadithPaths(): Promise<{ path: string; priority: number }[]> {
-  const paths: { path: string; priority: number }[] = [{ path: HADITH_PATH, priority: 0.9 }];
+/** What a collection's own landing page is worth. The two Sahihs are searched
+ * by name more than the rest of the corpus combined; the Forty Hadith sets
+ * punch above their size because people look up "40 hadith nawawi" as a work
+ * in itself; Muwatta Malik trails the six books. */
+const COLLECTION_PRIORITY: Record<string, number> = {
+  sahih: 0.9,
+  sunan: 0.8,
+  forty: 0.8,
+  muwatta: 0.7,
+};
+
+/** Every hadith URL the site publishes, for the sitemap.
+ *
+ * A kitab is the unit people land on from search ("book of belief bukhari"),
+ * so it outranks the overflow parts, which exist to keep a 525-hadith kitab
+ * from being one megabyte of HTML and are only ever reached from part 1. */
+export async function hadithPaths(): Promise<SitemapEntry[]> {
+  const freq = "yearly" as const;
+  const paths: SitemapEntry[] = [
+    { path: HADITH_PATH, priority: 0.9, changeFrequency: "monthly" },
+  ];
   for (const c of COLLECTIONS) {
-    paths.push({ path: collectionPath(c.slug), priority: 0.8 });
+    paths.push({
+      path: collectionPath(c.slug),
+      priority: COLLECTION_PRIORITY[c.kind] ?? 0.7,
+      changeFrequency: freq,
+    });
     for (const unit of await unitsOf(c)) {
-      paths.push({ path: unitPath(c.slug, unit), priority: 0.7 });
+      // For the Forty Hadith sets this segment is a single hadith, which is
+      // exactly what gets searched — it is not a mere chapter listing.
+      paths.push({ path: unitPath(c.slug, unit), priority: 0.6, changeFrequency: freq });
     }
     for (const { unit, part } of await partsOf(c)) {
-      paths.push({ path: partPath(c.slug, unit, part), priority: 0.5 });
+      paths.push({ path: partPath(c.slug, unit, part), priority: 0.4, changeFrequency: freq });
     }
   }
   return paths;
