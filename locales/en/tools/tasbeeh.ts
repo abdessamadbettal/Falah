@@ -1,0 +1,15 @@
+export const tasbeeh = {
+  title: "Smart Tasbeeh",
+  side: "Tasbeeh",
+  intro: "A digital Tasbeeh counter designed for daily Dhikr.",
+  target: "Target Goal",
+  presets: "Dhikr Presets",
+  count: "Count",
+  reset: "Reset",
+  goalReached: "Goal Reached!",
+  freeForm: "No Goal",
+  custom: "Custom",
+  subhanallah: "Subhanallah",
+  alhamdulillah: "Alhamdulillah",
+  allahuAkbar: "Allahu Akbar",
+};

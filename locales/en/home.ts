@@ -143,5 +143,9 @@ export const home = {
       name: "Arabic Letterhead & Date Stamp", 
       description: "Generate professional Hijri date headers and official stamps to add a polished touch to correspondence and documents." 
     },
+    tasbeeh: {
+      name: "Smart Tasbeeh & Dhikr Counter",
+      description: "A beautiful, digital Tasbeeh counter designed for mobile use with target goals, haptic feedback, and daily Dhikr presets."
+    },
   },
 };

@@ -1,0 +1,15 @@
+export const tasbeeh = {
+  title: "Tasbih Intelligent",
+  side: "Tasbih",
+  intro: "Un compteur Tasbih numérique conçu pour le Dhikr quotidien.",
+  target: "Objectif",
+  presets: "Dhikr",
+  count: "Compte",
+  reset: "Réinitialiser",
+  goalReached: "Objectif atteint !",
+  freeForm: "Sans objectif",
+  custom: "Personnalisé",
+  subhanallah: "Subhanallah",
+  alhamdulillah: "Alhamdulillah",
+  allahuAkbar: "Allahu Akbar",
+};

@@ -1,0 +1,15 @@
+export const tasbeeh = {
+  title: "المسبحة الذكية",
+  side: "تسبيح",
+  intro: "مسبحة رقمية مصممة لأذكارك اليومية.",
+  target: "الهدف",
+  presets: "الأذكار",
+  count: "العدد",
+  reset: "إعادة ضبط",
+  goalReached: "اكتمل الهدف!",
+  freeForm: "بدون هدف",
+  custom: "مخصص",
+  subhanallah: "سبحان الله",
+  alhamdulillah: "الحمد لله",
+  allahuAkbar: "الله أكبر",
+};
