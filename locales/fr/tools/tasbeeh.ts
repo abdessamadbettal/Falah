@@ -1,4 +1,8 @@
 export const tasbeeh = {
+  meta: {
+    title: "Tasbih Intelligent — Compteur numérique de Dhikr",
+    description: "Un compteur Tasbih numérique conçu pour une utilisation mobile avec des objectifs, un retour haptique et des préréglages de Dhikr quotidiens.",
+  },
   title: "Tasbih Intelligent",
   side: "Tasbih",
   intro: "Un compteur Tasbih numérique conçu pour le Dhikr quotidien.",
@@ -12,4 +16,9 @@ export const tasbeeh = {
   subhanallah: "Subhanallah",
   alhamdulillah: "Alhamdulillah",
   allahuAkbar: "Allahu Akbar",
+  total: "Total à vie",
+  fullScreen: "Mode de concentration",
+  exitFullScreen: "Quitter la concentration",
+  history: "Historique",
+  streak: "Jours consécutifs",
 };

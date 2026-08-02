@@ -1,4 +1,8 @@
 export const tasbeeh = {
+  meta: {
+    title: "Smart Tasbeeh Counter — Digital Dhikr Tracker",
+    description: "A beautiful, digital Tasbeeh counter designed for mobile use with target goals, haptic feedback, and daily Dhikr presets.",
+  },
   title: "Smart Tasbeeh",
   side: "Tasbeeh",
   intro: "A digital Tasbeeh counter designed for daily Dhikr.",
@@ -12,4 +16,9 @@ export const tasbeeh = {
   subhanallah: "Subhanallah",
   alhamdulillah: "Alhamdulillah",
   allahuAkbar: "Allahu Akbar",
+  total: "Lifetime Total",
+  fullScreen: "Focus Mode",
+  exitFullScreen: "Exit Focus",
+  history: "Activity History",
+  streak: "Day Streak",
 };

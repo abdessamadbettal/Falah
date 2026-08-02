@@ -1,4 +1,8 @@
 export const tasbeeh = {
+  meta: {
+    title: "المسبحة الذكية — عداد إلكتروني للأذكار",
+    description: "مسبحة رقمية مصممة لأذكارك اليومية، مع أهداف قابلة للتخصيص وميزة الاهتزاز عند كل تسبيحة.",
+  },
   title: "المسبحة الذكية",
   side: "تسبيح",
   intro: "مسبحة رقمية مصممة لأذكارك اليومية.",
@@ -12,4 +16,9 @@ export const tasbeeh = {
   subhanallah: "سبحان الله",
   alhamdulillah: "الحمد لله",
   allahuAkbar: "الله أكبر",
+  total: "المجموع الكلي",
+  fullScreen: "وضع التركيز",
+  exitFullScreen: "إنهاء التركيز",
+  history: "سجل النشاط",
+  streak: "أيام متتالية",
 };
