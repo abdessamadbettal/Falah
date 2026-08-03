@@ -145,6 +145,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   age: "/hijri-age",
   cards: "/quran-cards",
   stamp: "/date-stamp",
+  tasbeeh: "/tasbeeh",
 };
 
 /** The 15 tools grouped into the 5 categories used across the site — the home
@@ -156,6 +157,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
     { key: "calendar", icon: "ph:calendar-dots" },
     { key: "ramadan", icon: "ph:moon-stars" },
     { key: "converter", icon: "ph:arrows-left-right" },
+    { key: "tasbeeh", icon: "ph:fingerprint" },
   ],
   [
     { key: "qibla", icon: "ph:compass" },
