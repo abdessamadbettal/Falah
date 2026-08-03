@@ -123,6 +123,10 @@ export const home = {
       name: "Hisnul Muslim (Fortress of the Muslim)", 
       description: "An extensive, categorized collection of authentic daily Duas and Azkar for every occasion and circumstance." 
     },
+    khatam: {
+      name: "Khatam Al-Quran Planner",
+      description: "Plan your Quran reading to finish by a specific date. Calculate exactly how many pages you need to read per day and per prayer."
+    },
     zakat: { 
       name: "Comprehensive Zakat Calculator", 
       description: "A fast, precise tool to calculate Zakat on cash, gold, silver, investments, and business assets against live Nisab values." 

@@ -14,6 +14,7 @@ import { inheritance } from "./inheritance";
 import { age } from "./age";
 import { cards } from "./cards";
 import { stamp } from "./stamp";
+import { khatam } from "./khatam";
 import { tasbeeh } from "./tasbeeh";
 
 export const tools = {
@@ -33,5 +34,6 @@ export const tools = {
   age,
   cards,
   stamp,
+  khatam,
   tasbeeh,
 };

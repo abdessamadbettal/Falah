@@ -1,9 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import Link from "next/link";
-import { useDict, useLocale } from "@/components/locale";
-import { localePath } from "@/lib/i18n";
+import { useLocale } from "@/components/locale";
 import { Footer } from "./footer";
 import { Header } from "./header";
 import { goldCls, mutedCls } from "./styles";
@@ -30,7 +28,7 @@ export function ToolShell({
   children: React.ReactNode;
 }) {
   const locale = useLocale();
-  const d = useDict();
+
   // Each dict carries the *other* script as the ornament: Arabic calligraphy
   // for Latin locales, a Latin transliteration for Arabic.
   const renderSideAsArabic = locale !== "ar";

@@ -29,6 +29,7 @@ export default async function Page({ params }: Props) {
       <Client
         unit={p.unit}
         heading={{ title: d.tools.quran.title, side: d.tools.quran.side, intro: d.tools.quran.intro }}
+        isHub={true}
       >
         <QuranDirectory locale={locale} />
       </Client>
