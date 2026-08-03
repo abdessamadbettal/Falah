@@ -7,8 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "predev": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
-    "prebuild": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs"
+    "predev": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs && node scripts/fetch-cities.mjs",
+    "prebuild": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs && node scripts/fetch-cities.mjs"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",

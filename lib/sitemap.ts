@@ -1,11 +1,12 @@
-/** The XML behind the sitemap index and the three sitemaps it ties together.
+/** The XML behind the sitemap index and the five sitemaps it ties together.
  *
- * All four sit at the site root on purpose. A sitemap only covers URLs at or
+ * All six sit at the site root on purpose. A sitemap only covers URLs at or
  * below its own directory, so a file at /sitemap/quran.xml could not legally
  * list /en/quran/… — it would need to be hand-submitted in Search Console to
  * be read at all. Root-level files have no such restriction. */
 
 import { localePath, locales, type Locale } from "./i18n";
+import { PLACES_REVISION } from "./prayer-paths";
 import { SITE_URL } from "./site";
 
 export type ChangeFreq = "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
@@ -23,12 +24,19 @@ export type SitemapEntry = { path: string; priority: number; changeFrequency?: C
  * more than a fresh one that means nothing. */
 export const CONTENT_REVISION = "2026-08-01";
 
-/** The children of /sitemap.xml, in the order Search Console will list them. */
-export const SITEMAPS = [
-  "/sitemap-site.xml",
-  "/sitemap-quran.xml",
-  "/sitemap-hadith.xml",
-] as const;
+/** The children of /sitemap.xml, in the order Search Console will list them.
+ *
+ * Each carries its own lastmod, because they revise on different clocks: the
+ * Quran and hadith move when a template does, the place list when the world
+ * does. One shared date would make four of the five lie every time the fifth
+ * changed. */
+export const SITEMAPS: { path: string; lastmod: string }[] = [
+  { path: "/sitemap-site.xml", lastmod: CONTENT_REVISION },
+  { path: "/sitemap-prayer-countries.xml", lastmod: PLACES_REVISION },
+  { path: "/sitemap-prayer-cities.xml", lastmod: PLACES_REVISION },
+  { path: "/sitemap-quran.xml", lastmod: CONTENT_REVISION },
+  { path: "/sitemap-hadith.xml", lastmod: CONTENT_REVISION },
+];
 
 /** trailingSlash is on, so the canonical form carries the slash. A sitemap
  * listing the unslashed form would send Google through a 308 on every URL. */
@@ -67,9 +75,12 @@ export function urlsetXml(entries: SitemapEntry[], lastmod: string): string {
   );
 }
 
-export function sitemapIndexXml(paths: readonly string[], lastmod: string): string {
-  const body = paths
-    .map((p) => `<sitemap><loc>${esc(`${SITE_URL}${p}`)}</loc><lastmod>${lastmod}</lastmod></sitemap>`)
+export function sitemapIndexXml(children: readonly { path: string; lastmod: string }[]): string {
+  const body = children
+    .map(
+      ({ path, lastmod }) =>
+        `<sitemap><loc>${esc(`${SITE_URL}${path}`)}</loc><lastmod>${lastmod}</lastmod></sitemap>`,
+    )
     .join("");
 
   return (

@@ -6,6 +6,7 @@ import { about } from "./about";
 import { tools } from "./tools";
 import { quranBrowse } from "./tools/quran-browse";
 import { hadithBrowse } from "./tools/hadith-browse";
+import { prayerPlaces } from "./tools/prayer-places";
 
 export const ar: typeof en = {
   code: "ar",
@@ -18,4 +19,5 @@ export const ar: typeof en = {
   tools,
   quranBrowse,
   hadithBrowse,
+  prayerPlaces,
 };
