@@ -5,6 +5,7 @@ import { about } from "./about";
 import { tools } from "./tools";
 import { quranBrowse } from "./tools/quran-browse";
 import { hadithBrowse } from "./tools/hadith-browse";
+import { prayerPlaces } from "./tools/prayer-places";
 
 export const fr = {
   code: "fr",
@@ -17,4 +18,5 @@ export const fr = {
   tools,
   quranBrowse,
   hadithBrowse,
+  prayerPlaces,
 };

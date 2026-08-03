@@ -61,10 +61,41 @@ Zubair Ali Zai, Shu'ayb al-Arna'ut, Ahmad Muhammad Shakir and five others.
 Sahih al-Bukhari and Sahih Muslim carry no per-hadith grading, because both
 compilers admitted only what met their own stated conditions.
 
+## Prayer times by place
+
+Every country and 7,654 cities have a prerendered prayer-times page, in all
+three languages — 23,694 URLs, listed in their own sitemaps
+(`/sitemap-prayer-countries.xml`, `/sitemap-prayer-cities.xml`).
+
+URL shape:
+- `/en/prayer-times` — the tool, plus an index of all 244 countries
+- `/en/prayer-times/<country>` — one country: today's times across its largest
+  cities, the calculation method it follows, and an index of its cities
+- `/en/prayer-times/<country>/<city>` — one city: today's five prayers with a
+  live countdown, the full month's timetable, coordinates, IANA timezone,
+  qibla bearing, distance to Makkah, and the nearest cities
+
+Country slugs come from the English CLDR name (`morocco`, `united-states`);
+city slugs from the GeoNames ASCII name, disambiguated by region and then by
+GeoNames id where two places in one country share a name.
+
+The place list is GeoNames `cities15000` (CC BY 4.0), reduced to each
+country's 20 largest cities plus every city over 100,000 people. Arabic and
+French city names come from GeoNames' language-tagged `alternateNamesV2`;
+country names from CLDR via `Intl.DisplayNames`.
+
+Times are computed with `adhan` from each city's own coordinates and rendered
+in that city's IANA timezone on a 24-hour clock — not the reader's. Above ~48°
+latitude the recommended high-latitude rule applies, and inside the polar
+circles the *aqrab balad* resolution, so no page can show an undefined prayer.
+Each city page's calculation method defaults to the one its country generally
+follows; the tool at `/en/prayer-times` can switch between all eleven.
+
 ## Notes for citation
 
 - The inheritance and zakat tools cover common cases and always advise consulting a qualified scholar for complex situations.
 - Ramadan and Hijri dates follow Umm al-Qura and may differ by one day from local moonsighting.
+- Prayer times are astronomical calculations, not a substitute for a local mosque's timetable; methods disagree by several minutes at Fajr and Isha, and a city page uses one default method for the whole country.
 - Arabic pages live under https://falah.io/ar/… with identical functionality; English lives under /en/… and the bare paths above redirect there.
 - Hadith numbering follows the hadith-api edition and can differ by one or two from a printed copy; cite the Arabic text rather than the number alone.
 - Hadith gradings are the verdicts of named scholars and are reported as such — they are not Falah.io's own judgement, and scholars sometimes disagree on the same hadith.
