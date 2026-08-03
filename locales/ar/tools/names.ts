@@ -16,6 +16,7 @@ export const names: typeof en = {
   searchAria: "البحث في الأسماء الحسنى",
   noMatch: (q: string) => `لا اسم يطابق «${q}». جرّب بحثًا أقصر.`,
   nameLabel: (n: number) => `الاسم ${n} من 99`,
+  readMore: "المزيد",
   copy: "نسخ",
   copied: "تم النسخ",
   prev: "الاسم السابق",

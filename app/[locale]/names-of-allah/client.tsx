@@ -126,7 +126,7 @@ export default function NamesOfAllahClient() {
             <p className={`mt-3 font-semibold ${brandCls}`}>{n.transliteration}</p>
             <p className={`mt-1 text-sm ${mutedCls}`}>{short(n.index)}</p>
             <span className={`mt-3 inline-flex items-center gap-1 text-xs font-medium ${mutedCls} transition-colors group-hover:text-emerald-700 dark:group-hover:text-emerald-400`}>
-              {locale === "ar" ? "المزيد" : "Read more"}
+              {t.readMore}
               <Icon icon="ph:arrow-right" className="size-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
             </span>
           </motion.button>

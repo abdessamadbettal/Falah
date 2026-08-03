@@ -16,6 +16,7 @@ import { stamp } from "./stamp";
 import { hadith } from "./hadith";
 import { hadithBrowse } from "./hadith-browse";
 import { khatam } from "./khatam";
+import { tasbeeh } from "./tasbeeh";
 
 export const tools = {
   prayer,
@@ -36,4 +37,5 @@ export const tools = {
   hadith,
   hadithBrowse,
   khatam,
+  tasbeeh,
 };

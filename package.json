@@ -1,18 +1,19 @@
 {
   "name": "falah-io",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "private": true,
   "scripts": {
-    "predev": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
-    "dev": "next dev",
-    "prebuild": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "predev": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs",
+    "prebuild": "node scripts/fetch-quran.mjs && node scripts/fetch-hadith.mjs"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
     "@next/third-parties": "^16.2.10",
+    "@serwist/next": "^9.5.12",
     "adhan": "^4.4.4",
     "motion": "^12.42.2",
     "next": "16.2.10",

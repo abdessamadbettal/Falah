@@ -49,6 +49,8 @@ export const quran = {
   repeatOff: "Repeat off",
   repeatAyah: "Repeat verse",
   repeatSurah: "Repeat surah",
+  followTrans: "Follow with translation",
+  followTransHint: "Reveal each verse's translation as it is recited.",
   settings: "Reading settings",
   hoverHint: "Hover any verse to reveal its translation.",
   clickHint: "Tap any verse to reveal its translation.",

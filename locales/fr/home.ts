@@ -145,5 +145,9 @@ export const home = {
       name: "En-tête Arabe & Tampon de Date",
       description: "Générez des en-têtes de date Hégirienne professionnels et des tampons officiels pour ajouter une touche soignée à vos documents."
     },
+    tasbeeh: {
+      name: "Tasbih Intelligent",
+      description: "Un compteur Tasbih numérique conçu pour une utilisation mobile avec des objectifs, un retour haptique et des préréglages de Dhikr quotidiens."
+    },
   },
 };

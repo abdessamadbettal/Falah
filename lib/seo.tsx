@@ -68,6 +68,14 @@ export function siteMetadata(d: Dict): Metadata {
     applicationName: "Falah.io",
     keywords: KEYWORDS,
     robots: { index: true, follow: true },
+    appleWebApp: {
+      statusBarStyle: "black-translucent",
+      title: "Falah.io",
+      startupImage: "/icon.png",
+    },
+    other: {
+      "apple-mobile-web-app-capable": "yes",
+    },
   };
 }
 
@@ -138,6 +146,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   cards: "/quran-cards",
   stamp: "/date-stamp",
   khatam: "/quran-planner",
+  tasbeeh: "/tasbeeh",
 };
 
 /** The 16 tools grouped into the 5 categories used across the site — the home
@@ -149,6 +158,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
     { key: "calendar", icon: "ph:calendar-dots" },
     { key: "ramadan", icon: "ph:moon-stars" },
     { key: "converter", icon: "ph:arrows-left-right" },
+    { key: "tasbeeh", icon: "ph:fingerprint" },
   ],
   [
     { key: "qibla", icon: "ph:compass" },

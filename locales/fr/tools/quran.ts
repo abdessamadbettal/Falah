@@ -47,6 +47,8 @@ export const quran = {
   repeatOff: "Répétition désactivée",
   repeatAyah: "Répéter le verset",
   repeatSurah: "Répéter la sourate",
+  followTrans: "Suivre avec la traduction",
+  followTransHint: "Afficher la traduction de chaque verset pendant sa récitation.",
   settings: "Paramètres de lecture",
   hoverHint: "Survolez n'importe quel verset pour révéler sa traduction.",
   clickHint: "Touchez n'importe quel verset pour révéler sa traduction.",
