@@ -24,7 +24,15 @@ export function RootShell({
       suppressHydrationWarning
       className={`${fontVariables} h-full antialiased`}
     >
-      <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      {/* The theme has to be on <html> before the first paint, so the script
+       * is inline and synchronous — which means it belongs in <head>. A bare
+       * <script> is not a valid child of <html>, and React won't order one
+       * inside <body> without deferring it. next/head is Pages Router only;
+       * an explicit <head> is what the App Router documents for this. */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col bg-white font-sans text-zinc-900 antialiased selection:bg-emerald-700 selection:text-white dark:bg-zinc-950 dark:text-zinc-100">
         {/* keyboard users skip the sticky header straight to <main id="main"> */}
         <a

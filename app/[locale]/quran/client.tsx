@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import { goldCls, lineCls, mutedCls, Star8, StarField, ToolShell } from "@/components/ui";
 import { stripLeadingBasmala } from "@/lib/arabic";
+import { saveLastRead } from "@/lib/khatam";
 import { SURAHS, type SurahMeta, TOTAL_PAGES } from "@/lib/quran-meta";
 import {
   type BrowseMode,
@@ -98,7 +99,8 @@ export default function QuranClient({
   /** Server-rendered links (the hub directory, or a unit's related units) —
    * already HTML, so crawlers see them without running any JavaScript. */
   children?: React.ReactNode;
-  /** Whether this is the root hub page (prevents auto-overwriting memory with Surah 1) */
+  /** Set on the /quran hub, which renders Al-Fatihah as a sample: visiting it
+   * shouldn't overwrite the Khatam planner's bookmark with surah 1. */
   isHub?: boolean;
 }) {
   const d = useDict();
@@ -170,53 +172,24 @@ export default function QuranClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const restoredUnit = useRef("");
-
-  // Save and restore the current reading location so other features can resume
+  // A bookmark for the Khatam planner: one write per unit opened, recording
+  // where in the mushaf this unit begins. Nothing on this page reads it back,
+  // and it deliberately doesn't track the active verse — that would put a
+  // synchronous localStorage write on every tap and every ayah of playback.
+  // The hub is skipped: landing on /quran is not reading Al-Fatihah.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const currentUnitKey = `${unit.mode}-${unit.n}`;
-    let didRestore = false;
-
-    // Try to restore on first visit to this unit
-    if (!isHub && restoredUnit.current !== currentUnitKey) {
-      restoredUnit.current = currentUnitKey;
-      try {
-        const read = localStorage.getItem("falah:quran:last-read");
-        if (read) {
-          const parsed = JSON.parse(read);
-          if (parsed.mode === unit.mode && parsed.n === unit.n && parsed.ayah) {
-            const idx = ayahs.findIndex((a) => a.ayah === parsed.ayah);
-            if (idx !== -1) {
-              setTimeout(() => {
-                setActiveIdx(idx);
-                document
-                  .getElementById(`ayah-${idx}`)
-                  ?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
-              }, 100);
-              didRestore = true;
-            }
-          }
-        }
-      } catch {}
-    }
-
-    // Do not overwrite memory with Surah 1 just because they visited the hub,
-    // unless they actually interact with the text (play audio or click verse).
-    if (isHub && activeIdx === null && playingIdx === null) return;
-
-    // Skip saving on the exact render we restored, so we don't save a stale activeIdx
-    if (didRestore) return;
-
-    const idx = activeIdx ?? playingIdx ?? 0;
-    const ayah = ayahs[idx]?.ayah;
-
-    localStorage.setItem(
-      "falah:quran:last-read",
-      JSON.stringify({ mode: unit.mode, n: unit.n, ayah, timestamp: Date.now() })
-    );
-  }, [unit.mode, unit.n, isHub, activeIdx, playingIdx, ayahs, reduce]);
+    const a = ayahs[0];
+    if (isHub || !a) return;
+    saveLastRead({
+      mode: unit.mode,
+      n: unit.n,
+      surah: a.surah,
+      juz: a.juz,
+      hizb: a.hizb,
+      page: a.page,
+      t: Date.now(),
+    });
+  }, [isHub, unit.mode, unit.n, ayahs]);
 
   // Escape or a click elsewhere dismisses the translation bubble — on touch
   // there is no pointer-leave to close it with.
