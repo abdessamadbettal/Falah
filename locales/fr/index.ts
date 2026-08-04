@@ -6,6 +6,7 @@ import { tools } from "./tools";
 import { quranBrowse } from "./tools/quran-browse";
 import { hadithBrowse } from "./tools/hadith-browse";
 import { prayerPlaces } from "./tools/prayer-places";
+import { namePage } from "./tools/name-page";
 
 export const fr = {
   code: "fr",
@@ -19,4 +20,5 @@ export const fr = {
   quranBrowse,
   hadithBrowse,
   prayerPlaces,
+  namePage,
 };
