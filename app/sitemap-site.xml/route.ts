@@ -1,4 +1,5 @@
 import { HADITH_PATH } from "@/lib/hadith-seo";
+import { NAMES_PATH } from "@/lib/names-seo";
 import { QURAN_PATH } from "@/lib/quran-seo";
 import { ABOUT_PATH, TOOL_PATHS } from "@/lib/seo";
 import { CONTENT_REVISION, type SitemapEntry, urlsetXml, xmlResponse } from "@/lib/sitemap";
@@ -18,14 +19,20 @@ export const dynamic = "force-static";
  * across the three locales. Small enough that Search Console reports on it
  * are actually readable, which is the whole point of the split.
  *
- * The Quran and hadith hubs are listed by their own sitemaps, alongside the
- * pages beneath them, so they are dropped here to avoid duplicate entries. */
+ * The Quran, hadith and Asma ul Husna hubs are listed by their own sitemaps,
+ * alongside the pages beneath them, so they are dropped here to avoid
+ * duplicate entries. */
 export function GET() {
   const priorityOf = (key: ToolKey) =>
     FLAGSHIP.includes(key) ? 0.9 : CORE.includes(key) ? 0.8 : 0.6;
 
   const tools = (Object.keys(TOOL_PATHS) as ToolKey[])
-    .filter((key) => TOOL_PATHS[key] !== QURAN_PATH && TOOL_PATHS[key] !== HADITH_PATH)
+    .filter(
+      (key) =>
+        TOOL_PATHS[key] !== QURAN_PATH &&
+        TOOL_PATHS[key] !== HADITH_PATH &&
+        TOOL_PATHS[key] !== NAMES_PATH,
+    )
     .map((key) => ({ path: TOOL_PATHS[key], priority: priorityOf(key) }));
 
   const entries: SitemapEntry[] = [

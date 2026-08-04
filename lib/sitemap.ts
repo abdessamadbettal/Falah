@@ -1,11 +1,12 @@
-/** The XML behind the sitemap index and the five sitemaps it ties together.
+/** The XML behind the sitemap index and the six sitemaps it ties together.
  *
- * All six sit at the site root on purpose. A sitemap only covers URLs at or
+ * All seven sit at the site root on purpose. A sitemap only covers URLs at or
  * below its own directory, so a file at /sitemap/quran.xml could not legally
  * list /en/quran/… — it would need to be hand-submitted in Search Console to
  * be read at all. Root-level files have no such restriction. */
 
 import { localePath, locales, type Locale } from "./i18n";
+import { NAMES_REVISION } from "./names-seo";
 import { PLACES_REVISION } from "./prayer-paths";
 import { SITE_URL } from "./site";
 
@@ -34,6 +35,7 @@ export const SITEMAPS: { path: string; lastmod: string }[] = [
   { path: "/sitemap-site.xml", lastmod: CONTENT_REVISION },
   { path: "/sitemap-prayer-countries.xml", lastmod: PLACES_REVISION },
   { path: "/sitemap-prayer-cities.xml", lastmod: PLACES_REVISION },
+  { path: "/sitemap-names.xml", lastmod: NAMES_REVISION },
   { path: "/sitemap-quran.xml", lastmod: CONTENT_REVISION },
   { path: "/sitemap-hadith.xml", lastmod: CONTENT_REVISION },
 ];
