@@ -137,6 +137,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   mosque: "/mosque-finder",
   quran: "/quran",
   tafseer: "/tafseer",
+  ayahFinder: "/ayah-finder",
   hadith: "/hadith",
   names: "/names-of-allah",
   hisnul: "/hisnul-muslim",
@@ -147,7 +148,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   stamp: "/date-stamp",
 };
 
-/** The 15 tools grouped into the 5 categories used across the site — the home
+/** The 17 tools grouped into the 5 categories used across the site — the home
  * directory and the footer both read from this one source. Group order matches
  * d.home.categories, so index i lines up with categories[i]. */
 export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
@@ -164,6 +165,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
   [
     { key: "quran", icon: "ph:book-open-text" },
     { key: "tafseer", icon: "ph:scroll" },
+    { key: "ayahFinder", icon: "ph:microphone" },
     { key: "hadith", icon: "ph:book-bookmark" },
     { key: "names", icon: "ph:sparkle" },
     { key: "hisnul", icon: "ph:hands-praying" },

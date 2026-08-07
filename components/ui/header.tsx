@@ -13,8 +13,9 @@ import { lineCls, mutedCls } from "./styles";
 import { ThemeToggle } from "./theme-toggle";
 import { usePathname } from "next/navigation";
 
-const NAV: { key: "prayer" | "quran"; icon: string }[] = [
+const NAV: { key: "prayer" | "quran" | "ayahFinder"; icon: string }[] = [
   { key: "quran", icon: "ph:book-open-text" },
+  { key: "ayahFinder", icon: "ph:microphone" },
   { key: "prayer", icon: "ph:mosque" },
 ];
 
