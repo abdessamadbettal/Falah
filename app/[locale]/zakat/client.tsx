@@ -24,8 +24,8 @@ const NISAB_SILVER_GRAMS = 595;
 const ZAKAT_RATE = 0.025;
 
 const COMMON_CURRENCIES = [
-  "USD", "EUR", "GBP", "SAR", "AED", "KWD", "BHD", "OMR", "QAR", "JOD", 
-  "DZD", "MAD", "TND", "EGP", "LBP", "TRY", "PKR", "INR", "IDR", "MYR", 
+  "USD", "EUR", "GBP", "SAR", "AED", "KWD", "BHD", "OMR", "QAR", "JOD",
+  "DZD", "MAD", "TND", "EGP", "LBP", "TRY", "PKR", "INR", "IDR", "MYR",
   "CAD", "AUD", "SGD", "ZAR", "NGN"
 ];
 
@@ -70,6 +70,38 @@ export default function ZakatClient({ article }: { article: ToolArticle }) {
   const [business, setBusiness] = useState(DEFAULTS.business);
   const [liabilities, setLiabilities] = useState(DEFAULTS.liabilities);
   const [nisabBasis, setNisabBasis] = useState<"gold" | "silver">("silver");
+
+  const [isFetchingRates, setIsFetchingRates] = useState(false);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
+  const [fetchError, setFetchError] = useState("");
+
+  const handleFetchRates = async () => {
+    setIsFetchingRates(true);
+    setFetchError("");
+    try {
+      const c = currency.toLowerCase();
+      const res = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/${c}.json`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      const rates = data[c];
+      
+      if (!rates || !rates.xau || !rates.xag) {
+        throw new Error("Metals data not found");
+      }
+      
+      const troyOunceToGrams = 31.1034768;
+      const goldPerGram = (1 / rates.xau) / troyOunceToGrams;
+      const silverPerGram = (1 / rates.xag) / troyOunceToGrams;
+      
+      setGoldPrice(goldPerGram.toFixed(2));
+      setSilverPrice(silverPerGram.toFixed(3));
+      setLastFetched(new Date());
+    } catch {
+      setFetchError(t.errorFetching || "Failed to fetch live rates");
+    } finally {
+      setIsFetchingRates(false);
+    }
+  };
 
   const [logs, setLogs] = useState<ZakatLogEntry[]>(() => {
     if (typeof window === "undefined") return [];
@@ -169,27 +201,81 @@ export default function ZakatClient({ article }: { article: ToolArticle }) {
             </button>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label={t.currency}>
-              <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                {COMMON_CURRENCIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </Select>
-            </Field>
+            <div className="flex flex-col gap-1.5">
+              <Field label={t.currency}>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Select value={currency} onChange={(e) => {
+                      setCurrency(e.target.value);
+                      setLastFetched(null);
+                    }}>
+                      {COMMON_CURRENCIES.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </Select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleFetchRates}
+                    disabled={isFetchingRates}
+                    className="inline-flex h-[42px] items-center justify-center gap-2 rounded-md bg-emerald-100 px-3 text-sm font-medium text-emerald-800 transition-colors hover:bg-emerald-200 focus:outline-none disabled:opacity-50 dark:bg-emerald-900/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60"
+                    title={t.fetchLive}
+                  >
+                    <Icon icon={isFetchingRates ? "ph:spinner-gap" : "ph:arrows-clockwise"} className={`size-4 ${isFetchingRates ? "animate-spin" : ""}`} />
+                    <span className="hidden sm:inline">{isFetchingRates ? t.fetching : t.fetchLive}</span>
+                  </button>
+                </div>
+              </Field>
+              {lastFetched && (
+                <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <Icon icon="ph:check-circle" />
+                  {t.updatedJustNow}
+                </div>
+              )}
+              {fetchError && (
+                <div className="text-xs font-medium text-red-600 dark:text-red-400">
+                  {fetchError}
+                </div>
+              )}
+            </div>
             <Field label={t.cash}>
               <Input inputMode="decimal" placeholder="0" value={cash} onChange={(e) => setCash(e.target.value.replace(/[^0-9.]/g, ""))} />
             </Field>
             <Field label={t.goldGrams}>
               <Input inputMode="decimal" placeholder="0" value={goldGrams} onChange={(e) => setGoldGrams(e.target.value.replace(/[^0-9.]/g, ""))} />
             </Field>
-            <Field label={t.goldPrice(currency)} hint={t.goldPriceHint}>
-              <Input inputMode="decimal" value={goldPrice} onChange={(e) => setGoldPrice(e.target.value.replace(/[^0-9.]/g, ""))} />
+            <Field label={t.goldPrice(currency)} hint={lastFetched ? undefined : t.goldPriceHint}>
+              <div className="relative">
+                <Input inputMode="decimal" value={goldPrice} onChange={(e) => {
+                  setGoldPrice(e.target.value.replace(/[^0-9.]/g, ""));
+                  setLastFetched(null);
+                }} />
+                {lastFetched && (
+                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+                      {t.liveRate || "LIVE"}
+                    </span>
+                  </div>
+                )}
+              </div>
             </Field>
             <Field label={t.silverGrams}>
               <Input inputMode="decimal" placeholder="0" value={silverGrams} onChange={(e) => setSilverGrams(e.target.value.replace(/[^0-9.]/g, ""))} />
             </Field>
             <Field label={t.silverPrice(currency)}>
-              <Input inputMode="decimal" value={silverPrice} onChange={(e) => setSilverPrice(e.target.value.replace(/[^0-9.]/g, ""))} />
+              <div className="relative">
+                <Input inputMode="decimal" value={silverPrice} onChange={(e) => {
+                  setSilverPrice(e.target.value.replace(/[^0-9.]/g, ""));
+                  setLastFetched(null);
+                }} />
+                {lastFetched && (
+                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+                      {t.liveRate || "LIVE"}
+                    </span>
+                  </div>
+                )}
+              </div>
             </Field>
             <Field label={t.investments} hint={t.investmentsHint}>
               <Input inputMode="decimal" placeholder="0" value={investments} onChange={(e) => setInvestments(e.target.value.replace(/[^0-9.]/g, ""))} />
