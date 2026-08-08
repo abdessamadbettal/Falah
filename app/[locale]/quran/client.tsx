@@ -3,10 +3,11 @@
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useDict, useLocale } from "@/components/locale";
 import { goldCls, lineCls, mutedCls, Star8, StarField, ToolShell } from "@/components/ui";
 import { stripLeadingBasmala } from "@/lib/arabic";
+import { saveLastRead } from "@/lib/khatam";
 import { SURAHS, type SurahMeta, TOTAL_PAGES } from "@/lib/quran-meta";
 import {
   type BrowseMode,
@@ -35,6 +36,42 @@ const toArabicNum = (n: number) =>
  * does not. */
 const AUTOPLAY_KEY = "falah:quran:autoplay";
 
+/** Same trick for the follow-along preference: the recitation rolls into the
+ * next unit on its own, and a toggle that quietly reset itself there would
+ * read as a bug rather than a default. sessionStorage is the source of truth
+ * rather than a copy of it, so there is no state to fall out of sync. */
+const FOLLOW_KEY = "falah:quran:followtrans";
+
+const followListeners = new Set<() => void>();
+
+function subscribeFollow(cb: () => void) {
+  followListeners.add(cb);
+  return () => {
+    followListeners.delete(cb);
+  };
+}
+
+function getFollow() {
+  try {
+    return sessionStorage.getItem(FOLLOW_KEY) === "1";
+  } catch {
+    // sessionStorage unavailable (private mode, etc.) — the default holds.
+    return false;
+  }
+}
+
+/** Prerendered HTML can't know the preference; it starts off, like a fresh visit. */
+function getFollowOnServer() {
+  return false;
+}
+
+function setFollow(on: boolean) {
+  try {
+    sessionStorage.setItem(FOLLOW_KEY, on ? "1" : "0");
+  } catch {}
+  for (const cb of followListeners) cb();
+}
+
 /** The 8-pointed star medallion that closes each verse. */
 function AyahMark({ n }: { n: number }) {
   return (
@@ -53,6 +90,7 @@ export default function QuranClient({
   unit,
   heading,
   children,
+  isHub,
 }: {
   unit: ReaderUnit;
   /** H1, Arabic ornament and intro prose for this URL — built server-side
@@ -61,6 +99,9 @@ export default function QuranClient({
   /** Server-rendered links (the hub directory, or a unit's related units) —
    * already HTML, so crawlers see them without running any JavaScript. */
   children?: React.ReactNode;
+  /** Set on the /quran hub, which renders Al-Fatihah as a sample: visiting it
+   * shouldn't overwrite the Khatam planner's bookmark with surah 1. */
+  isHub?: boolean;
 }) {
   const d = useDict();
   const locale = useLocale();
@@ -70,7 +111,7 @@ export default function QuranClient({
 
   const [reciter, setReciter] = useState(RECITERS[0].id);
   const [transEdition, setTransEdition] = useState(unit.edition);
-  const [transMode, setTransMode] = useState<TransMode>("hover");
+  const [transMode, setTransMode] = useState<TransMode>("click");
   const [scale, setScale] = useState(1);
   const [speed, setSpeed] = useState(1);
 
@@ -87,6 +128,12 @@ export default function QuranClient({
   const [isMuted, setIsMuted] = useState(false);
   const [repeatMode, setRepeatMode] = useState<"off" | "ayah" | "surah">("off");
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  /** Off by default: a bubble that opens itself on every verse covers the
+   * mushaf you came to read. Listeners who do want to read along turn it on
+   * in the player, and it follows the recitation from there — across the
+   * navigation into the next unit included. */
+  const followTrans = useSyncExternalStore(subscribeFollow, getFollow, getFollowOnServer);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -142,6 +189,24 @@ export default function QuranClient({
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit.mode, unit.n, ayahs.length]);
+  // A bookmark for the Khatam planner: one write per unit opened, recording
+  // where in the mushaf this unit begins. Nothing on this page reads it back,
+  // and it deliberately doesn't track the active verse — that would put a
+  // synchronous localStorage write on every tap and every ayah of playback.
+  // The hub is skipped: landing on /quran is not reading Al-Fatihah.
+  useEffect(() => {
+    const a = ayahs[0];
+    if (isHub || !a) return;
+    saveLastRead({
+      mode: unit.mode,
+      n: unit.n,
+      surah: a.surah,
+      juz: a.juz,
+      hizb: a.hizb,
+      page: a.page,
+      t: Date.now(),
+    });
+  }, [isHub, unit.mode, unit.n, ayahs]);
 
   // Escape or a click elsewhere dismisses the translation bubble — on touch
   // there is no pointer-leave to close it with.
@@ -228,11 +293,14 @@ export default function QuranClient({
     el.src = audioUrl(reciter, a.n);
     el.playbackRate = speed;
     el.muted = isMuted;
-    void el.play().catch(() => {});
+    void el.play().catch(() => { });
     setPlayingIdx(idx);
     setActiveIdx(idx);
-    // Follow along: park the translation bubble on the verse being recited.
-    if (transMode !== "off") {
+    // Follow along: park the translation bubble on the verse being recited —
+    // only for readers who asked for it in the player. Read straight from the
+    // store: the autoplay effect calls this on mount, before the subscription
+    // has had a chance to re-render with the restored value.
+    if (getFollow() && transMode !== "off") {
       if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current);
       setAnchor({ idx, rect: 0, xRatio: 0.5 });
     }
@@ -341,6 +409,17 @@ export default function QuranClient({
     setTransMode: (m) => {
       setTransMode(m);
       if (m === "off") setAnchor(null);
+    },
+    followTrans,
+    toggleFollowTrans: () => {
+      const next = !followTrans;
+      setFollow(next);
+      // Reflect the choice on the verse being recited right away, rather than
+      // making the reader wait for the next one to start.
+      if (!next) setAnchor(null);
+      else if (playingIdx !== null && transMode !== "off") {
+        setAnchor({ idx: playingIdx, rect: 0, xRatio: 0.5 });
+      }
     },
     scale,
     setScale,
@@ -474,13 +553,11 @@ export default function QuranClient({
                               onMouseEnter={transMode === "hover" ? (e) => openTip(i, e) : undefined}
                               onMouseLeave={transMode === "hover" ? scheduleTipClose : undefined}
                               onClick={transMode !== "off" ? (e) => openTip(i, e) : undefined}
-                              className={`rounded-lg px-0.5 transition-colors ${
-                                transMode !== "off" ? "cursor-pointer" : ""
-                              } ${
-                                on
+                              className={`rounded-lg px-0.5 transition-colors ${transMode !== "off" ? "cursor-pointer" : ""
+                                } ${on
                                   ? "bg-emerald-200/70 dark:bg-emerald-400/25"
                                   : "hover:bg-emerald-100/60 dark:hover:bg-emerald-500/10"
-                              }`}
+                                }`}
                             >
                               {text}
                               <AyahMark n={ayah.ayah} />{" "}
@@ -523,9 +600,8 @@ export default function QuranClient({
                   <p
                     lang={transIsRtl ? "ar" : transEdition.split(".")[0]}
                     dir={transIsRtl ? "rtl" : "ltr"}
-                    className={`leading-relaxed ${mutedCls} ${
-                      transIsRtl ? "text-right font-arabic text-base" : "text-sm"
-                    }`}
+                    className={`leading-relaxed ${mutedCls} ${transIsRtl ? "text-right font-arabic text-base" : "text-sm"
+                      }`}
                   >
                     {translationAt(i)}
                   </p>

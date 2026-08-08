@@ -49,6 +49,8 @@ export const quran: typeof en = {
   repeatOff: "التكرار متوقف",
   repeatAyah: "تكرار الآية (للحفظ)",
   repeatSurah: "تكرار السورة",
+  followTrans: "المتابعة مع الترجمة",
+  followTransHint: "إظهار ترجمة كل آية أثناء تلاوتها.",
   settings: "إعدادات القراءة",
   hoverHint: "مرّر فوق أي آية لإظهار تفسيرها.",
   clickHint: "انقر أي آية لإظهار تفسيرها.",

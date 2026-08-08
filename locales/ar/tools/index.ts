@@ -8,13 +8,16 @@ import { quran } from "./quran";
 import { tafseer } from "./tafseer";
 import { ayahFinder } from "./ayah-finder";
 import { names } from "./names";
-import { hadith } from "./hadith";
 import { hisnul } from "./hisnul";
 import { zakat } from "./zakat";
 import { inheritance } from "./inheritance";
 import { age } from "./age";
 import { cards } from "./cards";
 import { stamp } from "./stamp";
+import { hadith } from "./hadith";
+import { hadithBrowse } from "./hadith-browse";
+import { khatam } from "./khatam";
+import { tasbeeh } from "./tasbeeh";
 
 export const tools = {
   prayer,
@@ -27,11 +30,14 @@ export const tools = {
   tafseer,
   ayahFinder,
   names,
-  hadith,
   hisnul,
   zakat,
   inheritance,
   age,
   cards,
   stamp,
+  hadith,
+  hadithBrowse,
+  khatam,
+  tasbeeh,
 };

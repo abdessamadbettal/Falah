@@ -1,7 +1,6 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { CalculationMethod, Coordinates, PrayerTimes } from "adhan";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CitySearch, type Place, detectIpPlace, reverseGeocode } from "@/components/city-search";
@@ -19,36 +18,20 @@ import {
   ToolShell,
   useMounted,
 } from "@/components/ui";
+import {
+  dayTimes,
+  METHOD_KEYS,
+  type MethodKey,
+  methodForCountry,
+  PRAYER_AR,
+  PRAYER_ORDER,
+  type PrayerKey,
+} from "@/lib/prayer-calc";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
-
-const METHOD_FNS: Record<string, () => ReturnType<typeof CalculationMethod.MuslimWorldLeague>> = {
-  MuslimWorldLeague: CalculationMethod.MuslimWorldLeague,
-  UmmAlQura: CalculationMethod.UmmAlQura,
-  Egyptian: CalculationMethod.Egyptian,
-  Karachi: CalculationMethod.Karachi,
-  NorthAmerica: CalculationMethod.NorthAmerica,
-  MoonsightingCommittee: CalculationMethod.MoonsightingCommittee,
-  Dubai: CalculationMethod.Dubai,
-  Kuwait: CalculationMethod.Kuwait,
-  Qatar: CalculationMethod.Qatar,
-  Singapore: CalculationMethod.Singapore,
-  Turkey: CalculationMethod.Turkey,
-};
-
-/** The calculation method most commonly followed in each country. */
-const METHOD_BY_COUNTRY: Record<string, string> = {
-  SA: "UmmAlQura", AE: "Dubai", QA: "Qatar", KW: "Kuwait", EG: "Egyptian",
-  TR: "Turkey", PK: "Karachi", IN: "Karachi", BD: "Karachi", AF: "Karachi",
-  US: "NorthAmerica", CA: "NorthAmerica", MY: "Singapore", SG: "Singapore",
-  BN: "Singapore",
-};
-const methodForCountry = (code?: string) =>
-  METHOD_BY_COUNTRY[(code ?? "").toUpperCase()] ?? "MuslimWorldLeague";
 
 /** Shown until the visitor's own location resolves. */
 const FALLBACK: Place = { name: "Makkah", country: "Saudi Arabia", code: "SA", lat: 21.42, lng: 39.83 };
 
-const PRAYER_ORDER = ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"] as const;
 const PRAYER_ICON: Record<string, string> = {
   fajr: "ph:cloud-moon",
   sunrise: "ph:sun-horizon",
@@ -57,14 +40,6 @@ const PRAYER_ICON: Record<string, string> = {
   maghrib: "ph:sun-horizon",
   isha: "ph:moon-stars",
 };
-const PRAYER_AR: Record<string, string> = {
-  fajr: "الفجر",
-  sunrise: "الشروق",
-  dhuhr: "الظهر",
-  asr: "العصر",
-  maghrib: "المغرب",
-  isha: "العشاء",
-};
 
 function fmtTime(d: Date) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -72,7 +47,7 @@ function fmtTime(d: Date) {
 
 const GEO_OPTS: PositionOptions = { timeout: 10000, enableHighAccuracy: true };
 
-export default function PrayerTimesClient() {
+export default function PrayerTimesClient({ children }: { children?: React.ReactNode }) {
   const d = useDict();
   const locale = useLocale();
   const t = d.tools.prayer;
@@ -168,16 +143,13 @@ export default function PrayerTimesClient() {
   // Fajr) so the countdown works across midnight.
   const data = useMemo(() => {
     if (!mounted) return null;
-    const coords = new Coordinates(place.lat, place.lng);
-    const params = (METHOD_FNS[method] ?? METHOD_FNS.MuslimWorldLeague)();
-    const today = new PrayerTimes(coords, new Date(), params);
-    const y = new Date();
-    y.setDate(y.getDate() - 1);
-    const tm = new Date();
-    tm.setDate(tm.getDate() + 1);
-    const py = new PrayerTimes(coords, y, params);
-    const tn = new PrayerTimes(coords, tm, params);
-    const seq = [
+    const at = new Date();
+    const shift = (days: number) =>
+      new Date(at.getFullYear(), at.getMonth(), at.getDate() + days);
+    const today = dayTimes(place, shift(0), method);
+    const py = dayTimes(place, shift(-1), method);
+    const tn = dayTimes(place, shift(1), method);
+    const around: { key: PrayerKey; time: Date }[] = [
       { key: "isha", time: py.isha },
       { key: "fajr", time: today.fajr },
       { key: "dhuhr", time: today.dhuhr },
@@ -186,6 +158,9 @@ export default function PrayerTimesClient() {
       { key: "isha", time: today.isha },
       { key: "fajr", time: tn.fajr },
     ];
+    // Above the polar circles a prayer can have no astronomical time at all;
+    // dropping those keeps the countdown from landing on an Invalid Date.
+    const seq = around.filter((p) => !Number.isNaN(p.time.getTime()));
     return { today, seq };
   }, [mounted, place, method]);
 
@@ -235,12 +210,12 @@ export default function PrayerTimesClient() {
               value={method}
               onChange={(e) => {
                 touched.current = true;
-                setMethod(e.target.value);
+                setMethod(e.target.value as MethodKey);
               }}
             >
-              {Object.keys(METHOD_FNS).map((key) => (
+              {METHOD_KEYS.map((key) => (
                 <option key={key} value={key}>
-                  {t.methods[key as keyof typeof t.methods]}
+                  {t.methods[key]}
                 </option>
               ))}
             </Select>
@@ -300,7 +275,7 @@ export default function PrayerTimesClient() {
                   {t.nextPrayer}
                 </p>
                 <p className="mt-1 font-display text-4xl">
-                  {t.prayerNames[live.nextKey as keyof typeof t.prayerNames]}
+                  {t.prayerNames[live.nextKey]}
                 </p>
                 {locale !== "ar" ? (
                   <p lang="ar" dir="rtl" className="mt-1 font-arabic text-xl opacity-80">
@@ -410,6 +385,8 @@ export default function PrayerTimesClient() {
           <div className={`h-72 rounded-2xl border ${lineCls}`} />
         </div>
       )}
+
+      {children}
 
       <Faq eyebrow={t.faqEyebrow} heading={t.faqH2} items={t.faq} />
     </ToolShell>

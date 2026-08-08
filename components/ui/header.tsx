@@ -35,12 +35,12 @@ export function Header() {
         <div className="flex items-center gap-2.5">
           <nav className="hidden items-center gap-6 md:flex">
             <Link
-            href={`${localePath(locale)}#toolkit`}
-            className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
-          >
-            <Icon icon="mdi:weather-night" className="size-4 rtl:rotate-180" />
-            {d.common.allTools}
-          </Link>
+              href={`${localePath(locale)}#toolkit`}
+              className={`inline-flex items-center gap-1.5 text-sm ${mutedCls} transition-colors hover:text-emerald-700 dark:hover:text-emerald-400`}
+            >
+              <Icon icon="ph:squares-four" className="size-4 rtl:rotate-180" />
+              <span>{d.common.allTools}</span>
+            </Link>
             {NAV.map(({ key, icon }) => {
               const href = localePath(locale, TOOL_PATHS[key]);
               const active = pathname === href;
@@ -49,14 +49,13 @@ export function Header() {
                   key={key}
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={`inline-flex items-center gap-1.5 border-b pb-0.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 ${
-                    active
-                      ? "border-emerald-600 text-emerald-700 dark:border-emerald-400 dark:text-emerald-400"
-                      : `border-transparent ${mutedCls} hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`
-                  }`}
+                  className={`inline-flex items-center gap-1.5 border-b pb-0.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 ${active
+                    ? "border-emerald-600 text-emerald-700 dark:border-emerald-400 dark:text-emerald-400"
+                    : `border-transparent ${mutedCls} hover:border-emerald-600 hover:text-emerald-700 dark:hover:border-emerald-400 dark:hover:text-emerald-400`
+                    }`}
                 >
                   <Icon icon={icon} className="size-4" />
-                  {d.tools[key].title}
+                  <span>{d.tools[key].title}</span>
                 </Link>
               );
             })}
@@ -102,7 +101,7 @@ export function Header() {
               className={`flex items-center gap-2.5 border-b px-5 py-3.5 text-sm font-medium last:border-b-0 ${lineCls} ${mutedCls} hover:text-emerald-700 dark:hover:text-emerald-400`}
             >
               <Icon icon={icon} className="size-5" />
-              {d.tools[key].title}
+              <span>{d.tools[key].title}</span>
             </Link>
           ))}
         </nav>

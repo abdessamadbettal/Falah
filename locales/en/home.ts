@@ -127,6 +127,10 @@ export const home = {
       name: "Hisnul Muslim (Fortress of the Muslim)", 
       description: "An extensive, categorized collection of authentic daily Duas and Azkar for every occasion and circumstance." 
     },
+    khatam: {
+      name: "Khatam Al-Quran Planner",
+      description: "Plan your Quran reading to finish by a specific date. Calculate exactly how many pages you need to read per day and per prayer."
+    },
     zakat: { 
       name: "Comprehensive Zakat Calculator", 
       description: "A fast, precise tool to calculate Zakat on cash, gold, silver, investments, and business assets against live Nisab values." 
@@ -146,6 +150,10 @@ export const home = {
     stamp: { 
       name: "Arabic Letterhead & Date Stamp", 
       description: "Generate professional Hijri date headers and official stamps to add a polished touch to correspondence and documents." 
+    },
+    tasbeeh: {
+      name: "Smart Tasbeeh & Dhikr Counter",
+      description: "A beautiful, digital Tasbeeh counter designed for mobile use with target goals, haptic feedback, and daily Dhikr presets."
     },
   },
 };

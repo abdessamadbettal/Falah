@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { getDict, localePath, locales, type Dict, type Locale } from "./i18n";
 import { GITHUB_URL, SITE_URL } from "./site";
 
-const OG_LOCALES: Record<Locale, string> = { en: "en_US", ar: "ar_MA" };
+const OG_LOCALES: Record<Locale, string> = { en: "en_US", ar: "ar_MA", fr: "fr_FR" };
 
 /** Canonical + hreflang + OG metadata for one page in one locale.
  * English (/en) doubles as the x-default. */
@@ -146,9 +146,12 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   age: "/hijri-age",
   cards: "/quran-cards",
   stamp: "/date-stamp",
+  khatam: "/quran-planner",
+  tasbeeh: "/tasbeeh",
 };
 
 /** The 17 tools grouped into the 5 categories used across the site — the home
+/** The 16 tools grouped into the 5 categories used across the site — the home
  * directory and the footer both read from this one source. Group order matches
  * d.home.categories, so index i lines up with categories[i]. */
 export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
@@ -157,6 +160,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
     { key: "calendar", icon: "ph:calendar-dots" },
     { key: "ramadan", icon: "ph:moon-stars" },
     { key: "converter", icon: "ph:arrows-left-right" },
+    { key: "tasbeeh", icon: "ph:fingerprint" },
   ],
   [
     { key: "qibla", icon: "ph:compass" },
@@ -169,6 +173,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
     { key: "hadith", icon: "ph:book-bookmark" },
     { key: "names", icon: "ph:sparkle" },
     { key: "hisnul", icon: "ph:hands-praying" },
+    { key: "khatam", icon: "ph:calendar-check" },
   ],
   [
     { key: "zakat", icon: "ph:coins" },

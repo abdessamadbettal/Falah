@@ -162,7 +162,7 @@ export function AyahTooltip({
       <p
         lang={lang}
         dir={dir}
-        className={`mt-1.5 max-h-[40vh] overflow-y-auto leading-relaxed text-zinc-800 dark:text-zinc-200 ${
+        className={`mt-1.5 max-h-[50vh]  leading-relaxed text-zinc-800 dark:text-zinc-200 ${
           dir === "rtl" ? "font-arabic text-lg" : "text-sm"
         }`}
       >

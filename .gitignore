@@ -62,3 +62,7 @@ ayahFinder.md
 
 ayahFinderSupport.md
 ayahFinderWorkflow.md
+# GeoNames city list for the prerendered /prayer-times/<country>/<city>
+# routes (npm run prebuild). The localized names it feeds are committed as
+# lib/city-names.json; only the raw dumps live here.
+/.cities-cache/
