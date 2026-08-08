@@ -109,6 +109,10 @@ export const home = {
       name: "Explorateur de Tafsir Coranique",
       description: "Lisez des explications faisant autorité et des commentaires d'érudits verset par verset pour approfondir votre compréhension du Coran."
     },
+    ayahFinder: {
+      name: "Recherche de Versets (Texte & Voix)",
+      description: "Recherchez tous les versets du Coran en tapant ou en prononçant un texte arabe, puis accédez directement au verset dans le lecteur."
+    },
     hadith: {
       name: "Recueils de Hadiths (Kutub as-Sittah)",
       description: "Plus de 36 000 hadiths de Bukhari, Mouslim, des quatre Sounan, de la Mouwatta et des Quarante Hadiths — texte intégral en arabe avec traduction et authentification."
