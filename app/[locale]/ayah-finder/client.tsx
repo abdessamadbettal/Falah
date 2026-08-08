@@ -72,8 +72,13 @@ export default function AyahFinderClient() {
   const keepListening = useRef(false);
   /** Consecutive "network" errors. Reset on any transcript and on restart. */
   const networkRetries = useRef(0);
+  /** Accumulated finalized transcript. On mobile engines finalize chunks while
+   * a live interim segment re-includes prior words, so finalized text is
+   * appended once and the interim replaces itself. */
+  const finalText = useRef("");
 
   const stop = () => {
+    finalText.current = "";
     keepListening.current = false;
     recognition.current?.abort();
     recognition.current = null;
@@ -91,10 +96,14 @@ export default function AyahFinderClient() {
     rec.continuous = true;
     rec.interimResults = true;
     rec.onresult = (e: SpeechRecognitionEvent) => {
-      let text = "";
-      for (let i = 0; i < e.results.length; i++)
-        text += e.results[i][0].transcript;
-      if (text.trim()) networkRetries.current = 0;
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) finalText.current += " " + r[0].transcript;
+        else interim = r[0].transcript;
+      }
+      const text = (finalText.current + " " + interim).trim();
+      if (text) networkRetries.current = 0;
       setQuery(text);
     };
     rec.onerror = (e) => {
@@ -164,6 +173,7 @@ export default function AyahFinderClient() {
       return;
     }
     setMicError(null);
+    finalText.current = "";
     keepListening.current = true;
     setListening(true);
     try {
