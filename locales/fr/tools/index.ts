@@ -6,6 +6,7 @@ import { qibla } from "./qibla";
 import { mosque } from "./mosque";
 import { quran } from "./quran";
 import { tafseer } from "./tafseer";
+import { ayahFinder } from "./ayah-finder";
 import { names } from "./names";
 import { hisnul } from "./hisnul";
 import { zakat } from "./zakat";
@@ -27,6 +28,7 @@ export const tools = {
   mosque,
   quran,
   tafseer,
+  ayahFinder,
   names,
   hisnul,
   zakat,

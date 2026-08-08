@@ -6,9 +6,9 @@
  * "بِسْمِ" returned an empty string instead of "بسم". Spelled out in escapes,
  * the ranges are unambiguous and only combining marks are removed. */
 
-const HARAKAT = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D3-\u08FF]/g;
+export const HARAKAT = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D3-\u08FF]/g;
 /** Some ayah strings arrive with a byte-order mark or a tatweel. */
-const NOISE = /[\uFEFF\u0640]/g;
+export const NOISE = /[\uFEFF\u0640]/g;
 
 /** Undecorated Arabic: no harakat, no BOM — what a reader would type into a
  * search box, and what belongs in a meta description. */

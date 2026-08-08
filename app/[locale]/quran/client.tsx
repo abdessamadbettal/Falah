@@ -172,6 +172,23 @@ export default function QuranClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Land on a deep link like #ayah-42 (0-based, as in id={`ayah-${i}`}) — the
+  // reader is prerendered, so the anchor is in the DOM the moment we mount.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const match = window.location.hash.match(/^#ayah-(\d+)$/);
+    if (!match) return;
+    const idx = Number(match[1]);
+    if (!Number.isInteger(idx) || idx < 0 || idx >= ayahs.length) return;
+    const el = document.getElementById(`ayah-${idx}`);
+    if (!el) return;
+    // Highlight on the next frame so the browser paints the prerendered page
+    // first; setState must not run synchronously in the effect body.
+    const raf = requestAnimationFrame(() => setActiveIdx(idx));
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unit.mode, unit.n, ayahs.length]);
   // A bookmark for the Khatam planner: one write per unit opened, recording
   // where in the mushaf this unit begins. Nothing on this page reads it back,
   // and it deliberately doesn't track the active verse — that would put a
