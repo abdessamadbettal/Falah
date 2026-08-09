@@ -111,6 +111,10 @@ export const home = {
       name: "Quranic Tafseer Explorer", 
       description: "Read authoritative explanations and scholarly commentary verse by verse to deepen your understanding of the Quran." 
     },
+    ayahFinder: {
+      name: "Ayah Finder (Text & Voice)",
+      description: "Search every ayah of the Quran by typing or speaking Arabic text, then jump straight to the verse in the reader."
+    },
     hadith: {
       name: "Hadith Collections (Kutub as-Sittah)",
       description: "Over 36,000 hadiths from Bukhari, Muslim, the four Sunan, the Muwatta and the Forty Hadith — full Arabic with translation and grading."
