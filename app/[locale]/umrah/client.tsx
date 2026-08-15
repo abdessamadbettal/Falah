@@ -5,6 +5,18 @@ import { ToolShell } from "@/components/ui";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
+function Kaaba() {
+  return (
+    <group position={[0, 1.5, 0]}>
+      {/* Main Kaaba Cube (Black) */}
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[3, 3, 3]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
 export default function UmrahSimulatorClient() {
   const d = useDict();
   const t = d.tools.umrah;
@@ -19,6 +31,9 @@ export default function UmrahSimulatorClient() {
             maxDistance={20} 
             maxPolarAngle={Math.PI / 2 - 0.05} // Prevent camera from going under the floor
           />
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+          <Kaaba />
         </Canvas>
       </div>
     </ToolShell>
