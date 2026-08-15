@@ -58,11 +58,31 @@ function Floor() {
 export default function UmrahSimulatorClient() {
   const d = useDict();
   const t = d.tools.umrah;
-
+  
   return (
     <ToolShell icon="ph:cube" title={t.title} side={t.side} intro={t.intro}>
-      <div className="relative flex h-[60vh] w-full items-center justify-center overflow-hidden rounded-xl bg-zinc-950 shadow-inner">
-        <Canvas camera={{ position: [10, 5, 10], fov: 50 }}>
+      <div className="relative flex h-[60vh] w-full flex-col overflow-hidden rounded-xl bg-zinc-950 shadow-inner">
+        {/* Step-by-Step UI Overlay */}
+        <div className="absolute top-4 left-4 z-10 w-72 rounded-xl bg-white/95 p-4 shadow-xl backdrop-blur-md dark:bg-zinc-900/95">
+          <div className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400">
+            <Icon icon="ph:map-pin-line" className="size-5" />
+            {t.step} 1: {t.hajrAlAswad}
+          </div>
+          <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            {t.hajrAlAswadDesc}
+          </p>
+          <div className="mt-4 flex gap-2">
+            <button className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 py-2 text-xs font-bold text-white transition hover:bg-emerald-600">
+              {t.nextStep} <Icon icon="ph:arrow-right" />
+            </button>
+          </div>
+        </div>
+
+        <div className="absolute bottom-4 right-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-xs text-white/80 backdrop-blur">
+          {t.dragToRotate}
+        </div>
+
+        <Canvas camera={{ position: [10, 5, 10], fov: 50 }} className="flex-1">
           <OrbitControls 
             enablePan={false} 
             minDistance={5} 
