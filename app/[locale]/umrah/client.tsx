@@ -19,6 +19,12 @@ function Kaaba() {
         <boxGeometry args={[3.01, 0.3, 3.01]} />
         <meshStandardMaterial color="#D4AF37" roughness={0.4} metalness={0.8} />
       </mesh>
+
+      {/* Golden Door (Bab al-Kaaba) */}
+      <mesh position={[0.8, 0, 1.51]}>
+        <planeGeometry args={[0.7, 1.4]} />
+        <meshStandardMaterial color="#D4AF37" roughness={0.3} metalness={0.9} />
+      </mesh>
     </group>
   );
 }
