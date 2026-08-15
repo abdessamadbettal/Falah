@@ -3,7 +3,7 @@
 import { useDict } from "@/components/locale";
 import { ToolShell } from "@/components/ui";
 import { Icon } from "@iconify/react";
-import { Html, OrbitControls } from "@react-three/drei";
+import { Html, OrbitControls, Environment, Sky } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useState } from "react";
 
@@ -228,12 +228,16 @@ export default function UmrahSimulatorClient() {
           <OrbitControls 
             enablePan={false} 
             minDistance={5} 
-            maxDistance={20}
+            maxDistance={25}
             maxPolarAngle={Math.PI / 2 - 0.05} // Prevent going below floor
           />
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+          <ambientLight intensity={0.2} />
+          <directionalLight position={[10, 15, -5]} intensity={1.5} castShadow color="#ffedd5" />
           
+          {/* Realistic Lighting & Sky */}
+          <Environment preset="sunset" />
+          <Sky distance={450000} sunPosition={[10, 1, -5]} inclination={0.2} azimuth={0.25} />
+
           {stage === 2 && (
             <>
               <Marker 
