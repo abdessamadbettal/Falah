@@ -13,6 +13,12 @@ function Kaaba() {
         <boxGeometry args={[3, 3, 3]} />
         <meshStandardMaterial color="#111111" roughness={0.9} />
       </mesh>
+      
+      {/* Golden Band (Kiswa embroidery) */}
+      <mesh position={[0, 0.8, 0]}>
+        <boxGeometry args={[3.01, 0.3, 3.01]} />
+        <meshStandardMaterial color="#D4AF37" roughness={0.4} metalness={0.8} />
+      </mesh>
     </group>
   );
 }
