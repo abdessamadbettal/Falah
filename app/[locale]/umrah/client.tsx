@@ -84,6 +84,12 @@ export default function UmrahSimulatorClient() {
             description={t.ruknYamaniDesc} 
           />
           
+          <Marker 
+            position={[2.0, 0.5, 3.5]} 
+            title={t.maqamIbrahim} 
+            description={t.maqamIbrahimDesc} 
+          />
+          
           <Kaaba />
           <Floor />
         </Canvas>
