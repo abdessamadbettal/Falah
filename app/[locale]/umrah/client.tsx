@@ -78,6 +78,12 @@ export default function UmrahSimulatorClient() {
             description={t.hajrAlAswadDesc} 
           />
           
+          <Marker 
+            position={[1.6, 1.5, -1.6]} 
+            title={t.ruknYamani} 
+            description={t.ruknYamaniDesc} 
+          />
+          
           <Kaaba />
           <Floor />
         </Canvas>
