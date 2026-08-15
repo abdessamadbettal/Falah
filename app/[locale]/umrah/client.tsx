@@ -3,7 +3,7 @@
 import { useDict } from "@/components/locale";
 import { ToolShell } from "@/components/ui";
 import { Icon } from "@iconify/react";
-import { Html, OrbitControls, Environment, Sky } from "@react-three/drei";
+import { Html, OrbitControls, Environment, Sky, MeshReflectorMaterial } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useState } from "react";
 
@@ -51,7 +51,19 @@ function Floor() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
       <planeGeometry args={[100, 100]} />
-      <meshStandardMaterial color="#eeeeee" roughness={0.1} metalness={0.1} />
+      <MeshReflectorMaterial
+        blur={[300, 100]}
+        resolution={1024}
+        mixBlur={1}
+        mixStrength={40}
+        roughness={0.15}
+        depthScale={1.2}
+        minDepthThreshold={0.4}
+        maxDepthThreshold={1.4}
+        color="#e5e5e5"
+        metalness={0.1}
+        mirror={1}
+      />
     </mesh>
   );
 }
