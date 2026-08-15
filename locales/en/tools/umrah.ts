@@ -16,5 +16,35 @@ export const umrah = {
   nextStep: "Next Step",
   prevStep: "Previous",
   loading3d: "Loading 3D Experience...",
-  dragToRotate: "Drag to rotate the Kaaba",
+  dragToRotate: "Drag to rotate",
+  
+  // Phase 2: Umrah Stages
+  stageIhram: "Stage 1: Ihram",
+  stageTawaf: "Stage 2: Tawaf",
+  stageSai: "Stage 3: Sa'i",
+  stageHalq: "Stage 4: Halq / Taqsir",
+  
+  ihramNiyyah: "Niyyah (Intention)",
+  ihramNiyyahDesc: "Recite: 'Allahumma labbayka ‘umrah' (O Allah, here I am to perform Umrah).",
+  ihramTalbiyah: "The Talbiyah",
+  ihramTalbiyahDesc: "Recite: 'Labbayk Allahumma labbayk, labbayka la sharika laka labbayk. Innal-hamda wan-ni’mata laka wal-mulk, la sharika lak.'",
+  enterIhram: "Enter Ihram",
+  
+  tawafCircuit: "Circuit",
+  completeCircuit: "Complete Circuit",
+  tawafComplete: "Tawaf Complete! Proceed to Maqam Ibrahim.",
+  proceedToSai: "Proceed to Sa'i",
+  
+  saiSafa: "Mount Safa",
+  saiSafaDesc: "Recite: 'Inna as-Safa wal-Marwata min sha’a’irillah' (Verily, As-Safa and Al-Marwah are from the symbols of Allah).",
+  saiMarwa: "Mount Marwa",
+  saiLap: "Lap",
+  completeLap: "Complete Lap",
+  saiComplete: "Sa'i Complete! Proceed to Halq.",
+  proceedToHalq: "Proceed to Halq",
+  
+  halqTitle: "Halq / Taqsir (Shaving or Trimming)",
+  halqDesc: "To exit the state of Ihram, men should ideally shave their head (Halq) or trim it equally all around (Taqsir). Women gather their hair and cut off a fingertip's length.",
+  completeUmrah: "Complete Umrah",
+  umrahSuccess: "Congratulations! May Allah accept your Umrah.",
 };
