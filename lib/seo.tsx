@@ -148,7 +148,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   stamp: "/date-stamp",
   khatam: "/quran-planner",
   tasbeeh: "/tasbeeh",
-  umrah: "/umrah-simulator",
+  umrah: "/umrah",
 };
 
 /** The 17 tools grouped into the 5 categories used across the site — the home
