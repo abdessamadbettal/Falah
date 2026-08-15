@@ -5,7 +5,8 @@ import { ToolShell } from "@/components/ui";
 import { Icon } from "@iconify/react";
 import { Html, OrbitControls, Environment, Sky, MeshReflectorMaterial } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
+import * as THREE from "three";
 
 function Marker({ position, title, description }: { position: [number, number, number], title: string, description: string }) {
   return (
@@ -88,6 +89,32 @@ function SafaMarwa() {
         <meshStandardMaterial color="#E8E2D9" roughness={0.3} />
       </mesh>
     </group>
+  );
+}
+
+function MosqueArches() {
+  const count = 36;
+  const radius = 22;
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+
+  useLayoutEffect(() => {
+    if (!meshRef.current) return;
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      dummy.position.set(Math.cos(angle) * radius, 2.5, Math.sin(angle) * radius);
+      dummy.rotation.y = -angle;
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  }, []);
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]} castShadow receiveShadow>
+      <boxGeometry args={[1.5, 5, 1.5]} />
+      <meshStandardMaterial color="#E8E2D9" roughness={0.8} />
+    </instancedMesh>
   );
 }
 
@@ -268,6 +295,7 @@ export default function UmrahSimulatorClient() {
                 description={t.maqamIbrahimDesc} 
               />
               <Kaaba />
+              <MosqueArches />
             </>
           )}
 
