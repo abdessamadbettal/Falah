@@ -1,11 +1,12 @@
-import type { Locale } from "@/lib/arabic";
-import { getDict } from "@/lib/arabic";
+import type { Locale } from "@/lib/i18n";
+import { getDict } from "@/lib/i18n";
 import { TOOL_PATHS } from "@/lib/seo";
 import { ToolJsonLd } from "@/lib/tool-page";
 import type { Metadata } from "next";
 import UmrahSimulatorClient from "./client";
 
-export function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
   const m = getDict(locale).tools.umrah.meta;
   return {
     title: m.title,
@@ -21,7 +22,8 @@ export function generateMetadata({ params: { locale } }: { params: { locale: Loc
   };
 }
 
-export default function UmrahSimulatorPage({ params: { locale } }: { params: { locale: Locale } }) {
+export default async function UmrahSimulatorPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
   return (
     <>
       <ToolJsonLd locale={locale} toolKey="umrah" />
