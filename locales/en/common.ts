@@ -18,6 +18,11 @@ export const common = {
   useMyLocation: "Use my location",
   myLocation: "My location",
   locating: "Locating…",
+  savedLocation: "Using your saved location",
+  clear: "Clear",
+  offline: "You're offline",
+  offlineNote:
+    "You're offline, so your location can't be detected. Pick a city — it'll be saved for next time.",
   geoUnavailable: "Geolocation is unavailable in this browser. Enter coordinates below.",
   geoDenied: "Location was denied. Enter coordinates manually — they stay on this device.",
   searchCityPh: "Search for your city…",

@@ -18,6 +18,11 @@ export const common = {
   useMyLocation: "Utiliser ma position",
   myLocation: "Ma position",
   locating: "Localisation…",
+  savedLocation: "Position enregistrée utilisée",
+  clear: "Effacer",
+  offline: "Vous êtes hors ligne",
+  offlineNote:
+    "Vous êtes hors ligne, votre position ne peut donc pas être détectée. Choisissez une ville — elle sera enregistrée pour la prochaine fois.",
   geoUnavailable: "La géolocalisation est indisponible dans ce navigateur. Entrez les coordonnées ci-dessous.",
   geoDenied: "Position refusée. Entrez les coordonnées manuellement — elles restent sur cet appareil.",
   searchCityPh: "Rechercher votre ville…",
