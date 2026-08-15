@@ -1,0 +1,20 @@
+export const umrah = {
+  meta: {
+    title: "3D Umrah Simulator — Interactive Tawaf Guide",
+    description: "An interactive 3D WebGL simulator to learn how to perform Tawaf around the Kaaba with exact Duas and steps.",
+  },
+  title: "Umrah Simulator",
+  side: "3D Guide",
+  intro: "Explore the Masjid Al-Haram in 3D. Learn the steps of Tawaf, key locations, and the exact supplications to recite at each corner.",
+  hajrAlAswad: "Hajr Al-Aswad (Black Stone)",
+  hajrAlAswadDesc: "The starting point of Tawaf. Point towards it and say: 'Bismillahi Allahu Akbar' (In the name of Allah, Allah is the Greatest).",
+  ruknYamani: "Rukn Al-Yamani",
+  ruknYamaniDesc: "Between this corner and the Black Stone, recite: 'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar'.",
+  maqamIbrahim: "Maqam Ibrahim",
+  maqamIbrahimDesc: "After completing 7 circuits, pray 2 Raka'at behind Maqam Ibrahim if possible.",
+  step: "Step",
+  nextStep: "Next Step",
+  prevStep: "Previous",
+  loading3d: "Loading 3D Experience...",
+  dragToRotate: "Drag to rotate the Kaaba",
+};
