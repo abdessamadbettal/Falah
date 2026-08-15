@@ -2,8 +2,25 @@
 
 import { useDict } from "@/components/locale";
 import { ToolShell } from "@/components/ui";
-import { OrbitControls } from "@react-three/drei";
+import { Icon } from "@iconify/react";
+import { Html, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+
+function Marker({ position, title, description }: { position: [number, number, number], title: string, description: string }) {
+  return (
+    <Html position={position} center className="pointer-events-none">
+      <div className="flex w-48 flex-col items-center text-center">
+        <div className="mb-2 flex size-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg">
+          <Icon icon="ph:map-pin-fill" className="size-4" />
+        </div>
+        <div className="rounded-lg bg-white/90 p-2 shadow-xl backdrop-blur-sm dark:bg-zinc-900/90 pointer-events-auto">
+          <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{title}</div>
+          <div className="mt-1 text-[10px] text-zinc-600 dark:text-zinc-400 leading-tight">{description}</div>
+        </div>
+      </div>
+    </Html>
+  );
+}
 
 function Kaaba() {
   return (
@@ -54,6 +71,13 @@ export default function UmrahSimulatorClient() {
           />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+          
+          <Marker 
+            position={[1.6, 1.5, 1.6]} 
+            title={t.hajrAlAswad} 
+            description={t.hajrAlAswadDesc} 
+          />
+          
           <Kaaba />
           <Floor />
         </Canvas>
