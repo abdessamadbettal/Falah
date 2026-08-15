@@ -29,6 +29,15 @@ function Kaaba() {
   );
 }
 
+function Floor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
+      <planeGeometry args={[100, 100]} />
+      <meshStandardMaterial color="#eeeeee" roughness={0.1} metalness={0.1} />
+    </mesh>
+  );
+}
+
 export default function UmrahSimulatorClient() {
   const d = useDict();
   const t = d.tools.umrah;
@@ -46,6 +55,7 @@ export default function UmrahSimulatorClient() {
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
           <Kaaba />
+          <Floor />
         </Canvas>
       </div>
     </ToolShell>
