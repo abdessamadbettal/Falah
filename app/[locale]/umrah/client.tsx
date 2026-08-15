@@ -26,22 +26,22 @@ function Marker({ position, title, description }: { position: [number, number, n
 function Kaaba() {
   return (
     <group position={[0, 1.5, 0]}>
-      {/* Main Kaaba Cube (Black) */}
+      {/* Main black cube (Kiswa) */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[3, 3, 3]} />
-        <meshStandardMaterial color="#111111" roughness={0.9} />
+        <meshStandardMaterial color="#111111" roughness={0.9} metalness={0.1} />
       </mesh>
       
-      {/* Golden Band (Kiswa embroidery) */}
-      <mesh position={[0, 0.8, 0]}>
-        <boxGeometry args={[3.01, 0.3, 3.01]} />
-        <meshStandardMaterial color="#D4AF37" roughness={0.4} metalness={0.8} />
+      {/* Golden Band (Al-Hizam) */}
+      <mesh position={[0, 0.8, 0]} castShadow>
+        <boxGeometry args={[3.02, 0.4, 3.02]} />
+        <meshStandardMaterial color="#d4af37" roughness={0.2} metalness={0.9} />
       </mesh>
-
+      
       {/* Golden Door (Bab al-Kaaba) */}
-      <mesh position={[0.8, 0, 1.51]}>
-        <planeGeometry args={[0.7, 1.4]} />
-        <meshStandardMaterial color="#D4AF37" roughness={0.3} metalness={0.9} />
+      <mesh position={[0.8, 0, 1.51]} castShadow>
+        <boxGeometry args={[0.8, 1.5, 0.05]} />
+        <meshStandardMaterial color="#d4af37" roughness={0.2} metalness={0.9} />
       </mesh>
     </group>
   );
