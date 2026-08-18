@@ -1,0 +1,50 @@
+export const umrah = {
+  meta: {
+    title: "Simulateur de la Omra 3D — Guide Interactif du Tawaf",
+    description: "Un simulateur WebGL 3D interactif pour apprendre à effectuer le Tawaf autour de la Kaaba avec les invocations et étapes exactes.",
+  },
+  title: "Simulateur de Omra",
+  side: "Guide 3D",
+  intro: "Explorez Masjid Al-Haram en 3D. Apprenez les étapes du Tawaf, les lieux clés et les invocations exactes à réciter à chaque coin.",
+  hajrAlAswad: "Hajr Al-Aswad (Pierre Noire)",
+  hajrAlAswadDesc: "Le point de départ du Tawaf. Pointez vers elle et dites : 'Bismillahi Allahu Akbar'.",
+  ruknYamani: "Rukn Al-Yamani (Coin Yéménite)",
+  ruknYamaniDesc: "Entre ce coin et la Pierre Noire, récitez : 'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar'.",
+  maqamIbrahim: "Maqam Ibrahim",
+  maqamIbrahimDesc: "Après avoir terminé 7 circuits, priez 2 Rak'ats derrière Maqam Ibrahim si possible.",
+  step: "Étape",
+  nextStep: "Étape Suivante",
+  prevStep: "Précédent",
+  loading3d: "Chargement de l'expérience 3D...",
+  dragToRotate: "Faites glisser pour faire pivoter",
+  
+  // Phase 2: Umrah Stages
+  stageIhram: "Étape 1 : Ihram",
+  stageTawaf: "Étape 2 : Tawaf",
+  stageSai: "Étape 3 : Sa'i",
+  stageHalq: "Étape 4 : Halq / Taqsir",
+  
+  ihramNiyyah: "L'Intention (Niyyah)",
+  ihramNiyyahDesc: "Récit : 'Allahumma labbayka ‘umrah' (Ô Allah, me voici pour accomplir la Omra).",
+  ihramTalbiyah: "La Talbiyah",
+  ihramTalbiyahDesc: "Récit : 'Labbayk Allahumma labbayk, labbayka la sharika laka labbayk. Innal-hamda wan-ni’mata laka wal-mulk, la sharika lak.'",
+  enterIhram: "Entrer en Ihram",
+  
+  tawafCircuit: "Tour",
+  completeCircuit: "Terminer le Tour",
+  tawafComplete: "Tawaf terminé ! Dirigez-vous vers le Maqam Ibrahim.",
+  proceedToSai: "Procéder au Sa'i",
+  
+  saiSafa: "Mont Safa",
+  saiSafaDesc: "Récit : 'Inna as-Safa wal-Marwata min sha’a’irillah' (Certes, Safa et Marwa sont parmi les signes d'Allah).",
+  saiMarwa: "Mont Marwa",
+  saiLap: "Aller",
+  completeLap: "Terminer l'aller",
+  saiComplete: "Sa'i terminé ! Procédez au Halq.",
+  proceedToHalq: "Procéder au Halq",
+  
+  halqTitle: "Halq / Taqsir (Rasage ou Raccourcissement)",
+  halqDesc: "Pour sortir de l'état d'Ihram, les hommes devraient idéalement se raser la tête (Halq) ou raccourcir leurs cheveux (Taqsir) de manière égale. Les femmes coupent l'équivalent d'une phalange.",
+  completeUmrah: "Terminer la Omra",
+  umrahSuccess: "Félicitations ! Qu'Allah accepte votre Omra.",
+};

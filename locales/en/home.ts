@@ -155,5 +155,9 @@ export const home = {
       name: "Smart Tasbeeh & Dhikr Counter",
       description: "A beautiful, digital Tasbeeh counter designed for mobile use with target goals, haptic feedback, and daily Dhikr presets."
     },
+    umrah: {
+      name: "3D Umrah & Hajj Simulator",
+      description: "An interactive WebGL 3D simulator to learn Tawaf, explore the Kaaba, and memorize key Duas step-by-step."
+    },
   },
 };

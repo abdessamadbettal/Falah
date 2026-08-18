@@ -18,6 +18,7 @@ import { tasbeeh } from "./tasbeeh";
 import { hadith } from "./hadith";
 import { hadithBrowse } from "./hadith-browse";
 import { khatam } from "./khatam";
+import { umrah } from "./umrah";
 
 export const tools = {
   prayer,
@@ -40,4 +41,5 @@ export const tools = {
   hadith,
   hadithBrowse,
   khatam,
+  umrah,
 };

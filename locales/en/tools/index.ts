@@ -17,6 +17,7 @@ import { cards } from "./cards";
 import { stamp } from "./stamp";
 import { khatam } from "./khatam";
 import { tasbeeh } from "./tasbeeh";
+import { umrah } from "./umrah";
 
 export const tools = {
   prayer,
@@ -38,4 +39,5 @@ export const tools = {
   stamp,
   khatam,
   tasbeeh,
+  umrah,
 };

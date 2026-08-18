@@ -148,6 +148,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   stamp: "/date-stamp",
   khatam: "/quran-planner",
   tasbeeh: "/tasbeeh",
+  umrah: "/umrah",
 };
 
 /** The 17 tools grouped into the 5 categories used across the site — the home
@@ -174,6 +175,7 @@ export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
     { key: "names", icon: "ph:sparkle" },
     { key: "hisnul", icon: "ph:hands-praying" },
     { key: "khatam", icon: "ph:calendar-check" },
+    { key: "umrah", icon: "ph:cube" },
   ],
   [
     { key: "zakat", icon: "ph:coins" },

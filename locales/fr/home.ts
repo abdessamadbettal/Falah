@@ -153,5 +153,9 @@ export const home = {
       name: "Tasbih Intelligent",
       description: "Un compteur Tasbih numérique conçu pour une utilisation mobile avec des objectifs, un retour haptique et des préréglages de Dhikr quotidiens."
     },
+    umrah: {
+      name: "Simulateur de la Omra 3D",
+      description: "Un simulateur 3D interactif WebGL pour apprendre le Tawaf, explorer la Kaaba et mémoriser les invocations clés étape par étape."
+    },
   },
 };
