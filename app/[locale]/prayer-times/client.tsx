@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { CitySearch, type Place, detectIpPlace, reverseGeocode } from "@/components/city-search";
 import { Faq } from "@/components/faq";
 import { useDict, useLocale } from "@/components/locale";
@@ -28,6 +28,15 @@ import {
   type PrayerKey,
 } from "@/lib/prayer-calc";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
+import {
+  clearSavedPlace,
+  getSavedPlaceServerSnapshot,
+  getSavedPlaceSnapshot,
+  loadSavedPlace,
+  savePlace,
+  subscribeSavedPlace,
+  type SavedPrayerPlace,
+} from "@/lib/prayer-location";
 
 /** Shown until the visitor's own location resolves. */
 const FALLBACK: Place = { name: "Makkah", country: "Saudi Arabia", code: "SA", lat: 21.42, lng: 39.83 };
@@ -54,22 +63,52 @@ export default function PrayerTimesClient({ children }: { children?: React.React
   const mounted = useMounted();
   const reduce = useReducedMotion();
 
-  const [place, setPlace] = useState<Place>(FALLBACK);
-  const [method, setMethod] = useState(() => methodForCountry(FALLBACK.code));
   const [detecting, setDetecting] = useState(true);
   const [locating, setLocating] = useState(false);
   const [precise, setPrecise] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  // The persisted place, served from storage via an external store so the
+  // prerendered HTML always matches (the server snapshot is null) — the saved
+  // value lands after hydration without a manual restore effect.
+  const persisted = useSyncExternalStore(
+    subscribeSavedPlace,
+    getSavedPlaceSnapshot,
+    getSavedPlaceServerSnapshot,
+  );
+  // The place chosen this session (pick / GPS / IP prefill). Takes precedence
+  // over `persisted` so an explicit action always stands, even if saving fails.
+  const [choice, setChoice] = useState<{ place: Place; method: MethodKey } | null>(null);
+  // Load-time saved place. During the hydration pass `persisted` is still the
+  // null server snapshot, so this is what blocks GPS/IP on the first commit.
+  const [restored, setRestored] = useState<SavedPrayerPlace | null>(() =>
+    typeof window === "undefined" ? null : loadSavedPlace(),
+  );
+  // Synced in an effect so the prerendered HTML always matches (navigator is
+  // undefined on the server), then kept live via online/offline events.
+  const [onLine, setOnLine] = useState(true);
+  // Bumped by "Clear" to re-run the silent GPS + IP detection.
+  const [detectRun, setDetectRun] = useState(0);
   // Once the user picks a city or shares GPS, stop the IP guess from
   // overriding it (this ref is read inside async callbacks).
   const touched = useRef(false);
 
+  // The active place + method. A fresh choice wins over the persisted place,
+  // which in turn wins over the Makkah fallback.
+  const place = choice?.place ?? persisted?.place ?? FALLBACK;
+  const method = choice?.method ?? persisted?.method ?? methodForCountry(FALLBACK.code);
+  // Latest method, readable inside async callbacks without a stale closure.
+  const methodRef = useRef(method);
+  useEffect(() => {
+    methodRef.current = method;
+  }, [method]);
+
   function pick(p: Place) {
     touched.current = true;
     setPrecise(false);
-    setPlace(p);
-    setMethod(methodForCountry(p.code));
+    const m = methodForCountry(p.code);
+    setChoice({ place: p, method: m });
+    savePlace(p, m);
   }
 
   // Adopt an exact GPS fix. Shared by the on-load attempt and the button:
@@ -77,14 +116,20 @@ export default function PrayerTimesClient({ children }: { children?: React.React
   // (and its calculation method) in the background.
   const applyPosition = useCallback(
     (pos: GeolocationPosition) => {
+      // A manual pick won the race — let it stand, never overwrite it.
+      if (touched.current) return;
       const { latitude, longitude } = pos.coords;
       touched.current = true;
-      setPlace({ name: d.common.myLocation, country: "", lat: latitude, lng: longitude });
+      setChoice({
+        place: { name: d.common.myLocation, country: "", lat: latitude, lng: longitude },
+        method: methodRef.current,
+      });
       setPrecise(true);
       setLocating(false);
       reverseGeocode(latitude, longitude, locale, d.common.myLocation).then((p) => {
-        setPlace(p);
-        if (p.code) setMethod(methodForCountry(p.code));
+        const m = p.code ? methodForCountry(p.code) : methodRef.current;
+        setChoice({ place: p, method: m });
+        savePlace(p, m);
       });
     },
     [d, locale],
@@ -109,35 +154,63 @@ export default function PrayerTimesClient({ children }: { children?: React.React
     );
   }
 
+  /** Forget the saved place and start detection over — silent GPS first, then
+   * the IP prefill — so the visitor can re-establish their location. */
+  function clearSaved() {
+    clearSavedPlace();
+    setRestored(null);
+    setChoice(null);
+    touched.current = false;
+    setPrecise(false);
+    setGeoError(null);
+    setDetecting(true);
+    setDetectRun((n) => n + 1);
+  }
+
   // Tick the countdown once a second.
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
+  // Keep the offline state live so the location card and detection flow
+  // respond when the connection drops or returns.
+  useEffect(() => {
+    const goOnline = () => setOnLine(true);
+    const goOffline = () => setOnLine(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+
   // Prefer the visitor's exact location, requested silently on open. A denial
   // here is expected and stays quiet; the IP guess below keeps the page useful.
+  // Skipped entirely when a saved place is active (persisted or restored).
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    if (restored || persisted || !navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(applyPosition, () => {}, GEO_OPTS);
-  }, [applyPosition]);
+  }, [applyPosition, restored, persisted, detectRun]);
 
   // Approximate the visitor's city by IP as an immediate, permission-free
-  // default — skipped if GPS or a manual pick already set the location.
+  // default — skipped when a saved place is active or the visitor is offline
+  // (fails fast to the saved place, or Makkah when nothing is saved).
   useEffect(() => {
+    if (restored || persisted || !onLine) return;
     let cancelled = false;
     detectIpPlace().then((p) => {
       if (cancelled) return;
       if (p && !touched.current) {
-        setPlace(p);
-        setMethod(methodForCountry(p.code));
+        setChoice({ place: p, method: methodForCountry(p.code) });
       }
       setDetecting(false);
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [restored, persisted, onLine, detectRun]);
 
   // Today's times plus the surrounding prayers (yesterday's Isha → tomorrow's
   // Fajr) so the countdown works across midnight.
@@ -209,8 +282,10 @@ export default function PrayerTimesClient({ children }: { children?: React.React
             <Select
               value={method}
               onChange={(e) => {
+                const next = e.target.value as MethodKey;
                 touched.current = true;
-                setMethod(e.target.value as MethodKey);
+                setChoice({ place, method: next });
+                savePlace(place, next);
               }}
             >
               {METHOD_KEYS.map((key) => (
@@ -236,14 +311,43 @@ export default function PrayerTimesClient({ children }: { children?: React.React
               {locating ? d.common.locating : d.common.useMyLocation}
             </button>
           ) : null}
-          <p className={`flex items-center gap-2 text-xs ${mutedCls}`}>
-            {detecting || locating ? (
-              <Icon icon="ph:circle-notch" className="size-3.5 animate-spin" />
-            ) : (
-              <Icon icon="ph:shield-check" className={`size-3.5 ${brandCls}`} />
-            )}
-            {detecting || locating ? t.detecting : t.autoNote}
-          </p>
+          {persisted ? (
+            <p className="flex flex-wrap items-center gap-2 text-xs">
+              {!onLine ? (
+                <span className="inline-flex items-center gap-1.5 font-medium text-amber-600 dark:text-amber-400">
+                  <Icon icon="ph:wifi-x" className="size-3.5" />
+                  {d.common.offline}
+                </span>
+              ) : (
+                <Icon icon="ph:shield-check" className={`size-3.5 ${brandCls}`} />
+              )}
+              <span className={mutedCls}>{d.common.savedLocation}</span>
+              <span aria-hidden="true" className={mutedCls}>
+                ·
+              </span>
+              <button
+                type="button"
+                onClick={clearSaved}
+                className="font-semibold text-emerald-700 underline underline-offset-2 transition-colors hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+              >
+                {d.common.clear}
+              </button>
+            </p>
+          ) : !onLine ? (
+            <p className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
+              <Icon icon="ph:wifi-x" className="size-3.5" />
+              {d.common.offlineNote}
+            </p>
+          ) : (
+            <p className={`flex items-center gap-2 text-xs ${mutedCls}`}>
+              {detecting || locating ? (
+                <Icon icon="ph:circle-notch" className="size-3.5 animate-spin" />
+              ) : (
+                <Icon icon="ph:shield-check" className={`size-3.5 ${brandCls}`} />
+              )}
+              {detecting || locating ? t.detecting : t.autoNote}
+            </p>
+          )}
         </div>
         {geoError ? (
           <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">{geoError}</p>

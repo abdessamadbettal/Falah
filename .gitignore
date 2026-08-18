@@ -66,3 +66,6 @@ ayahFinderWorkflow.md
 # routes (npm run prebuild). The localized names it feeds are committed as
 # lib/city-names.json; only the raw dumps live here.
 /.cities-cache/
+
+prayer-times-ux.md
+timePrayerBug.md
