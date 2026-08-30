@@ -15,13 +15,13 @@ const CORE: ToolKey[] = ["converter", "mosque", "tafseer", "names", "hisnul", "i
 
 export const dynamic = "force-static";
 
-/** The site proper: the home page, the 16 tools and the about page — 48 URLs
+/** The site proper: the home page, the tools and the about page — 57 URLs
  * across the three locales. Small enough that Search Console reports on it
  * are actually readable, which is the whole point of the split.
  *
  * The Quran, hadith and Asma ul Husna hubs are listed by their own sitemaps,
  * alongside the pages beneath them, so they are dropped here to avoid
- * duplicate entries. */
+ * duplicate entries — 17 of the 20 tools remain. */
 export function GET() {
   const priorityOf = (key: ToolKey) =>
     FLAGSHIP.includes(key) ? 0.9 : CORE.includes(key) ? 0.8 : 0.6;

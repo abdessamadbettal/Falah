@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Falah.io — Open-source Islamic Tools",
     short_name: "Falah",
     description:
-      "15 free Islamic tools that run entirely in your browser: prayer times, Qibla, Hijri calendar, Zakat, Quran, inheritance and more.",
+      "20 free Islamic tools that run entirely in your browser: prayer times, Qibla, Hijri calendar, Zakat, Quran, inheritance and more.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

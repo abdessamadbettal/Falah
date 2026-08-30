@@ -8,43 +8,53 @@ import { ToolShell } from "@/components/ui/tool-shell";
 import { cardCls, inputCls } from "@/components/ui/styles";
 import { useMounted } from "@/components/ui/use-mounted";
 
+const STORAGE_KEY = "falah:tasbeeh";
+
+type SavedTasbeeh = {
+  count: number;
+  goal: number;
+  preset: string;
+  customPreset: string;
+  totalCount: number;
+  dailyHistory: Record<string, number>;
+};
+
+/** Read the persisted counter once, for the state initializers. Returns `{}`
+ * on the server and whenever storage is unavailable or corrupt, so each field
+ * falls back to its default. The component renders only a skeleton until
+ * `useMounted` flips, so reading storage here can't desync hydration — which
+ * is what the old `setTimeout(…, 0)` load effect was working around. */
+function loadSaved(): Partial<SavedTasbeeh> {
+  if (typeof window === "undefined") return {};
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") as Partial<SavedTasbeeh>;
+  } catch {
+    return {};
+  }
+}
+
 export default function Client() {
   const d = useDict();
   const k = d.tools.tasbeeh;
   const isMounted = useMounted();
 
-  const [count, setCount] = useState(0);
-  const [goal, setGoal] = useState<number>(33);
-  const [preset, setPreset] = useState<string>("subhanallah");
-  const [customPreset, setCustomPreset] = useState("");
+  const [saved] = useState(loadSaved);
+  const [count, setCount] = useState(saved.count ?? 0);
+  const [goal, setGoal] = useState<number>(saved.goal ?? 33);
+  const [preset, setPreset] = useState<string>(saved.preset ?? "subhanallah");
+  const [customPreset, setCustomPreset] = useState(saved.customPreset ?? "");
   const [customGoal, setCustomGoal] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(saved.totalCount ?? 0);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [dailyHistory, setDailyHistory] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("falah:tasbeeh");
-      if (saved) {
-        const p = JSON.parse(saved);
-        // Using setTimeout to prevent React 18 cascading render warnings during hydration
-        setTimeout(() => {
-          if (p.count !== undefined) setCount(p.count);
-          if (p.goal !== undefined) setGoal(p.goal);
-          if (p.preset) setPreset(p.preset);
-          if (p.customPreset) setCustomPreset(p.customPreset);
-          if (p.totalCount !== undefined) setTotalCount(p.totalCount);
-          if (p.dailyHistory) setDailyHistory(p.dailyHistory);
-        }, 0);
-      }
-    } catch {}
-  }, []);
+  const [dailyHistory, setDailyHistory] = useState<Record<string, number>>(
+    saved.dailyHistory ?? {},
+  );
 
   useEffect(() => {
     if (!isMounted) return;
     localStorage.setItem(
-      "falah:tasbeeh",
+      STORAGE_KEY,
       JSON.stringify({ count, goal, preset, customPreset, totalCount, dailyHistory })
     );
   }, [count, goal, preset, customPreset, totalCount, dailyHistory, isMounted]);

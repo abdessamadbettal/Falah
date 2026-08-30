@@ -151,8 +151,7 @@ export const TOOL_PATHS: Record<ToolKey, string> = {
   umrah: "/umrah",
 };
 
-/** The 17 tools grouped into the 5 categories used across the site — the home
-/** The 16 tools grouped into the 5 categories used across the site — the home
+/** The 20 tools grouped into the 5 categories used across the site — the home
  * directory and the footer both read from this one source. Group order matches
  * d.home.categories, so index i lines up with categories[i]. */
 export const TOOL_CATEGORIES: { key: ToolKey; icon: string }[][] = [
