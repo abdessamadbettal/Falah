@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Article } from "@/components/article";
 import { Faq } from "@/components/faq";
 import { useDict } from "@/components/locale";
@@ -56,6 +56,24 @@ type ZakatLogEntry = {
   due: boolean;
 };
 
+const TROY_OUNCE_GRAMS = 31.1034768;
+
+/** Live gold/silver spot price per gram, in `currency`. Pure fetch + parse
+ * with no React state — both the "fetch live rates" button and the on-load
+ * effect build on it. Throws on any network or shape error, leaving the
+ * caller to keep the DEFAULTS fallback. */
+async function fetchMetalRates(currency: string): Promise<{ gold: string; silver: string }> {
+  const c = currency.toLowerCase();
+  const res = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/${c}.json`);
+  if (!res.ok) throw new Error("Failed to fetch");
+  const rates = (await res.json())[c];
+  if (!rates || !rates.xau || !rates.xag) throw new Error("Metals data not found");
+  return {
+    gold: ((1 / rates.xau) / TROY_OUNCE_GRAMS).toFixed(2),
+    silver: ((1 / rates.xag) / TROY_OUNCE_GRAMS).toFixed(3),
+  };
+}
+
 export default function ZakatClient({ article }: { article: ToolArticle }) {
   const d = useDict();
   const t = d.tools.zakat;
@@ -75,26 +93,15 @@ export default function ZakatClient({ article }: { article: ToolArticle }) {
   const [lastFetched, setLastFetched] = useState<Date | null>(null);
   const [fetchError, setFetchError] = useState("");
 
+  /** The "fetch live rates" button: surfaces a spinner and, on failure, an
+   * error banner. */
   const handleFetchRates = async () => {
     setIsFetchingRates(true);
     setFetchError("");
     try {
-      const c = currency.toLowerCase();
-      const res = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/${c}.json`);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      const rates = data[c];
-      
-      if (!rates || !rates.xau || !rates.xag) {
-        throw new Error("Metals data not found");
-      }
-      
-      const troyOunceToGrams = 31.1034768;
-      const goldPerGram = (1 / rates.xau) / troyOunceToGrams;
-      const silverPerGram = (1 / rates.xag) / troyOunceToGrams;
-      
-      setGoldPrice(goldPerGram.toFixed(2));
-      setSilverPrice(silverPerGram.toFixed(3));
+      const { gold, silver } = await fetchMetalRates(currency);
+      setGoldPrice(gold);
+      setSilverPrice(silver);
       setLastFetched(new Date());
     } catch {
       setFetchError(t.errorFetching || "Failed to fetch live rates");
@@ -102,6 +109,25 @@ export default function ZakatClient({ article }: { article: ToolArticle }) {
       setIsFetchingRates(false);
     }
   };
+
+  // Prime the metal prices with live rates on load, and again when the
+  // currency changes — the hardcoded DEFAULTS are only an offline fallback,
+  // not a number anyone should unknowingly compute their zakat against. A
+  // failed fetch quietly keeps the fallback (no banner for a passive load).
+  useEffect(() => {
+    let cancelled = false;
+    fetchMetalRates(currency)
+      .then(({ gold, silver }) => {
+        if (cancelled) return;
+        setGoldPrice(gold);
+        setSilverPrice(silver);
+        setLastFetched(new Date());
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [currency]);
 
   const [logs, setLogs] = useState<ZakatLogEntry[]>(() => {
     if (typeof window === "undefined") return [];

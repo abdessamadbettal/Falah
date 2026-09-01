@@ -10,7 +10,7 @@
 > *"Come to success (Falah)” — the daily call we answer, and a platform built to serve your worship."*  
 > **Every Muslim deserves access to accurate Islamic tools without creating accounts, handing over location data, or hitting paywalls.**
 
-**Falah.io** is an open-source Islamic toolkit (Quraan explorer, Hadith collections, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, and Inheritance & Zakat calculators and +16 tools more). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
+**Falah.io** is an open-source Islamic toolkit — Qur'an explorer, Hadith collections, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, Inheritance & Zakat calculators, and a dozen more (**20 tools in all**). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
 
 ![Falah.io — home page](.github/screenshot.png)
 
@@ -32,9 +32,10 @@ Most modern Islamic apps rely on invasive location tracking, aggressive ads, or 
 
 ## Time & Daily Worship
 
-- **Prayer Times & Adhan**
+- **Prayer Times**
   - Accurate prayer times for your location or any city worldwide.
-  - Customizable Adhan notifications.
+  - Live next-prayer countdown, the full month's timetable, and a calculation method chosen per country.
+  - Your location is saved on-device and the tool keeps working offline.
 
 - **Hijri Smart Calendar**
   - Islamic calendar.
@@ -151,9 +152,9 @@ Around 1% of hadiths have no Arabic text upstream and are not published at
 all, so a collection's count here can be slightly below its printed total.
 
 - **99 Names of Allah**
-  - Meanings.
-  - Audio pronunciations.
-  - Explanations.
+  - Arabic, transliteration and meaning for every name.
+  - A concise explanation embedded in the page (works fully offline).
+  - A dedicated, prerendered page per name with cited evidences.
 
 - **Hisnul Muslim**
   - Authentic daily Duas.
@@ -199,6 +200,8 @@ all, so a collection's count here can be slightly below its printed total.
 | **Next.js 16** | React framework using Static Export for fast client-side performance |
 | **Tailwind CSS** | Responsive modern UI with dark mode support |
 | **Iconify** | Lightweight SVG icons |
+| **adhan** | Astronomical prayer-time and Qibla calculation |
+| **Serwist** | Service worker powering offline / installable PWA support |
 | **HTML5 Geolocation** | Local-only mosque finding |
 | **DeviceOrientation API** | Local-only Qibla direction |
 
