@@ -131,7 +131,7 @@ export default function UmrahSimulatorClient() {
     <ToolShell icon="ph:cube" title={t.title} side={t.side} intro={t.intro}>
       <div className="relative flex h-[60vh] w-full flex-col overflow-hidden rounded-xl bg-zinc-950 shadow-inner">
         {/* Step-by-Step UI Overlay */}
-        <div className="absolute top-4 left-4 z-10 w-72 rounded-xl bg-white/95 p-4 shadow-xl backdrop-blur-md dark:bg-zinc-900/95 max-h-[50vh] overflow-y-auto">
+        <div className="absolute top-4 start-4 z-10 w-72 rounded-xl bg-white/95 p-4 shadow-xl backdrop-blur-md dark:bg-zinc-900/95 max-h-[50vh] overflow-y-auto">
           {stage === 1 && (
             <>
               <div className="mb-2 text-sm font-bold text-emerald-600 dark:text-emerald-400">
@@ -150,7 +150,7 @@ export default function UmrahSimulatorClient() {
                   onClick={() => setStage(2)}
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 py-2 text-xs font-bold text-white transition hover:bg-emerald-600"
                 >
-                  {t.enterIhram} <Icon icon="ph:arrow-right" />
+                  {t.enterIhram} <Icon icon="ph:arrow-right" className="rtl:rotate-180" />
                 </button>
               </div>
             </>
@@ -188,7 +188,7 @@ export default function UmrahSimulatorClient() {
                       onClick={() => setStage(3)}
                       className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 py-2 text-xs font-bold text-white transition hover:bg-emerald-600"
                     >
-                      {t.proceedToSai} <Icon icon="ph:arrow-right" />
+                      {t.proceedToSai} <Icon icon="ph:arrow-right" className="rtl:rotate-180" />
                     </button>
                   </div>
                 </>
@@ -226,7 +226,7 @@ export default function UmrahSimulatorClient() {
                       onClick={() => setStage(4)}
                       className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 py-2 text-xs font-bold text-white transition hover:bg-emerald-600"
                     >
-                      {t.proceedToHalq} <Icon icon="ph:arrow-right" />
+                      {t.proceedToHalq} <Icon icon="ph:arrow-right" className="rtl:rotate-180" />
                     </button>
                   </div>
                 </>
@@ -259,7 +259,7 @@ export default function UmrahSimulatorClient() {
           )}
         </div>
 
-        <div className="absolute bottom-4 right-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-xs text-white/80 backdrop-blur">
+        <div className="absolute bottom-4 end-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-xs text-white/80 backdrop-blur">
           {t.dragToRotate}
         </div>
 
