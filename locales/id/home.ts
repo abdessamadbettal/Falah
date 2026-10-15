@@ -88,7 +88,7 @@ export const home: typeof en = {
     tafseer: { name: "Jelajah Tafsir Al-Qur'an", description: "Baca penjelasan dan tafsir ulama ayat demi ayat untuk memperdalam pemahaman Al-Qur'an." },
     ayahFinder: { name: "Pencari Ayat (Teks dan Suara)", description: "Cari ayat Al-Qur'an dengan mengetik atau mengucapkan bahasa Arab, lalu buka ayatnya langsung." },
     hadith: { name: "Kumpulan Hadis (Kutub as-Sittah)", description: "Lebih dari 36.000 hadis Bukhari, Muslim, empat Sunan, Muwatta, dan Arba'in — teks Arab, terjemahan, dan penilaian." },
-    names: { name: "99 Nama Allah (Asmaul Husna)", description: "Pelajari nama-nama Allah, maknanya, nilai spiritualnya, dan pelafalan audio — sepenuhnya offline." },
+    names: { name: "99 Asma Allah (Asmaul Husna)", description: "Pelajari asma-asma Allah, maknanya, nilai spiritualnya, dan pelafalan audio — sepenuhnya offline." },
     hisnul: { name: "Hisnul Muslim (Benteng Seorang Muslim)", description: "Kumpulan doa dan zikir harian sahih yang disusun berdasarkan kategori untuk berbagai keadaan." },
     khatam: { name: "Perencana Khatam Al-Qur'an", description: "Rencanakan khatam sesuai tanggal target dan hitung jumlah halaman yang perlu dibaca setiap hari." },
     zakat: { name: "Kalkulator Zakat Lengkap", description: "Hitung zakat uang, emas, perak, investasi, dan aset usaha dibandingkan dengan nilai nisab terkini." },
