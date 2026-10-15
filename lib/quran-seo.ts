@@ -132,6 +132,7 @@ const LIST_JOIN: Record<Locale, { comma: string; tail: string }> = {
   en: { comma: ", ", tail: " & " },
   ar: { comma: "، ", tail: " و" },
   fr: { comma: ", ", tail: " et " },
+  id: { comma: ", ", tail: " dan " },
 };
 
 function joinNames(locale: Locale, names: string[]): string {
@@ -144,6 +145,7 @@ const BOOK_NAME: Record<Locale, string> = {
   en: "The Holy Quran",
   ar: "القرآن الكريم",
   fr: "Le Saint Coran",
+  id: "Al-Qur'an",
 };
 
 /** trailingSlash is on, so the canonical form carries the slash. Structured

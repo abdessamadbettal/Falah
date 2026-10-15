@@ -30,6 +30,21 @@ export const HIJRI_MONTHS_FR = [
   "Dhou al-Hijja",
 ];
 
+export const HIJRI_MONTHS_ID = [
+  "Muharam",
+  "Safar",
+  "Rabiulawal",
+  "Rabiulakhir",
+  "Jumadilawal",
+  "Jumadilakhir",
+  "Rajab",
+  "Syakban",
+  "Ramadan",
+  "Syawal",
+  "Zulkaidah",
+  "Zulhijah",
+];
+
 export const HIJRI_MONTHS_AR = [
   "محرم",
   "صفر",
@@ -110,6 +125,7 @@ export function hijriMonthLength(year: number, month: number): number {
 export function hijriMonthName(month: number, locale: string): string {
   if (locale === "ar") return HIJRI_MONTHS_AR[month - 1];
   if (locale === "fr") return HIJRI_MONTHS_FR[month - 1];
+  if (locale === "id") return HIJRI_MONTHS_ID[month - 1];
   return HIJRI_MONTHS[month - 1];
 }
 
@@ -117,8 +133,8 @@ export function formatHijri(h: HijriDate, locale: string = "en"): string {
   if (locale === "ar") {
     return `${toArabicDigits(h.day)} ${HIJRI_MONTHS_AR[h.month - 1]} ${toArabicDigits(h.year)} هـ`;
   }
-  // French writes the Hijri era "1447 H", not the English "1447 AH".
-  const era = locale === "fr" ? "H" : "AH";
+  // French and Indonesian write the Hijri era as "H", not "AH".
+  const era = locale === "fr" || locale === "id" ? "H" : "AH";
   return `${h.day} ${hijriMonthName(h.month, locale)} ${h.year} ${era}`;
 }
 

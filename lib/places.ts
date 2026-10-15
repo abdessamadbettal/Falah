@@ -96,11 +96,7 @@ export function places(): Promise<Places> {
 
 const DISPLAY = new Map<Locale, Intl.DisplayNames>();
 
-/** "Morocco" / "المغرب" / "Maroc", from CLDR.
- *
- * Country names are the one part of this that needs no data of its own:
- * every code in the GeoNames dump resolves in all three locales, including
- * the awkward ones (XK → Kosovo / كوسوفو / Kosovo). */
+/** Localized country names come from CLDR rather than the city data file. */
 export function countryName(locale: Locale, code: string): string {
   let names = DISPLAY.get(locale);
   if (!names) {
@@ -120,7 +116,8 @@ const NAMES = LOCALIZED as Record<string, { ar?: string; fr?: string } | undefin
  * spelling is also the one locals write, so the fallback is not a compromise. */
 export function cityName(locale: Locale, city: City): string {
   if (locale === "en") return city.name;
-  return NAMES[city.id]?.[locale] ?? city.name;
+  if (locale === "ar" || locale === "fr") return NAMES[city.id]?.[locale] ?? city.name;
+  return city.name;
 }
 
 /** "Casablanca, Morocco" / "الدار البيضاء، المغرب" — the full form, for

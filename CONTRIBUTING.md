@@ -19,7 +19,7 @@ The site is a **static export** (`output: "export"` in `next.config.ts`): there 
 
 ```text
 app/
-  [locale]/         The one route tree: /en/…, /ar/…, and /fr/… (page.tsx + client.tsx per tool)
+  [locale]/         The one route tree: /en/…, /ar/…, /fr/…, and /id/… (page.tsx + client.tsx per tool)
   (redirect)/       "/" picks the visitor's language; legacy URLs forward to /en/…
 components/
   ui/               Design system — one component per file (button, input, header, …)
@@ -57,7 +57,7 @@ Any string you change must be updated in **every** language.
 
 ## Adding a new tool
 
-1. **Strings** — create `locales/<locale>/tools/<key>.ts` for every locale in `lib/i18n.ts` (currently English `en`, Arabic `ar`, and French `fr`; copy a sibling). Import each module and add it to the exported `tools` object in `locales/<locale>/tools/index.ts`. Add a matching `toolCards` entry (name and description) in each `locales/<locale>/home.ts`.
+1. **Strings** — create `locales/<locale>/tools/<key>.ts` for every locale in `lib/i18n.ts` (currently English `en`, Arabic `ar`, French `fr`, and Indonesian `id`; copy a sibling). Import each module and add it to the exported `tools` object in `locales/<locale>/tools/index.ts`. Add a matching `toolCards` entry (name and description) in each `locales/<locale>/home.ts`.
 2. **Register it** — add a path to `TOOL_PATHS` and an entry (with icon) to `TOOL_CATEGORIES` in `lib/seo.tsx`. The `ToolKey` type makes a step-1 ↔ step-2 mismatch a compile error.
 3. **Build it** — create `app/[locale]/<slug>/client.tsx` (the interactive component, wrapped in `<ToolShell>`) and `page.tsx` (copy any sibling's `page.tsx` and change the key).
 4. Done — the sitemap, footer directory, home grid, and JSON-LD all read from the registry automatically, in every language.
