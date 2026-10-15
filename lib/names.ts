@@ -18,7 +18,7 @@ export type DivineName = {
 /** Al-Asma ul-Husna — the 99 beautiful names of Allah, each with a short
  * meaning and a concise explanation. Embedded so the tool works fully offline. */
 export const NAMES_OF_ALLAH: DivineName[] = [
-  { arabic: "الرَّحْمَنُ", transliteration: "Ar-Rahman", slug: "ar-rahman", meaning: "The Most Merciful", meaningAr: "ذو الرحمة الواسعة لكل الخلق", meaningFr: "Le Tout Miséricordieux", explanation: "The One whose boundless mercy encompasses all of creation in this world." },
+  { arabic: "الرَّحْمَنُ", transliteration: "Ar-Rahman", slug: "ar-rahman", meaning: "The Most Merciful", meaningAr: "ذو الرحمة الواسعة لكل الخلق", meaningFr: "Le Tout Miséricordieux", meaningId: "Yang Maha Pengasih", explanation: "The One whose boundless mercy encompasses all of creation in this world." },
   { arabic: "الرَّحِيمُ", transliteration: "Ar-Rahim", slug: "ar-rahim", meaning: "The Bestower of Mercy", meaningAr: "الرحيم بالمؤمنين", meaningFr: "Le Très Miséricordieux", explanation: "The One who is especially and eternally merciful to the believers." },
   { arabic: "الْمَلِكُ", transliteration: "Al-Malik", slug: "al-malik", meaning: "The King", meaningAr: "المالك المتصرف في كل شيء", meaningFr: "Le Souverain", explanation: "The absolute Sovereign who owns and governs all dominion." },
   { arabic: "الْقُدُّوسُ", transliteration: "Al-Quddus", slug: "al-quddus", meaning: "The Most Holy", meaningAr: "المنزَّه عن كل نقص", meaningFr: "Le Très Saint", explanation: "The One utterly pure and free from every flaw and imperfection." },

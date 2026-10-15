@@ -1,9 +1,9 @@
 import type { home as en } from "../en/home";
 
 export const home: typeof en = {
-  eyebrow: "Sumber Terbuka | Sedekah Jariyah",
-  h1a: (n: number) => `${n} Perangkat Islami`,
-  h1b: "Semua kebutuhan Muslim dalam satu tempat.",
+  eyebrow: "Open Source | Sedekah Jariyah",
+  h1a: (n: number) => `${n} Fitur Islami`,
+  h1b: "Semua kebutuhan seorang Muslim dalam satu platform.",
   heroP:
     "Waktu salat, kiblat, zakat, Al-Qur'an, kalender Hijriah, waris, dan lainnya — tanpa iklan atau biaya langganan. Dibangun sebagai sedekah jariyah.",
   ctaExplore: "Jelajahi Perangkat",
@@ -12,9 +12,9 @@ export const home: typeof en = {
   falahCaption: "Seruan menuju keberhasilan di dunia dan akhirat",
   heroQuote: "“Marilah menuju keberhasilan (falah)” — seruan harian yang kita sambut, dan platform yang dibangun untuk mendukung ibadah Anda.",
   toolkitEyebrow: "Kumpulan Perangkat",
-  toolkitH2: "Semua alat gratis, selamanya.",
+  toolkitH2: "Sepenuhnya gratis, selamanya.",
   toolkitP: (n: number) =>
-    `${n} alat untuk ibadah, arah, ilmu, keuangan, dan kreativitas — semuanya berjalan 100% di perangkat Anda.`,
+    `${n} layanan untuk ibadah, arah kiblat, ilmu, keuangan, hingga kreativitas — berjalan 100% di perangkat Anda.`,
   searchPh: "Cari alat…",
   searchAria: "Cari di kumpulan perangkat",
   openTool: "Buka",
@@ -24,7 +24,7 @@ export const home: typeof en = {
   faq: [
     {
       q: "Apakah Falah.io benar-benar gratis?",
-      a: "Ya — semua alat gratis selamanya, tanpa iklan, biaya langganan, atau paket premium. Falah dibangun sebagai sedekah jariyah.",
+      a: "Ya — semua fitur gratis selamanya, tanpa iklan, biaya langganan, atau paket premium. Falah dibangun sebagai sedekah jariyah.",
     },
     {
       q: "Apakah saya perlu membuat akun?",
@@ -43,8 +43,8 @@ export const home: typeof en = {
       a: "Alat menggunakan metode yang telah dikenal — pustaka astronomi adhan untuk waktu salat dan kiblat, kalender Umm al-Qura untuk tanggal Hijriah, serta bagian waris tetap dalam Al-Qur'an.",
     },
     {
-      q: "Apakah Falah sumber terbuka?",
-      a: "Ya. Seluruh kode sumber tersedia untuk umum di GitHub, sehingga siapa pun dapat memeriksa kode, memastikan privasinya, atau berkontribusi.",
+      q: "Apakah Falah open source?",
+      a: "Ya. Seluruh source code tersedia untuk umum di GitHub, sehingga siapa pun dapat memeriksa kode, memastikan privasinya, atau berkontribusi.",
     },
   ],
   contributeEyebrow: "Jadilah Kontributor",

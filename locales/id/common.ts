@@ -7,7 +7,7 @@ export const common = {
   githubAria: "Falah.io di GitHub",
   langAria: "Ganti bahasa",
   tagline: "Panduan harian untuk ibadah dan keberhasilan",
-  footerDua: "Platform Islam sumber terbuka",
+  footerDua: "Platform Islam Open Source",
   mit: "Lisensi MIT",
   clientSide: "100% berjalan di perangkat Anda",
   loading: "Memuat…",

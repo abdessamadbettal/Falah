@@ -1,9 +1,9 @@
 ---
 eyebrow: Memahami Waris Islam
-heading: Cara kerja waris Islam (faraid)
+heading: Cara kerja waris Islam (Fara'id)
 ---
 
-Faraid adalah salah satu sistem hukum waris paling terperinci: Al-Qur'an menetapkan siapa yang berhak mewarisi dan berapa bagiannya. Panduan ini menjelaskan urutan pembagian, bagian tetap, serta penyesuaian yang dilakukan kalkulator.
+Fara'id adalah salah satu sistem paling presisi dalam hukum Islam: Al-Qur'an sendiri menetapkan siapa saja ahli waris beserta bagiannya secara pasti. Panduan ini menjelaskan urutan pembagian, bagian-bagian yang telah ditetapkan, serta penyesuaian yang diterapkan oleh kalkulator ini.
 
 ## Apa itu faraid?
 

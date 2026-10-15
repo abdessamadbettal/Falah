@@ -4,7 +4,7 @@ export const qibla: typeof en = {
   meta: {
     title: "Pencari Kiblat — arah Ka'bah dengan kompas langsung",
     description:
-      "Temukan arah kiblat dari kota mana pun: azimut tepat dari utara sejati, jarak ke Ka'bah di Makkah, dan kompas langsung di ponsel yang mendukung. Privat — dihitung di perangkat Anda.",
+      "Temukan arah kiblat dari kota mana pun: azimut tepat dari utara geografis, jarak ke Ka'bah di Makkah, dan kompas langsung di ponsel yang mendukung. Privat — dihitung di perangkat Anda.",
   },
   title: "Pencari Kiblat",
   side: "اتجاه القبلة",
@@ -13,11 +13,11 @@ export const qibla: typeof en = {
   yourLocation: "Lokasi Anda",
   enableCompass: "Aktifkan kompas langsung",
   compassActive: "Kompas aktif",
-  noCompass: "Sensor kompas tidak tersedia — gunakan arah dari utara sejati.",
-  fromNorth: "dari utara sejati",
+  noCompass: "Sensor kompas tidak tersedia — gunakan arah dari utara geografis.",
+  fromNorth: "dari utara geografis",
   toQibla: "menuju kiblat",
   needleLive: "Jarum kompas aktif — jarum menunjuk kiblat saat Anda berputar.",
-  faceNorth: "Hadap ke utara sejati, lalu berputar sesuai sudut yang ditampilkan.",
+  faceNorth: "Hadap ke utara geografis, lalu berputar sesuai sudut yang ditampilkan.",
   distance: (km: string) => `Jarak ke Ka'bah: ${km} km.`,
   prompt: "Cari kota atau gunakan lokasi Anda untuk menemukan arah kiblat.",
   guideEyebrow: "Langkah demi langkah",
@@ -41,7 +41,7 @@ export const qibla: typeof en = {
     {
       icon: "ph:navigation-arrow",
       title: "Tidak ada kompas? Gunakan sudut",
-      body: "Di laptop atau ponsel tanpa kompas, hadap ke utara sejati lalu berputar sesuai derajat yang ditampilkan untuk menghadap kiblat.",
+      body: "Di laptop atau ponsel tanpa kompas, hadap ke utara geografis lalu berputar sesuai derajat yang ditampilkan untuk menghadap kiblat.",
     },
   ],
   faqEyebrow: "Tanya Jawab Kiblat",
@@ -61,7 +61,7 @@ export const qibla: typeof en = {
     },
     {
       q: "Apakah pencari kiblat ini bekerja di laptop?",
-      a: "Ya, meski kebanyakan laptop tidak memiliki kompas. Alat ini menampilkan arah tepat dari utara sejati agar Anda dapat menyesuaikan arah dengan kompas fisik atau peta.",
+      a: "Ya, meski kebanyakan laptop tidak memiliki kompas. Alat ini menampilkan arah tepat dari utara geografis agar Anda dapat menyesuaikan arah dengan kompas fisik atau peta.",
     },
     {
       q: "Apakah lokasi saya tetap privat?",

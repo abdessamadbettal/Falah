@@ -9,7 +9,7 @@ export const prayer: typeof en = {
   title: "Waktu Salat",
   side: "مواقيت الصلاة",
   intro:
-    "Lihat lima waktu salat hari ini di kota Anda dengan hitung mundur langsung ke waktu berikutnya. Cari kota mana pun — lokasi dapat dideteksi otomatis — dan waktu salat dihitung di perangkat Anda.",
+    "Lihat jadwal waktu salat hari ini di kota Anda dengan hitung mundur langsung ke waktu berikutnya. Cari kota mana pun — lokasi dapat dideteksi otomatis — dan waktu salat dihitung di perangkat Anda.",
   city: "Kota",
   detecting: "Mendeteksi lokasi Anda…",
   autoNote: "Kota Anda dideteksi otomatis untuk menampilkan waktu setempat; perhitungan salat dilakukan di perangkat Anda.",
