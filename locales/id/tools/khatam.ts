@@ -9,7 +9,7 @@ export const khatam: typeof en = {
   title: "Perencana Khatam",
   side: "مخطط الختمة",
   intro:
-    "Pilih lama waktu yang diinginkan, lalu perencana membagi mushaf menjadi jatah harian yang bisa langsung dibaca. Progres disimpan di perangkat ini — sisa bacaan dibagi ulang saat Anda melewatkan hari atau membaca lebih awal.",
+    "Pilih lama waktu yang diinginkan, lalu perencana membagi mushaf menjadi bagian harian yang bisa langsung dibaca. Progres disimpan di perangkat ini — sisa bacaan dibagi ulang saat Anda melewatkan hari atau membaca lebih awal.",
   setupTitle: "Rencanakan khatam Anda",
   readBy: "Hitung bacaan berdasarkan",
   units: { page: "Halaman", juz: "Juz", hizb: "Hizb" },
