@@ -18,7 +18,7 @@ import {
 } from "@/components/ui";
 import { localePath, type Locale } from "@/lib/i18n";
 import { NAMES_OF_ALLAH } from "@/lib/names";
-import { namePath } from "@/lib/names-seo";
+import { nameMeaning, namePath } from "@/lib/names-seo";
 import { JsonLd, faqJsonLd } from "@/lib/seo";
 
 export default function NamesOfAllahClient({ children }: { children?: React.ReactNode }) {
@@ -27,12 +27,7 @@ export default function NamesOfAllahClient({ children }: { children?: React.Reac
   const locale = useLocale() as Locale;
   const [query, setQuery] = useState("");
 
-  const short = (i: number) =>
-    locale === "ar"
-      ? NAMES_OF_ALLAH[i].meaningAr
-      : locale === "fr"
-        ? NAMES_OF_ALLAH[i].meaningFr
-        : NAMES_OF_ALLAH[i].meaning;
+  const short = (i: number) => nameMeaning(locale, NAMES_OF_ALLAH[i]);
 
   const q = query.trim().toLowerCase();
   const results = NAMES_OF_ALLAH.map((name, i) => ({ ...name, index: i })).filter(
@@ -41,6 +36,7 @@ export default function NamesOfAllahClient({ children }: { children?: React.Reac
       n.transliteration.toLowerCase().includes(q) ||
       n.meaning.toLowerCase().includes(q) ||
       n.meaningFr.toLowerCase().includes(q) ||
+      n.meaningId.toLowerCase().includes(q) ||
       n.meaningAr.includes(query.trim()) ||
       n.explanation.toLowerCase().includes(q) ||
       n.arabic.includes(query.trim()),

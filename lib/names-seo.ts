@@ -57,6 +57,7 @@ export function nameTitleWord(locale: Locale, name: DivineName): string {
 export function nameMeaning(locale: Locale, name: DivineName): string {
   if (locale === "ar") return name.meaningAr;
   if (locale === "fr") return name.meaningFr;
+  if (locale === "id") return name.meaningId;
   return name.meaning;
 }
 

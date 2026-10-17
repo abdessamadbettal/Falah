@@ -2,9 +2,9 @@
  * Downloads the Quran editions the prerendered routes are built from.
  *
  * Runs once as `prebuild`. `next build` fans out across ~11 worker
- * processes, and every one of them renders some of the ~1,600 Quran routes —
- * without this step each worker would fetch all three editions itself, which
- * is ~40 requests for 14 MB of identical data and gets refused by the API.
+ * processes, and every one of them renders Quran routes —
+ * without this step each worker would fetch the locale editions itself,
+ * duplicating large downloads and risking API rate limits.
  *
  * Cached files are reused, so repeat builds do no network I/O at all. Delete
  * .quran-cache/ to force a refresh.
@@ -17,7 +17,7 @@ const API = "https://api.alquran.cloud/v1/quran";
 const DIR = join(process.cwd(), ".quran-cache");
 
 // The Arabic text, plus the translation each locale's dictionary asks for.
-const EDITIONS = ["quran-uthmani", "en.sahih", "ar.muyassar", "fr.hamidullah"];
+const EDITIONS = ["quran-uthmani", "en.sahih", "ar.muyassar", "fr.hamidullah", "id.indonesian"];
 const TOTAL_AYAHS = 6236;
 
 async function fetchEdition(edition) {

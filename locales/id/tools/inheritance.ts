@@ -1,0 +1,78 @@
+import type { inheritance as en } from "../../en/tools/inheritance";
+
+export const inheritance: typeof en = {
+  meta: {
+    title: "Kalkulator Waris Islam (Faraid) — bagian menurut Al-Qur'an",
+    description:
+      "Kalkulator waris Islam gratis: bagikan harta peninggalan berdasarkan bagian faraid yang ditetapkan Al-Qur'an dengan penyesuaian 'awl dan radd, disertai panduan. Pecahan akurat, privat, berjalan di browser.",
+  },
+  title: "Kalkulator Waris",
+  side: "حاسبة الفرائض",
+  intro:
+    "Pembagian harta peninggalan di antara ahli waris yang umum berdasarkan bagian tetap dalam Surah An-Nisa, dengan penyesuaian 'awl dan radd. Semua perhitungan dilakukan secara lokal.",
+  estate: "Nilai bersih harta peninggalan",
+  estateHint: "Setelah biaya pemakaman, utang, dan wasiat (maksimal sepertiga).",
+  spouse: "Pasangan",
+  husband: "Suami",
+  wivesLabel: "Istri",
+  descendants: "Keturunan",
+  sonsLabel: "Anak laki-laki",
+  daughtersLabel: "Anak perempuan",
+  ascendants: "Orang tua dan kakek-nenek",
+  father: "Ayah",
+  mother: "Ibu",
+  grandfather: "Kakek",
+  grandmother: "Nenek",
+  siblings: "Saudara kandung",
+  brothersLabel: "Saudara laki-laki",
+  sistersLabel: "Saudara perempuan",
+  heir: "Ahli waris",
+  share: "Bagian",
+  amount: "Jumlah",
+  each: (f: string) => `(masing-masing ${f})`,
+  selectPrompt: "Pilih ahli waris yang masih hidup untuk melihat pembagiannya.",
+  hWife: "Istri",
+  hWives: (n: number) => `Istri (${n}, dibagi bersama)`,
+  hSon: "Anak laki-laki",
+  hSons: (n: number) => `Anak laki-laki (${n}, dibagi bersama)`,
+  hDaughter: "Anak perempuan",
+  hDaughters: (n: number) => `Anak perempuan (${n}, dibagi bersama)`,
+  hBrother: "Saudara laki-laki kandung",
+  hBrothers: (n: number) => `Saudara laki-laki kandung (${n}, dibagi bersama)`,
+  hSister: "Saudara perempuan kandung",
+  hSisters: (n: number) => `Saudara perempuan kandung (${n}, dibagi bersama)`,
+  hGrandfather: "Kakek (menggantikan ayah)",
+  noteBlocked: "Saudara laki-laki dan perempuan tidak mendapat bagian dalam kasus ini (terhalang oleh anak laki-laki, ayah, atau kakek).",
+  note411: "Anak laki-laki dan perempuan berbagi sisa harta; bagian seorang anak laki-laki sama dengan bagian dua anak perempuan (Al-Qur'an 4:11).",
+  noteFatherResidue: (label: string) => `${label} menerima 1/6 ditambah sisa harta (jika hanya ada anak perempuan).`,
+  noteAwl: (f: string) => `Jumlah bagian tetap melebihi keseluruhan (${f}), sehingga semuanya dikurangi secara proporsional ('awl).`,
+  noteRadd: "Sisa harta dibagikan kembali secara proporsional kepada ahli waris kerabat sedarah (radd).",
+  noteRaddSpouse: "Karena tidak ada ahli waris lain, sisa harta dikembalikan kepada pasangan.",
+  noteBaytAlMal: "Karena tidak ada ahli waris yang terdaftar, harta peninggalan diserahkan kepada baitulmal.",
+  disclaimer:
+    "Kalkulator ini mencakup ahli waris umum dan kaidah Sunni standar ('awl, radd, hijab). Kasus langka — saudara seayah/seibu, cucu dari anak laki-laki yang telah wafat, atau beberapa nenek — memerlukan ulama yang kompeten. Selalu verifikasi sebelum membagikan harta sebenarnya.",
+  faqEyebrow: "Tanya Jawab Waris",
+  faqH2: "Pertanyaan umum tentang faraid",
+  faq: [
+    {
+      q: "Benarkah anak laki-laki mendapat warisan dua kali bagian anak perempuan?",
+      a: "Dalam kelompok ahli waris yang sama, ya — hal ini berkaitan dengan tanggung jawab: laki-laki wajib membayar mahar dan menafkahi keluarga, sedangkan perempuan sepenuhnya memiliki bagian hartanya sendiri.",
+    },
+    {
+      q: "Bisakah saya mewariskan harta kepada siapa pun melalui wasiat?",
+      a: "Anda dapat mewasiatkan hingga sepertiga harta kepada orang yang bukan ahli waris tetap. Dua pertiga sisanya harus mengikuti bagian yang ditetapkan Al-Qur'an, dan wasiat tidak boleh meniadakan hak ahli waris.",
+    },
+    {
+      q: "Apakah anak perempuan mendapat warisan jika tidak ada anak laki-laki?",
+      a: "Ya. Satu anak perempuan mendapat 1/2 dan dua atau lebih anak perempuan berbagi 2/3, bersama ahli waris lain yang berhak seperti orang tua dan pasangan.",
+    },
+    {
+      q: "Bagaimana jika jumlah bagian tidak sama dengan keseluruhan harta?",
+      a: "Jika jumlahnya melebihi harta, semua bagian dikurangi secara proporsional ('awl). Jika kurang dan tidak ada ahli waris penerima sisa, kelebihannya dikembalikan kepada ahli waris pemilik bagian tetap (radd). Keduanya dihitung otomatis.",
+    },
+    {
+      q: "Apakah kalkulator ini dapat menggantikan konsultasi ulama?",
+      a: "Tidak. Kalkulator ini menangani kasus umum, tetapi harta peninggalan nyata dapat melibatkan ahli waris yang lebih jarang atau perselisihan. Selalu konfirmasikan kepada ulama yang kompeten atau pengadilan agama sebelum membagikan harta.",
+    },
+  ],
+};

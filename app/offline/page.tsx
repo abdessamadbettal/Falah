@@ -23,6 +23,11 @@ const COPY = {
     body: "Veuillez vérifier votre connexion Internet et réessayer.",
     retry: "Réessayer",
   },
+  id: {
+    title: "Anda sedang offline",
+    body: "Periksa koneksi internet Anda, lalu coba lagi.",
+    retry: "Coba lagi",
+  },
 } as const;
 
 function isCopyLocale(value: string): value is keyof typeof COPY {

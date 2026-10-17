@@ -5,8 +5,8 @@ import { urlsetXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
-/** Every city with its own timetable — 7,654 places, 22,962 URLs across the
- * three locales.
+/** Every city with its own timetable — 7,702 places, 30,808 URLs across the
+ * four locales.
  *
  * Comfortably inside the 50,000-URL and 50 MB limits a single sitemap is
  * allowed, so it stays one file. If the city selection in

@@ -1,0 +1,77 @@
+import type { zakat as en } from "../../en/tools/zakat";
+
+export const zakat: typeof en = {
+  meta: {
+    title: "Kalkulator Zakat — hitung 2,5% dari uang, emas, dan tabungan",
+    description:
+      "Kalkulator zakat gratis: hitung 2,5% dari uang tunai, emas, perak, investasi, dan aset usaha dibandingkan dengan nisab emas atau perak, beserta panduan lengkap. Privat dan berjalan di browser Anda.",
+  },
+  title: "Kalkulator Zakat",
+  side: "حاسبة الزكاة",
+  intro:
+    "Jumlahkan harta yang wajib dizakati, bandingkan dengan nisab, lalu hitung zakat 2,5% — semuanya dilakukan di perangkat Anda. Data yang Anda masukkan tidak dikirim ke mana pun.",
+  currency: "Mata uang",
+  cash: "Uang tunai dan saldo bank",
+  goldGrams: "Emas (gram)",
+  goldPrice: (c: string) => `Harga emas per gram (${c})`,
+  goldPriceHint: "Periksa harga hari ini di toko emas setempat.",
+  silverGrams: "Perak (gram)",
+  silverPrice: (c: string) => `Harga perak per gram (${c})`,
+  liveRate: "Kurs langsung",
+  fetchLive: "Ambil kurs terkini",
+  fetching: "Mengambil…",
+  updatedJustNow: "Baru saja diperbarui",
+  errorFetching: "Gagal mengambil kurs terkini.",
+  investments: "Investasi dan saham",
+  investmentsHint: "Saham, reksa dana, dan kripto untuk memperoleh keuntungan.",
+  business: "Aset usaha",
+  businessHint: "Barang dagangan dan piutang.",
+  liabilities: "Kewajiban jangka pendek",
+  liabilitiesHint: "Utang yang segera jatuh tempo — dikurangi dari jumlah keseluruhan.",
+  nisabBasis: "Dasar nisab",
+  nisabHint: "Nisab perak lebih rendah; banyak ulama memilihnya agar lebih banyak zakat sampai kepada fakir miskin.",
+  silverOpt: (g: number) => `Perak (${g} g)`,
+  goldOpt: (g: number) => `Emas (${g} g)`,
+  totalWealth: "Harta wajib zakat",
+  nisabLabel: (basis: string) => `Nisab (${basis})`,
+  basisNames: { gold: "emas", silver: "perak" },
+  due: "Zakat yang harus dibayar (2,5%)",
+  belowNisab: "Harta Anda belum mencapai nisab sehingga zakat belum wajib. Sedekah sukarela tetap berpahala.",
+  reset: "Atur ulang",
+  saveLog: "Simpan ke riwayat tahunan",
+  exportSummary: "Ekspor / cetak ringkasan",
+  historyHeading: "Catatan Zakat Tahunan",
+  noHistory: "Belum ada catatan zakat tahunan yang disimpan.",
+  clearHistory: "Hapus riwayat",
+  savedSuccess: "Tersimpan di riwayat!",
+  yearLabel: "Tahun / label",
+  nisabProgress: "Progres menuju nisab",
+  assetsHeading: "Aset Anda",
+  deductionsHeading: "Pengurangan dan nisab",
+  disclaimer:
+    "Zakat wajib ditunaikan setelah satu tahun lunar (haul) atas harta yang mencapai nisab. Kalkulator ini mencakup kasus umum; untuk kepemilikan yang kompleks, konsultasikan dengan ulama yang kompeten.",
+  faqEyebrow: "Tanya Jawab Zakat",
+  faqH2: "Pertanyaan umum tentang zakat",
+  faq: [
+    {
+      q: "Berapa zakat yang harus saya bayar?",
+      a: "Zakat sebesar 2,5% (seperempat puluh) dari seluruh harta yang wajib dizakati, setelah harta tersebut berada di atas nisab selama satu tahun lunar penuh.",
+    },
+    {
+      q: "Apakah saya harus membayar zakat atas gaji?",
+      a: "Bukan atas penghasilan saat diterima, melainkan atas tabungan yang masih dimiliki ketika tahun zakat Anda genap. Uang yang telah dibelanjakan atau diberikan tidak dihitung — hanya harta tersisa yang mencapai nisab.",
+    },
+    {
+      q: "Apakah perhiasan emas yang saya pakai terkena zakat?",
+      a: "Para ulama berbeda pendapat. Banyak yang berpendapat emas dan perak selalu wajib dizakati, termasuk perhiasan yang dipakai; yang lain mengecualikan perhiasan yang digunakan secara wajar. Ikuti pendapat ulama yang Anda percayai.",
+    },
+    {
+      q: "Sebaiknya saya menggunakan nisab emas atau perak?",
+      a: "Keduanya dapat digunakan, tetapi nisab perak lebih rendah sehingga zakat wajib atas harta yang lebih sedikit — hal ini lebih bermanfaat bagi fakir miskin. Kalkulator ini memberi Anda pilihan.",
+    },
+    {
+      q: "Apakah utang dikurangi?",
+      a: "Ya — utang jangka pendek yang segera jatuh tempo dikurangi sebelum harta dibandingkan dengan nisab. Utang jangka panjang seperti hipotek biasanya tidak dikurangi seluruhnya; tanyakan kepada ulama untuk kasus Anda.",
+    },
+  ],
+};

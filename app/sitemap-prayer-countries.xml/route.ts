@@ -5,7 +5,7 @@ import { urlsetXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
-/** The 244 country hubs — 732 URLs across the three locales.
+/** The 244 country hubs — 976 URLs across the four locales.
  *
  * Split from the cities on purpose. These are the pages that decide whether
  * the 7,654 beneath them ever get crawled, and Search Console reports

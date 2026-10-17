@@ -12,6 +12,7 @@ const LANG_NATIVE: Record<string, string> = {
   en: "English",
   ar: "العربية",
   fr: "Français",
+  id: "Bahasa Indonesia",
 };
 
 const PREFIX_RE = new RegExp(`^/(${locales.join("|")})(?=/|$)`);
