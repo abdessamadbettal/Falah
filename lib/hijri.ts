@@ -73,6 +73,13 @@ export function utcNoon(year: number, monthIndex: number, day: number): Date {
   return new Date(Date.UTC(year, monthIndex, day, 12));
 }
 
+export function parseHijriYearInput(input: string): number | null {
+  const digits = input.trim();
+  if (!/^\d+$/.test(digits)) return null;
+  const year = Number(digits);
+  return Number.isSafeInteger(year) && year > 0 ? year : null;
+}
+
 /** Today as a UTC-noon date built from the visitor's local calendar day. */
 export function todayUtcNoon(): Date {
   const now = new Date();
