@@ -23,6 +23,7 @@ import {
   hijriFromGregorian,
   hijriMonthName,
   hijriToGregorian,
+  parseHijriYearInput,
   todayUtcNoon,
   utcNoon,
 } from "@/lib/hijri";
@@ -51,9 +52,9 @@ export default function DateConverterClient() {
       : null;
   const toHijri = gregDate ? hijriFromGregorian(gregDate) : null;
 
-  const yearNum = parseInt(hYear, 10);
+  const yearNum = parseHijriYearInput(hYear);
   const toGregorian =
-    Number.isFinite(yearNum) && yearNum > 0 && yearNum < 1600
+    yearNum !== null && yearNum < 1600
       ? hijriToGregorian({ year: yearNum, month: hMonth, day: hDay })
       : null;
 
