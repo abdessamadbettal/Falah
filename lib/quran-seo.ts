@@ -6,11 +6,16 @@
  *   /quran/hizb/59         "hizb 59"
  *   /quran/page/255        "quran page 255"
  * All four are self-canonical: they are genuinely different reading units,
- * and each carries its own heading, prose and navigation. */
+ * and each carries its own heading, prose and navigation.
+ *
+ * Only the surah and juz views are indexed. The 60 hizb and 604 mushaf pages
+ * re-cut verses the surah pages already carry — ~2,600 URLs across the four
+ * locales of text Google already has — so they render with `noindex, follow`
+ * and stay out of the sitemap. */
 
 import { bareArabic } from "./arabic";
 import { getDict, localePath, type Locale } from "./i18n";
-import { HIZB, JUZ, SURAHS, type SurahMeta, TOTAL_PAGES } from "./quran-meta";
+import { JUZ, SURAHS, type SurahMeta, TOTAL_PAGES } from "./quran-meta";
 import { TOOL_PATHS } from "./seo";
 import { SITE_URL } from "./site";
 import type { SitemapEntry } from "./sitemap";
@@ -56,11 +61,11 @@ const NOTABLE_SURAHS = new Set([
   "an-nas",
 ]);
 
-/** Every Quran URL the site publishes, for the sitemap.
+/** Every indexed Quran URL, for the sitemap: the hub, the surahs and the juz.
  *
  * The four views are not equals in search: a surah is what people ask for by
- * name, a juz mostly only as "juz amma", and a hizb almost never. The mushaf
- * pages earn their place by completing the crawl of the text, not by demand.
+ * name, a juz mostly only as "juz amma", and a hizb almost never. The hizb
+ * and mushaf pages are noindex (see the header) and so are not listed.
  * Revealed text does not change, so changefreq says so. */
 export function quranPaths(): SitemapEntry[] {
   const freq = "yearly" as const;
@@ -75,12 +80,6 @@ export function quranPaths(): SitemapEntry[] {
       // Juz 30 is "juz amma" — the one juz with real standalone demand.
       path: juzPath(j.n),
       priority: j.n === 30 ? 0.8 : 0.5,
-      changeFrequency: freq,
-    })),
-    ...HIZB.map((h) => ({ path: hizbPath(h.n), priority: 0.5, changeFrequency: freq })),
-    ...Array.from({ length: TOTAL_PAGES }, (_, i) => ({
-      path: mushafPath(i + 1),
-      priority: 0.5,
       changeFrequency: freq,
     })),
   ];

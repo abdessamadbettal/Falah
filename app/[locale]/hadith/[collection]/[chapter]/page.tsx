@@ -16,7 +16,7 @@ import {
   hasHadithPages,
 } from "@/lib/hadith-meta";
 import { buildChapterPage, buildHadithPage, unitsOf } from "@/lib/hadith-page";
-import { chapterJsonLd, collectionPath, hadithJsonLd } from "@/lib/hadith-seo";
+import { chapterJsonLd, collectionPath, hadithJsonLd, hadithTextIndex } from "@/lib/hadith-seo";
 import { citation } from "@/lib/hadith-view";
 import { getDict, localePath, locales, type Locale } from "@/lib/i18n";
 import { JsonLd, pageMeta } from "@/lib/seo";
@@ -74,6 +74,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     loaded.page.title,
     loaded.page.description,
     loaded.page.keywords,
+    hadithTextIndex(locale),
   );
 }
 

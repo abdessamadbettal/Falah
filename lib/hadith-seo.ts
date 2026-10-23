@@ -29,6 +29,18 @@ import { SITE_URL } from "./site";
 
 export const HADITH_PATH = TOOL_PATHS.hadith;
 
+/** The languages the hadith text itself exists in: the Arabic and its
+ * English translation. The /fr and /id chapter pages show that same English
+ * under a translated menu — near-copies of /en — so below the collection
+ * level they are noindex and left out of hreflang and the sitemap. */
+export const HADITH_TEXT_LOCALES = ["en", "ar"] as const satisfies readonly Locale[];
+
+/** Index options for a chapter, part or single-hadith page in `locale`. */
+export const hadithTextIndex = (locale: Locale) => ({
+  index: (HADITH_TEXT_LOCALES as readonly Locale[]).includes(locale),
+  locales: HADITH_TEXT_LOCALES,
+});
+
 export const collectionPath = (slug: string) => `${HADITH_PATH}/${slug}`;
 /** A chapter of a large collection ("book-of-belief"), or one hadith of a
  * "forty" ("hadith-13"). `unit` is already a slug. */

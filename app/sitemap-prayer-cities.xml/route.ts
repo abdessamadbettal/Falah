@@ -5,13 +5,12 @@ import { urlsetXml, xmlResponse } from "@/lib/sitemap";
 
 export const dynamic = "force-static";
 
-/** Every city with its own timetable — 7,702 places, 30,808 URLs across the
- * four locales.
+/** The indexed cities only — ~1,600 of the ~7,700 places with a timetable,
+ * so ~6,400 URLs across the four locales. The rest render with `noindex` and
+ * stay out of here; see `indexedCities` in lib/places.ts for the cut.
  *
  * Comfortably inside the 50,000-URL and 50 MB limits a single sitemap is
- * allowed, so it stays one file. If the city selection in
- * scripts/fetch-cities.mjs ever grows past ~16,600 places this has to be
- * split, and the sitemap index is where the extra files would be listed. */
+ * allowed, so it stays one file. */
 export async function GET() {
   return xmlResponse(urlsetXml(cityPaths(await places()), PLACES_REVISION));
 }

@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     cityTitle(locale, found.city),
     cityDescription(locale, found.city),
     cityKeywords(locale, found.city),
+    { index: found.all.indexed.has(found.city.id) },
   );
 }
 

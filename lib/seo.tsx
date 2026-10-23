@@ -9,6 +9,23 @@ const OG_LOCALES: Record<Locale, string> = {
   id: "id_ID",
 };
 
+/** Whether a page belongs in Google's index, and which locales it is
+ * genuinely translated into.
+ *
+ * Every prerendered page is not automatically a page worth indexing. A site
+ * that publishes tens of thousands of templated URLs is judged on the whole
+ * set, so the long tail that only differs by a name or a number — a city's
+ * suburbs, the same verses cut into hizb and mushaf pages, an English hadith
+ * under a French menu — stays reachable for readers but is kept out of the
+ * index with `noindex, follow`. */
+export type IndexOptions = {
+  /** false → `noindex, follow`. Links on the page are still followed. */
+  index?: boolean;
+  /** The hreflang cluster, when the content exists in fewer languages than
+   * the interface does. English must be in it: it is the x-default. */
+  locales?: readonly Locale[];
+};
+
 /** Canonical + hreflang + OG metadata for one page in one locale.
  * English (/en) doubles as the x-default. */
 export function pageMeta(
@@ -21,9 +38,11 @@ export function pageMeta(
    * actually work are the ones in the title, the H1 and the body copy — so
    * pass real alternative names a reader might type, never a wish list. */
   keywords?: string[],
+  opts: IndexOptions = {},
 ): Metadata {
+  const cluster = opts.locales ?? locales;
   const languages = Object.fromEntries(
-    locales.map((l) => [l, `${SITE_URL}${localePath(l, path)}`]),
+    cluster.map((l) => [l, `${SITE_URL}${localePath(l, path)}`]),
   ) as Record<string, string>;
   languages["x-default"] = `${SITE_URL}${localePath("en", path)}`;
 
@@ -31,6 +50,7 @@ export function pageMeta(
     title,
     description,
     ...(keywords?.length ? { keywords } : {}),
+    ...(opts.index === false ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical: `${SITE_URL}${localePath(locale, path)}`,
       languages,

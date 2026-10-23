@@ -48,7 +48,42 @@ export type Places = {
   countryBySlug: Map<string, Country>;
   countryByCode: Map<string, Country>;
   citiesByCountry: Map<string, City[]>;
+  /** Ids of the cities whose page is offered to search engines. See
+   * `indexedCities` — the rest are rendered but carry `noindex`. */
+  indexed: Set<number>;
 };
+
+/** A city has to be this big to earn an indexed page of its own… */
+const INDEX_POPULATION = 300_000;
+/** …and not sit within this distance of a bigger indexed city. Inside it the
+ * timetable differs by a minute at most, so a page for Kesklinn next to the
+ * page for Tallinn is the same page with a different name on it. */
+const INDEX_MIN_KM = 20;
+
+/** The set of city pages that go in the sitemap and in Google's index.
+ *
+ * All ~7,700 places stay on the site — someone looking for their own suburb
+ * still finds a timetable — but publishing every one of them, in four
+ * languages, is ~30,000 near-identical templated pages, which Google's
+ * scaled-content and helpful-content systems weigh against the whole domain.
+ * The indexed set is the cities people actually search by name: each
+ * country's largest (so no country page is a hub over nothing), plus every
+ * city over INDEX_POPULATION that is not a district of a larger one. */
+function indexedCities(cities: City[], citiesByCountry: Map<string, City[]>): Set<number> {
+  const kept: City[] = [];
+  const largest = new Set(
+    [...citiesByCountry.values()].map((bucket) =>
+      bucket.reduce((a, b) => (b.pop > a.pop ? b : a)).id,
+    ),
+  );
+  for (const city of [...cities].sort((a, b) => b.pop - a.pop)) {
+    const big = city.pop >= INDEX_POPULATION || largest.has(city.id);
+    if (!big) continue;
+    if (!largest.has(city.id) && kept.some((k) => distanceKm(city, k) < INDEX_MIN_KM)) continue;
+    kept.push(city);
+  }
+  return new Set(kept.map((c) => c.id));
+}
 
 const CACHE = join(process.cwd(), ".cities-cache", "places.json");
 
@@ -81,6 +116,7 @@ async function load(): Promise<Places> {
     countryBySlug: new Map(raw.countries.map((c) => [c.slug, c])),
     countryByCode: new Map(raw.countries.map((c) => [c.code, c])),
     citiesByCountry,
+    indexed: indexedCities(raw.cities, citiesByCountry),
   };
 }
 

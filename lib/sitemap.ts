@@ -12,8 +12,15 @@ import { SITE_URL } from "./site";
 
 export type ChangeFreq = "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
 
-/** One page, in every locale. Priorities are the caller's business. */
-export type SitemapEntry = { path: string; priority: number; changeFrequency?: ChangeFreq };
+/** One page, in every locale — or only in `locales`, when the content exists
+ * in fewer languages than the interface does. Priorities are the caller's
+ * business. */
+export type SitemapEntry = {
+  path: string;
+  priority: number;
+  changeFrequency?: ChangeFreq;
+  locales?: readonly Locale[];
+};
 
 /** Bump this when the content or the page template actually changes.
  *
@@ -56,12 +63,12 @@ const esc = (s: string) =>
  * the same set the pages themselves declare in <head>, x-default included. */
 export function urlsetXml(entries: SitemapEntry[], lastmod: string): string {
   const body = entries
-    .flatMap(({ path, priority, changeFrequency = "monthly" }) => {
+    .flatMap(({ path, priority, changeFrequency = "monthly", locales: cluster = locales }) => {
       const alternates = [
-        ...locales.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${esc(abs(l, path))}"/>`),
+        ...cluster.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${esc(abs(l, path))}"/>`),
         `<xhtml:link rel="alternate" hreflang="x-default" href="${esc(abs("en", path))}"/>`,
       ].join("");
-      return locales.map(
+      return cluster.map(
         (locale) =>
           `<url><loc>${esc(abs(locale, path))}</loc>${alternates}` +
           `<lastmod>${lastmod}</lastmod><changefreq>${changeFrequency}</changefreq>` +

@@ -16,7 +16,7 @@ import {
   partSlug,
 } from "@/lib/hadith-meta";
 import { buildChapterPage, partsOf } from "@/lib/hadith-page";
-import { chapterJsonLd, collectionPath } from "@/lib/hadith-seo";
+import { chapterJsonLd, collectionPath, hadithTextIndex } from "@/lib/hadith-seo";
 import { getDict, localePath, locales, type Locale } from "@/lib/i18n";
 import { JsonLd, pageMeta } from "@/lib/seo";
 import Reader from "../../../client";
@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     loaded.page.title,
     loaded.page.description,
     loaded.page.keywords,
+    hadithTextIndex(locale),
   );
 }
 

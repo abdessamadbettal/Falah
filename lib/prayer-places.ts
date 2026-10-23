@@ -40,8 +40,10 @@ export function countryPaths(all: Places): SitemapEntry[] {
   }));
 }
 
+/** Only the indexed cities — a sitemap that lists noindexed URLs asks Google
+ * to crawl pages it has just been told to drop. */
 export function cityPaths(all: Places): SitemapEntry[] {
-  return all.cities.map((city) => ({
+  return all.cities.filter((city) => all.indexed.has(city.id)).map((city) => ({
     path: cityPath(all.countryByCode.get(city.cc)?.slug ?? "", city.slug),
     priority: city.pop >= MAJOR_CITY ? 0.7 : 0.6,
     changeFrequency: "daily" as const,

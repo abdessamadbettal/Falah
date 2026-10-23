@@ -24,7 +24,7 @@ import {
   PER_PAGE,
   partCount,
 } from "./hadith-meta";
-import { collectionPath, HADITH_PATH, partPath, unitPath } from "./hadith-seo";
+import { collectionPath, HADITH_PATH, HADITH_TEXT_LOCALES, partPath, unitPath } from "./hadith-seo";
 import { getDict, localePath, type Locale } from "./i18n";
 import type { SitemapEntry } from "./sitemap";
 
@@ -381,10 +381,20 @@ export async function hadithPaths(): Promise<SitemapEntry[]> {
     for (const unit of await unitsOf(c)) {
       // For the Forty Hadith sets this segment is a single hadith, which is
       // exactly what gets searched — it is not a mere chapter listing.
-      paths.push({ path: unitPath(c.slug, unit), priority: 0.6, changeFrequency: freq });
+      paths.push({
+        path: unitPath(c.slug, unit),
+        priority: 0.6,
+        changeFrequency: freq,
+        locales: HADITH_TEXT_LOCALES,
+      });
     }
     for (const { unit, part } of await partsOf(c)) {
-      paths.push({ path: partPath(c.slug, unit, part), priority: 0.4, changeFrequency: freq });
+      paths.push({
+        path: partPath(c.slug, unit, part),
+        priority: 0.4,
+        changeFrequency: freq,
+        locales: HADITH_TEXT_LOCALES,
+      });
     }
   }
   return paths;

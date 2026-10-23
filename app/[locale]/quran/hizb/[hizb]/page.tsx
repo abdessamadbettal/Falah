@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, hizb } = await params;
   if (!hizbByNumber(Number(hizb))) return {};
   const p = await buildQuranPage(locale, "hizb", Number(hizb));
-  return pageMeta(locale, p.path, p.title, p.description);
+  // Reachable for reading, but the same verses as the surah pages: noindex.
+  return pageMeta(locale, p.path, p.title, p.description, undefined, { index: false });
 }
 
 export default async function Page({ params }: Props) {
