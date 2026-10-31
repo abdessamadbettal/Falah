@@ -1,286 +1,255 @@
-# 🌙 Falah.io — Open-source Islamic Tools
+<div align="center">
 
-[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-brightgreen)](https://github.com/abdessamadbettal/falah)
-[![Built with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Iconify](https://img.shields.io/badge/Iconify-1769FF?logo=iconify&logoColor=white)](https://iconify.design)
-[![Privacy First](https://img.shields.io/badge/Privacy-First-blue)](https://falah.io)
-[![Sadaqah Jariyah](https://img.shields.io/badge/Model-Sadaqah%20Jariyah-emerald)](https://falah.io)
+<a href="https://falah.io"><img src="public/icon-192.png" width="88" height="88" alt="Falah.io logo"></a>
 
-> *"Come to success (Falah)” — the daily call we answer, and a platform built to serve your worship."*  
-> **Every Muslim deserves access to accurate Islamic tools without creating accounts, handing over location data, or hitting paywalls.**
+# Falah.io
 
-**Falah.io** is an open-source Islamic toolkit — Qur'an explorer, Hadith collections, Prayer Times, Hijri Calendar, Qibla finder, nearby Mosques, Inheritance & Zakat calculators, and a dozen more (**20 tools in all**). Built purely as **Sadaqah Jariyah** (continuous charity), Zero Ads — everything runs client-side directly in your browser. No backend databases harvesting your GPS, no premium subscriptions, and no hidden monetization—just clean, modern, and accessible tools for the Ummah.
+**Open-source Islamic tools: prayer times, Quran, hadith, Qibla, Hijri calendar, Zakat and more.**<br>
+No ads, no accounts, no paywall. Built as sadaqah jariyah.
 
-![Falah.io — home page](.github/screenshot.png)
+<sub><i>"Come to success." Five times a day the adhan calls it. The project is named after that call.</i></sub>
 
----
+<br><br>
 
-## Why Falah.io?
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Ffalah.io&label=falah.io&up_message=online&style=flat-square)](https://falah.io)
+[![CI](https://img.shields.io/github/actions/workflow/status/abdessamadbettal/Falah/ci.yml?branch=main&label=CI&style=flat-square)](https://github.com/abdessamadbettal/falah/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/abdessamadbettal/Falah?style=flat-square&color=0e7c59)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/abdessamadbettal/Falah?style=flat-square&color=0e7c59)](https://github.com/abdessamadbettal/falah/stargazers)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-0e7c59?style=flat-square)](CONTRIBUTING.md)
 
-Most modern Islamic apps rely on invasive location tracking, aggressive ads, or locking basic religious necessities behind paywalls. **Falah is different by design:**
+[**Open the app**](https://falah.io) · [Tools](#the-tools) · [Privacy](#what-leaves-your-browser) · [Run locally](#run-it-locally) · [Contribute](#contributing) · [Report a bug](https://github.com/abdessamadbettal/falah/issues/new/choose)
 
-- **Private & Client-Side:** All calculations (Prayer Times, Quran Explorer, Qibla, and Inheritance & Zakat calculators) happen locally on your device — your location and financial inputs never leave your browser.
-- **Zero Ads & No Paywalls:** Faith should never be monetized. No advertisements, sponsored listings, or premium-only features.
-- **Offline-Ready & Lightning Fast:** Built with Next.js static architecture for excellent performance and offline capabilities.
-- **No Accounts Required:** Open the app and instantly access every feature without signing up.
-- **Multilingual Support:** Available in [**English**](https://falah.io/en), [**Arabic (العربية)**](https://falah.io/ar) with full right-to-left layout, and [**French (Français)**](https://falah.io/fr).
+<br>
 
----
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshot/home.png">
+  <img src=".github/screenshot.png" alt="Falah.io home page showing the Islamic tools directory" width="900">
+</picture>
 
-# The Toolkit
-
-## Time & Daily Worship
-
-- **Prayer Times**
-  - Accurate prayer times for your location or any city worldwide.
-  - Live next-prayer countdown, the full month's timetable, and a calculation method chosen per country.
-  - Your location is saved on-device and the tool keeps working offline.
-
-- **Hijri Smart Calendar**
-  - Islamic calendar.
-  - White Days (Ayyam al-Bid) reminders.
-  - Calendar export support.
-
-- **Ramadan Countdown**
-  - Countdown to Ramadan.
-  - Daily Ramadan companion.
-
-- **Hijri ↔ Gregorian Converter**
-  - Instant calendar conversion.
+</div>
 
 ---
 
-## Direction & Local Community
+Most Islamic apps want something from you: an account, your location history, a subscription, or your attention for ads. Falah.io asks for none of it. It is a set of 20 tools a Muslim reaches for every day, from prayer times to the Quran reader to the Zakat calculator. Each one is a static page that does its work in your browser.
 
-- **Qibla Finder**
-  - Compass-based Qibla direction.
-  - Uses device sensors locally.
+The project is free to use, free to fork, and will stay that way.
 
-- **Mosque Finder**
-  - Find nearby mosques and prayer spaces.
-  - Uses browser geolocation only.
+- **Runs in your browser.** There is no Falah backend and no database. Prayer times, Qibla, Hijri dates, Zakat and inheritance are all computed on your device.
+- **Works offline.** It's an installable PWA. Prayer times keep working once your location is saved.
+- **Four languages.** [English](https://falah.io/en/), [العربية](https://falah.io/ar/) with a full right-to-left layout, [Français](https://falah.io/fr/) and [Bahasa Indonesia](https://falah.io/id/).
+- **Sources are cited.** Every text and dataset is credited [below](#data-sources-and-credits), so you can check it.
 
----
+## The tools
 
-## Quran & Islamic Knowledge
+### Prayer and time
 
-- **Al-Qur'an Explorer**
-  - Beautiful Quran reader.
-  - Clean Arabic typography.
-  - 📖 Uthmani Quran script
-  - 🎧 Audio recitation from multiple reciters
-  - 🌍 Multiple translations
-  - 💡 Instant translation on hover or tap (so you can read without leaving the Arabic text)
-  - ⏯️ Verse-by-verse playback
-  - ⚡ Playback speed control
-  - 🔤 Adjustable Arabic font size
-  - 🌙 Dark mode and responsive design
-  - 🔗 Every reading unit has its own prerendered page — see below
+| Tool | What it does |
+|---|---|
+| [**Prayer Times**](https://falah.io/en/prayer-times/) | Fajr to Isha for your location or any of ~7,700 cities, with a live countdown, the full month's timetable, and 11 calculation methods (the default is chosen per country). |
+| [**Hijri Calendar**](https://falah.io/en/hijri-calendar/) | Umm al-Qura month view with the White Days (Ayyam al-Bid) marked and `.ics` export to your calendar app. |
+| [**Ramadan Countdown**](https://falah.io/en/ramadan-countdown/) | Days until Ramadan, then a daily companion once it begins. |
+| [**Hijri ↔ Gregorian Converter**](https://falah.io/en/date-converter/) | Convert a date in either direction. |
+| [**Tasbeeh Counter**](https://falah.io/en/tasbeeh/) | Dhikr counter with targets and presets. It vibrates on each count on phones that support it. |
 
-### Quran URL structure
+### Direction
 
-Beyond the interactive reader at `/quran`, the whole Quran is prerendered as
-static, indexable pages — four views of the same text, one per way people
-actually look it up:
+| Tool | What it does |
+|---|---|
+| [**Qibla Finder**](https://falah.io/en/qibla/) | Bearing to the Kaaba, computed on your device and shown on a live compass using the phone's orientation sensor. |
+| [**Mosque Finder**](https://falah.io/en/mosque-finder/) | Mosques and prayer rooms near you from OpenStreetMap, with one-tap directions. |
 
-| Route | Count | Example |
-|-------|-------|---------|
-| `/[locale]/quran/surah/[slug]` | 114 | [`/en/quran/surah/al-kahf`](https://falah.io/en/quran/surah/al-kahf/) |
-| `/[locale]/quran/juz/[n]` | 30 | [`/en/quran/juz/30`](https://falah.io/en/quran/juz/30/) |
-| `/[locale]/quran/hizb/[n]` | 60 | [`/en/quran/hizb/59`](https://falah.io/en/quran/hizb/59/) |
-| `/[locale]/quran/page/[n]` | 604 | [`/en/quran/page/255`](https://falah.io/en/quran/page/255/) |
+### Quran and knowledge
 
-Each page ships the full Arabic text and translation in the HTML (no
-client-side fetch), with its own title, description, canonical, hreflang and
-`schema.org` `Chapter` / `Book` data. Surah slugs are fixed in
-`lib/quran-meta.ts` so URLs never shift with an upstream API's spelling.
+| Tool | What it does |
+|---|---|
+| [**Quran**](https://falah.io/en/quran/) | Uthmani script, eight reciters (Alafasy, al-Husary, Abdul Basit, as-Sudais and more), verse-by-verse playback, translations, and a meaning tooltip on any ayah. Every surah and juz also has its own page, e.g. [Surah Al-Kahf](https://falah.io/en/quran/surah/al-kahf/). |
+| [**Tafseer**](https://falah.io/en/tafseer/) | Tafsir al-Muyassar and Tafsir al-Jalalayn, verse by verse beside the Arabic. |
+| [**Ayah Finder**](https://falah.io/en/ayah-finder/) | Type or say a fragment of Arabic and get the verse it belongs to. |
+| [**Hadith Collections**](https://falah.io/en/hadith/) | 36,000+ hadiths from the six books, the Muwatta and three Forty Hadith collections. Arabic with English, plus the gradings of al-Albani, Zubair Ali Zai, Shu'ayb al-Arna'ut and others. |
+| [**99 Names of Allah**](https://falah.io/en/names-of-allah/) | Each name in Arabic with transliteration, meaning, a short explanation and its evidence from the Quran and Sunnah. |
+| [**Hisnul Muslim**](https://falah.io/en/hisnul-muslim/) | The duas and adhkar of *Fortress of the Muslim*, by occasion, with audio. |
+| [**Khatam Planner**](https://falah.io/en/quran-planner/) | Choose the day you want to finish the Quran and see how many pages that means per day and per prayer. |
+| [**Umrah Simulator**](https://falah.io/en/umrah/) | A 3D walk through Tawaf and Sa'i, with the dua for each stage. |
 
-The text is downloaded once by `npm run prebuild` into `.quran-cache/`
-(git-ignored) — `next build` renders ~1,600 pages across parallel workers, so
-they read from disk rather than hitting the API each.
+### Calculators
 
-- **Tafseer Explorer**
-  - Read explanations and commentary alongside verses.
+| Tool | What it does |
+|---|---|
+| [**Zakat Calculator**](https://falah.io/en/zakat/) | Cash, gold, silver, investments and business assets, checked against a nisab (85 g gold or 595 g silver) priced from live metal rates. |
+| [**Inheritance (Fara'id)**](https://falah.io/en/inheritance/) | Divides an estate by the fixed Quranic shares and the residuary heirs. |
+| [**Hijri Age**](https://falah.io/en/hijri-age/) | Your age in Hijri years and the date of your next Hijri birthday. |
 
-- **Hadith Collections**
-  - 36,000+ hadiths, every collection in full.
-  - 📚 The six canonical books — Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasa'i, Ibn Majah
-  - 📜 Muwatta Malik, plus the Forty Hadith of an-Nawawi, the Forty Hadith Qudsi and Shah Waliullah's Forty
-  - 🕌 Original Arabic with an English translation, side by side or either alone
-  - ✅ Authentication grades (Al-Albani, Zubair Ali Zai, Shu'ayb al-Arna'ut and six others) with a colour for sahih / hasan / da'if
-  - 🔍 Instant filter within a book, matching Arabic with or without harakat
-  - 🔗 Every book of every collection has its own prerendered page — see below
+### Create
 
-### Hadith URL structure
+| Tool | What it does |
+|---|---|
+| [**Quran Cards**](https://falah.io/en/quran-cards/) | Turn a verse into a shareable image, with colour palettes, auto-sized text and an optional translation. |
+| [**Date Stamp**](https://falah.io/en/date-stamp/) | Arabic letterhead date lines in Hijri and Gregorian for letters and documents. |
 
-Beyond the searchable hub at `/hadith`, every collection and every kitab
-inside it is prerendered as a static, indexable page:
+<details>
+<summary><b>More screenshots</b></summary>
+<br>
 
-| Route | Count | Example |
-|-------|-------|---------|
-| `/[locale]/hadith` | 1 | [`/en/hadith`](https://falah.io/en/hadith/) |
-| `/[locale]/hadith/[collection]` | 10 | [`/en/hadith/sahih-bukhari`](https://falah.io/en/hadith/sahih-bukhari/) |
-| `/[locale]/hadith/[collection]/[book]` | 397 | [`/en/hadith/sahih-bukhari/revelation`](https://falah.io/en/hadith/sahih-bukhari/revelation/) |
-| `/[locale]/hadith/[collection]/hadith-[n]` | 122 | [`/en/hadith/40-hadith-nawawi/hadith-13`](https://falah.io/en/hadith/40-hadith-nawawi/hadith-13/) |
+| Prayer times | Quran |
+|---|---|
+| <img src=".github/screenshot/prayer_time.png" alt="Prayer times with live countdown and monthly timetable"> | <img src=".github/screenshot/quran.png" alt="Quran reader in Uthmani script with translation"> |
+| **Tafseer** | **Hijri calendar** |
+| <img src=".github/screenshot/tafseer.png" alt="Tafseer explorer beside the Arabic verses"> | <img src=".github/screenshot/hijri-calendar.png" alt="Hijri calendar with White Days highlighted"> |
 
-Every segment is words, never a bare id — the path is the clearest place to
-say what a page is about, and `book-of-belief` is what someone looking for it
-actually types.
+</details>
 
-A kitab with more than 50 hadiths is split into parts — Bukhari's *Kitab
-al-Maghazi* alone has 525, and one page of them would be ~1 MB of HTML. Part 1
-lives at the book's own URL, so a short kitab never gains a `/part-2`. The
-three Forty Hadith collections have a single kitab, so for them the segment
-after the collection is the **hadith** itself.
+## What leaves your browser
 
-Collection slugs live in `lib/hadith-meta.ts` and book slugs in
-`lib/hadith-chapters.ts` — generated once, committed, and checked for
-collisions, so a URL can never shift because an upstream dataset changed its
-spelling. Every page ships the full Arabic and translation in the HTML (no
-client-side fetch), with its own title, description, canonical, hreflang and
-`schema.org` `Book` / `Chapter` / `Quotation` data. Slugs are shared by both
-locales, because switching language only swaps the `/en` `/ar` prefix.
+"Private" is easy to claim, so here is exactly what happens. Falah has no server of its own: the site is static files on a CDN. Some tools fetch data from open public APIs, directly from your browser:
 
-**Where the text comes from.** Hadiths, translations and gradings are from the
-open [hadith-api](https://github.com/fawazahmed0/hadith-api) dataset. Arabic
-book titles come from a second, independent dataset
-([hadith-json](https://github.com/AhmedBaset/hadith-json)) and every one of the
-397 is cross-checked against the first before being committed — the generator
-refuses to emit a title whose chapter numbering disagrees between the two.
-Around 1% of hadiths have no Arabic text upstream and are not published at
-all, so a collection's count here can be slightly below its printed total.
+| When you… | Request goes to | What it carries |
+|---|---|---|
+| open Prayer Times or Qibla for the first time | [ipwho.is](https://ipwho.is), then [GeoJS](https://geojs.io) as fallback | your IP address, to guess a starting city |
+| tap "use my location" | [BigDataCloud](https://www.bigdatacloud.com) reverse geocoding | your coordinates, to name the city |
+| search for a city | [Open-Meteo](https://open-meteo.com) geocoding | what you typed |
+| use Mosque Finder | [Overpass API](https://overpass-api.de) and OpenStreetMap tiles | the map area you're looking at |
+| fetch live gold and silver prices in Zakat | [exchange-api](https://github.com/fawazahmed0/exchange-api) | your currency code, nothing else |
+| read or listen in the Quran, Tafseer or Hisnul Muslim tools | [AlQuran.cloud](https://alquran.cloud), [Islamic Network CDN](https://islamic.network), [hisnmuslim.com](https://www.hisnmuslim.com) | the surah or chapter you opened |
+| speak into Ayah Finder | your browser's speech recognition (Chrome sends the audio to Google) | your voice, only while the mic is on |
 
-- **99 Names of Allah**
-  - Arabic, transliteration and meaning for every name.
-  - A concise explanation embedded in the page (works fully offline).
-  - A dedicated, prerendered page per name with cited evidences.
+Your amounts in the Zakat and inheritance calculators are never sent anywhere. Your saved location stays in your browser's local storage.
 
-- **Hisnul Muslim**
-  - Authentic daily Duas.
-  - Organized by category.
+The public site at falah.io runs Google Analytics to count page views. A fork or self-hosted copy runs **no analytics at all** unless you set `NEXT_PUBLIC_GA_ID`.
 
----
+## A note on religious accuracy
 
-## Islamic Calculators
+These tools help with worship. They don't replace scholars, and they don't replace your local mosque.
 
-- **Zakat Calculator**
-  - Cash
-  - Gold
-  - Silver
-  - Investments
-  - Business assets
-  - Live Nisab values
+- **Prayer times** are astronomical calculations. Pick the method your community follows. If your mosque's timetable differs, follow your mosque.
+- **Hijri dates** follow the Umm al-Qura calendar. Ramadan and Eid depend on the moon sighting where you live and can differ by a day.
+- **Zakat and inheritance** results apply the standard rulings. For a real estate, or an unusual family situation, confirm with a qualified scholar before acting.
+- **Hadith grades** are shown as the named graders gave them. Falah does not grade hadith.
+- **Translations** of the Quran convey its meanings. They are not the Quran.
 
-- **Islamic Inheritance Calculator (Fara'id)**
-  - Accurate inheritance distribution.
+Found a mistake in a ruling, a translation or a time? Please [open an issue](https://github.com/abdessamadbettal/falah/issues/new/choose). These reports matter more than any feature request.
 
-- **Hijri Age Calculator**
-  - Exact Hijri age.
-  - Islamic milestone tracker.
+## Run it locally
 
----
-
-## Creative & Utility Tools
-
-- **Quran Card Maker**
-  - Generate beautiful Quran verse cards.
-  - Share on social media.
-
-- **Arabic Letterhead Date Stamp**
-  - Professional Hijri date headers.
-  - Islamic document stamps.
-
----
-
-# Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| **Next.js 16** | React framework using Static Export for fast client-side performance |
-| **Tailwind CSS** | Responsive modern UI with dark mode support |
-| **Iconify** | Lightweight SVG icons |
-| **adhan** | Astronomical prayer-time and Qibla calculation |
-| **Serwist** | Service worker powering offline / installable PWA support |
-| **HTML5 Geolocation** | Local-only mosque finding |
-| **DeviceOrientation API** | Local-only Qibla direction |
-
----
-
-# Getting Started
-
-## Prerequisites
-
-- Node.js **20+**
-- npm, pnpm, or yarn
-
-## Installation
-
-### 1. Clone the repository
+You need **Node.js 20+** and npm (pnpm and yarn also work).
 
 ```bash
 git clone https://github.com/abdessamadbettal/falah.git
 cd falah
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-### 2. Install dependencies
+The first `npm run dev` takes a few minutes. A pre-step downloads the Quran, hadith and GeoNames city data into git-ignored caches (`.quran-cache/`, `.hadith-cache/`, `.cities-cache/`). Later runs read from disk and need no network.
 
-```bash
-npm install # or pnpm install # or yarn install
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server (webpack) with the data caches warmed first |
+| `npm run build` | Static export to `out/`, ready for any static host |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | Type check (CI runs this with lint and build) |
+
+> **Heads-up:** a full `npm run build` prerenders tens of thousands of pages (every surah, hadith book, country and city in four languages). Expect it to take a while and to need several GB of free disk.
+
+**Environment variables** (both optional):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | `https://falah.io` | Base for canonicals, sitemaps and structured data. Set it on a fork. |
+| `NEXT_PUBLIC_GA_ID` | *(empty)* | Google Analytics ID. Leave empty for no analytics. |
+
+## How it's built
+
+| | |
+|---|---|
+| **Framework** | [Next.js 16](https://nextjs.org) App Router with `output: "export"`: no server, no API routes, no middleware |
+| **UI** | React 19, [Tailwind CSS 4](https://tailwindcss.com), [Motion](https://motion.dev), [Iconify](https://iconify.design) |
+| **Prayer and Qibla maths** | [adhan](https://github.com/batoulapps/adhan-js) |
+| **3D** | [three.js](https://threejs.org) via React Three Fiber and Drei (Umrah simulator) |
+| **Offline** | [Serwist](https://serwist.pages.dev) service worker, installable PWA |
+| **Hosting** | Any static host. falah.io runs on Vercel. |
+
+```text
+app/
+  [locale]/          one route tree for /en, /ar, /fr and /id; each tool is page.tsx + client.tsx
+  (redirect)/        "/" picks your language; old unprefixed URLs forward to /en
+  sitemap-*.xml/     split sitemaps: site, prayer countries and cities, names, quran, hadith
+components/          shared UI, one component per file under ui/
+content/             long-form guides and the 99 Names explanations, as markdown per language
+lib/                 tool registry, SEO and JSON-LD builders, prayer, quran and hadith logic
+locales/<lang>/      UI strings, typed against English so a missing key fails the build
+scripts/             build-time data fetchers and integrity checks
 ```
 
-### 3. Start the development server
+<details>
+<summary><b>Prerendered pages and URL structure</b></summary>
+<br>
 
-```bash
-npm run dev # or pnpm dev # or yarn dev
-```
+Besides the interactive tools, the reference content is prerendered as plain HTML pages, so it can be read and indexed without JavaScript. Every page has its own title, description, canonical, `hreflang` and schema.org data. Slugs are committed to the repo, so a URL never shifts because an upstream dataset renamed something.
 
-### 4. Open your browser
+| Route | Pages per language | Indexed |
+|---|---|---|
+| `/quran/surah/[slug]` | 114 | yes |
+| `/quran/juz/[n]` | 30 | yes |
+| `/quran/hizb/[n]` · `/quran/page/[n]` | 60 · 604 | no: reading views over the same verses, `noindex, follow` |
+| `/hadith/[collection]` | 10 | yes |
+| `/hadith/[collection]/[book]` (+ `/part-n` past 50 hadiths) | ~1,060 | English and Arabic only, the languages the text exists in |
+| `/names-of-allah/[name]` | 99 | yes |
+| `/prayer-times/[country]` | ~244 | yes |
+| `/prayer-times/[country]/[city]` | ~7,700 | ~1,700: cities over 300k people that aren't districts of a larger city, plus each country's largest |
 
-Visit:
+The thresholds live in `lib/places.ts`, `lib/quran-seo.ts` and `lib/hadith-seo.ts`. Pages outside the index still render, so anyone looking for their own town gets a timetable.
 
-```
-http://localhost:3000
-```
+</details>
 
----
+## Data sources and credits
 
-# Contributing
+Falah stands on open data and on the people who maintain it. May Allah reward them.
 
-Falah.io is a community-driven project built as **Sadaqah Jariyah**.
+| Data | Source |
+|---|---|
+| Quran text (Uthmani), translations and tafsir | [AlQuran.cloud](https://alquran.cloud) API |
+| Recitation audio | [Islamic Network CDN](https://islamic.network) |
+| Hadith text, English translation and grades | [fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api) |
+| Arabic hadith book titles (cross-checked against the above) | [AhmedBaset/hadith-json](https://github.com/AhmedBaset/hadith-json) |
+| Hisnul Muslim duas and audio | [hisnmuslim.com](https://www.hisnmuslim.com) |
+| Prayer time and Qibla calculation | [batoulapps/adhan-js](https://github.com/batoulapps/adhan-js) |
+| Cities, coordinates and timezones | [GeoNames](https://www.geonames.org), CC BY 4.0 |
+| Mosques and map tiles | © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, ODbL |
+| Gold and silver prices | [fawazahmed0/exchange-api](https://github.com/fawazahmed0/exchange-api) |
 
-There are many ways to contribute:
+## Contributing
 
-- 💻 Submit code improvements.
-- 🌐 Help translate the project (English, Arabic and French today).
-- 🐞 Report bugs.
-- 📖 Improve documentation.
-- 📢 Share the project with others.
+Contributions of every size are welcome. Some of the most useful ones aren't code:
 
-Pull Requests are always welcome — start with the **[Contributing Guide](CONTRIBUTING.md)**, which covers local setup, the pre-PR checklist, and a step-by-step recipe for adding a new tool or language.
+- **Check the religious content.** Duas, translations, rulings and explanations of the Names. Corrections with a source are gold.
+- **Translate.** A new language is mostly one folder under `locales/`. Use the [translation request](https://github.com/abdessamadbettal/falah/issues/new?template=translation.yml) template to start.
+- **Report bugs.** Wrong prayer times for your city are worth an issue, so include the city and the method you expected.
+- **Build.** Fix an issue, improve accessibility, or add a tool. The [contributing guide](CONTRIBUTING.md) covers setup, the pre-PR checklist and a step-by-step recipe for adding a new tool or language.
 
----
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md). Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
-# Sadaqah Jariyah
+<a href="https://github.com/abdessamadbettal/falah/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=abdessamadbettal/falah" alt="Falah.io contributors">
+</a>
 
-This project will always remain:
+## Support the project
 
-- ✅ Open Source
-- ✅ Privacy First (inputs stay on-device; anonymized analytics only)
-- ✅ No Ads
-- ✅ No Premium Tier
-- ✅ No Selling of Your Data
+> The Prophet ﷺ said: *"When a person dies, their deeds come to an end except for three: ongoing charity, knowledge that benefits, or a righteous child who prays for them."* (Sahih Muslim 1631)
 
-If you'd like to help cover hosting and domain costs, voluntary donations are appreciated as **Sadaqah Jariyah**.
+The project will stay free, open source, ad-free and without a premium tier. If it helps you, you can:
 
----
+- ⭐ star the repo, which helps other Muslims find it on GitHub
+- share a tool with someone who needs it
+- cover hosting and domain costs on [Ko-fi](https://ko-fi.com/abdessamadbettal)
 
-# License
+## License
 
-Licensed under the **MIT License**.
+The code is [MIT](LICENSE) licensed: use it, fork it, learn from it, ship your own version. The data in [Data sources](#data-sources-and-credits) stays under its own licenses.
 
-You are free to use, modify, distribute, and learn from this project.
-
----
-
-> **May Allah accept this effort and make it beneficial for the Ummah. Ameen.**
+<div align="center">
+<br>
+<p dir="rtl" lang="ar">رَبَّنَا تَقَبَّلْ مِنَّا ۖ إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ</p>
+<sub><i>"Our Lord, accept this from us. You are the All-Hearing, the All-Knowing."</i> (Al-Baqarah 2:127)</sub>
+</div>
