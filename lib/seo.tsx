@@ -111,6 +111,11 @@ export const siteViewport: Viewport = {
   ],
 };
 
+/** Absolute URL in its canonical form. trailingSlash is on, so that form
+ * carries the slash — a JSON-LD url without it is a 308 that Google crawls,
+ * and Search Console then reports as a redirect, on every page. */
+const abs = (locale: Locale, path = "") => `${SITE_URL}${localePath(locale, path)}/`;
+
 const APP_BASE = {
   "@type": "WebApplication",
   applicationCategory: "LifestyleApplication",
@@ -123,7 +128,7 @@ const APP_BASE = {
 
 export function toolJsonLd(locale: Locale, path: string, name: string, description: string) {
   const d = getDict(locale);
-  const home = `${SITE_URL}${localePath(locale)}`;
+  const home = abs(locale);
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -131,7 +136,7 @@ export function toolJsonLd(locale: Locale, path: string, name: string, descripti
         ...APP_BASE,
         name,
         description,
-        url: `${SITE_URL}${localePath(locale, path)}`,
+        url: abs(locale, path),
         inLanguage: locale,
         isPartOf: { "@type": "WebSite", name: "Falah.io", url: SITE_URL },
       },
@@ -140,7 +145,7 @@ export function toolJsonLd(locale: Locale, path: string, name: string, descripti
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Falah.io", item: home },
           { "@type": "ListItem", position: 2, name: d.common.nav.toolkit, item: `${home}#toolkit` },
-          { "@type": "ListItem", position: 3, name, item: `${SITE_URL}${localePath(locale, path)}` },
+          { "@type": "ListItem", position: 3, name, item: abs(locale, path) },
         ],
       },
     ],
@@ -216,7 +221,7 @@ export const ABOUT_PATH = "/about";
 
 export function aboutJsonLd(locale: Locale) {
   const d = getDict(locale);
-  const home = `${SITE_URL}${localePath(locale)}`;
+  const home = abs(locale);
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -224,7 +229,7 @@ export function aboutJsonLd(locale: Locale) {
         "@type": "AboutPage",
         name: d.about.meta.title,
         description: d.about.meta.description,
-        url: `${SITE_URL}${localePath(locale, ABOUT_PATH)}`,
+        url: abs(locale, ABOUT_PATH),
         inLanguage: locale,
         isPartOf: { "@type": "WebSite", name: "Falah.io", url: SITE_URL },
       },
@@ -232,7 +237,7 @@ export function aboutJsonLd(locale: Locale) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Falah.io", item: home },
-          { "@type": "ListItem", position: 2, name: d.common.nav.about, item: `${SITE_URL}${localePath(locale, ABOUT_PATH)}` },
+          { "@type": "ListItem", position: 2, name: d.common.nav.about, item: abs(locale, ABOUT_PATH) },
         ],
       },
     ],
@@ -258,7 +263,7 @@ export function homeJsonLd(locale: Locale) {
         ...APP_BASE,
         name: d.meta.siteTitle,
         description: d.meta.siteDescription,
-        url: `${SITE_URL}${localePath(locale)}`,
+        url: abs(locale),
         inLanguage: locale,
         featureList: Object.values(cards).map((c) => c.name),
       },
@@ -271,7 +276,7 @@ export function homeJsonLd(locale: Locale) {
           position: i + 1,
           name: cards[key].name,
           description: cards[key].description,
-          url: `${SITE_URL}${localePath(locale, TOOL_PATHS[key])}`,
+          url: abs(locale, TOOL_PATHS[key]),
         })),
       },
       {
