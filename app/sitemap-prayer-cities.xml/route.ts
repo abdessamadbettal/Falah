@@ -6,7 +6,7 @@ import { urlsetXml, xmlResponse } from "@/lib/sitemap";
 export const dynamic = "force-static";
 
 /** The indexed cities only — ~1,600 of the ~7,700 places with a timetable,
- * so ~6,400 URLs across the four locales. The rest render with `noindex` and
+ * so ~8,000 URLs across the five locales. The rest render with `noindex` and
  * stay out of here; see `indexedCities` in lib/places.ts for the cut.
  *
  * Comfortably inside the 50,000-URL and 50 MB limits a single sitemap is

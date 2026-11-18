@@ -33,6 +33,7 @@ const TRANSLATIONS = [
   { id: "ur.jalandhry", label: "Urdu - Jalandhry" },
   { id: "id.indonesian", label: "Indonesian - Kemenag" },
   { id: "fr.hamidullah", label: "French - Hamidullah" },
+  { id: "es.cortes", label: "Spanish - Julio Cortés" },
   { id: "ar.muyassar", label: "Arabic - Muyassar" },
 ];
 

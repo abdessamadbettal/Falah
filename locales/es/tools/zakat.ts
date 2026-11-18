@@ -1,0 +1,77 @@
+import type { zakat as en } from "../../en/tools/zakat";
+
+export const zakat: typeof en = {
+  meta: {
+    title: "Calculadora de zakat — el 2,5 % de tu efectivo, oro y ahorros",
+    description:
+      "Calculadora de zakat gratuita: calcula el 2,5 % que debes por tu efectivo, oro, plata, inversiones y activos comerciales según el nisab del oro o de la plata, con una guía completa. Privada, en tu navegador y sin anuncios.",
+  },
+  title: "Calculadora de zakat",
+  side: "حاسبة الزكاة",
+  intro:
+    "Suma tus bienes sujetos a zakat, compáralos con el nisab y obtén el 2,5 % que corresponde, todo calculado en tu dispositivo. Nada de lo que escribes se envía a ningún sitio.",
+  currency: "Moneda",
+  cash: "Efectivo y saldos bancarios",
+  goldGrams: "Oro (gramos)",
+  goldPrice: (c: string) => `Precio del oro por gramo (${c})`,
+  goldPriceHint: "Consulta el precio de hoy en un comercio local.",
+  silverGrams: "Plata (gramos)",
+  silverPrice: (c: string) => `Precio de la plata por gramo (${c})`,
+  liveRate: "Precio en tiempo real",
+  fetchLive: "Obtener precios en tiempo real",
+  fetching: "Obteniendo…",
+  updatedJustNow: "Actualizado ahora mismo",
+  errorFetching: "No se han podido obtener los precios en tiempo real.",
+  investments: "Inversiones y acciones",
+  investmentsHint: "Acciones, fondos y criptomonedas que mantienes para obtener beneficio.",
+  business: "Activos comerciales",
+  businessHint: "Mercancías y cuentas por cobrar.",
+  liabilities: "Deudas a corto plazo",
+  liabilitiesHint: "Deudas que vencen ahora; se restan del total.",
+  nisabBasis: "Base del nisab",
+  nisabHint: "El nisab de la plata es más bajo; muchos sabios lo prefieren para que llegue más zakat a los pobres.",
+  silverOpt: (g: number) => `Plata (${g} g)`,
+  goldOpt: (g: number) => `Oro (${g} g)`,
+  totalWealth: "Bienes sujetos a zakat",
+  nisabLabel: (basis: string) => `Nisab (${basis})`,
+  basisNames: { gold: "oro", silver: "plata" },
+  due: "Zakat a pagar (2,5 %)",
+  belowNisab: "Tus bienes están por debajo del nisab: no debes pagar zakat. La caridad voluntaria (sadaqah) siempre tiene recompensa.",
+  reset: "Restablecer",
+  saveLog: "Guardar en el historial anual",
+  exportSummary: "Exportar / imprimir resumen",
+  historyHeading: "Registro anual de zakat",
+  noHistory: "Aún no hay registros anuales de zakat guardados.",
+  clearHistory: "Borrar historial",
+  savedSuccess: "¡Guardado en el historial!",
+  yearLabel: "Año / etiqueta",
+  nisabProgress: "Progreso hacia el nisab",
+  assetsHeading: "Tus bienes",
+  deductionsHeading: "Deducciones y nisab",
+  disclaimer:
+    "El zakat es obligatorio tras un año lunar (hawl) por encima del nisab. Esta calculadora cubre los casos habituales; para patrimonios complejos, consulta a un sabio cualificado.",
+  faqEyebrow: "Preguntas frecuentes sobre el zakat",
+  faqH2: "Preguntas habituales sobre el zakat",
+  faq: [
+    {
+      q: "¿Cuánto zakat tengo que pagar?",
+      a: "El zakat es el 2,5 % (una cuadragésima parte) del total de tus bienes sujetos a zakat, una vez que han permanecido por encima del nisab durante un año lunar completo.",
+    },
+    {
+      q: "¿Tengo que pagar zakat por mi sueldo?",
+      a: "No por los ingresos a medida que los ganas, sino por los ahorros que aún conservas cuando se cumple tu año de zakat. Lo que gastas o das durante el año no cuenta: solo lo que queda por encima del nisab.",
+    },
+    {
+      q: "¿Hay que pagar zakat por las joyas de oro que llevo?",
+      a: "Los sabios difieren. Muchos sostienen que el oro y la plata siempre están sujetos a zakat, aunque se lleven puestos; otros eximen las joyas de uso habitual. Sigue la postura de un sabio de tu confianza.",
+    },
+    {
+      q: "¿Uso el nisab del oro o el de la plata?",
+      a: "Ambos son válidos, pero el nisab de la plata es más bajo, así que con él se debe zakat a partir de un patrimonio menor, lo que beneficia a los pobres. Esta calculadora te permite elegir.",
+    },
+    {
+      q: "¿Tengo que restar mis deudas?",
+      a: "Sí: las deudas inmediatas a corto plazo que vencen ahora se restan antes de comparar con el nisab. Las deudas a largo plazo, como una hipoteca, normalmente no se deducen por completo; consulta a un sabio sobre tu caso.",
+    },
+  ],
+};

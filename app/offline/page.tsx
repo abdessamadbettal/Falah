@@ -28,6 +28,11 @@ const COPY = {
     body: "Periksa koneksi internet Anda, lalu coba lagi.",
     retry: "Coba lagi",
   },
+  es: {
+    title: "No tienes conexión",
+    body: "Comprueba tu conexión a internet y vuelve a intentarlo.",
+    retry: "Reintentar",
+  },
 } as const;
 
 function isCopyLocale(value: string): value is keyof typeof COPY {

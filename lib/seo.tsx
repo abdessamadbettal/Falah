@@ -7,6 +7,7 @@ const OG_LOCALES: Record<Locale, string> = {
   ar: "ar_MA",
   fr: "fr_FR",
   id: "id_ID",
+  es: "es_ES",
 };
 
 /** Whether a page belongs in Google's index, and which locales it is

@@ -1,0 +1,33 @@
+import type { common as en } from "../en/common";
+
+export const common: typeof en = {
+  nav: { toolkit: "Herramientas", principles: "Principios", contribute: "Colaborar", about: "Acerca de" },
+  allTools: "Todas las herramientas",
+  skipToContent: "Saltar al contenido",
+  themeToLight: "Cambiar al modo claro",
+  themeToDark: "Cambiar al modo oscuro",
+  githubAria: "Falah.io en GitHub",
+  langAria: "Cambiar de idioma",
+  tagline: "Tu guía diaria para la adoración y el éxito",
+  footerDua: "Plataforma islámica de código abierto",
+  mit: "Licencia MIT",
+  clientSide: "100 % en tu navegador",
+  loading: "Cargando…",
+  latitude: "Latitud",
+  longitude: "Longitud",
+  latPh: "p. ej., 40.4168",
+  lngPh: "p. ej., -3.7038",
+  useMyLocation: "Usar mi ubicación",
+  myLocation: "Mi ubicación",
+  locating: "Buscando tu ubicación…",
+  savedLocation: "Usando tu ubicación guardada",
+  clear: "Borrar",
+  offline: "No tienes conexión",
+  offlineNote:
+    "No tienes conexión, así que no se puede detectar tu ubicación. Elige una ciudad: se guardará para la próxima vez.",
+  geoUnavailable: "La geolocalización no está disponible en este navegador. Introduce las coordenadas abajo.",
+  geoDenied: "Se ha denegado el acceso a la ubicación. Introduce las coordenadas a mano: no salen de este dispositivo.",
+  searchCityPh: "Busca tu ciudad…",
+  searching: "Buscando…",
+  noCityMatch: "No se ha encontrado ninguna ciudad. Prueba con otra grafía.",
+};

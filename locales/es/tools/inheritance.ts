@@ -1,0 +1,78 @@
+import type { inheritance as en } from "../../en/tools/inheritance";
+
+export const inheritance: typeof en = {
+  meta: {
+    title: "Calculadora de herencias islámica (fara'id) — cuotas coránicas",
+    description:
+      "Calculadora de herencias islámica gratuita: reparte un patrimonio según las cuotas fijas del Corán (fara'id), con 'awl y radd, y una guía clara de cómo funcionan los fara'id. Fracciones exactas, privada y en tu navegador.",
+  },
+  title: "Calculadora de herencias",
+  side: "حاسبة الفرائض",
+  intro:
+    "Reparto de un patrimonio entre los herederos más habituales según las cuotas fijas de la sura An-Nisa, con los ajustes de 'awl y radd. Todo se calcula en tu dispositivo.",
+  estate: "Valor neto del patrimonio",
+  estateHint: "Una vez descontados los gastos del funeral, las deudas y cualquier legado (wasiyyah, como máximo un tercio).",
+  spouse: "Cónyuge",
+  husband: "Esposo",
+  wivesLabel: "Esposas",
+  descendants: "Descendientes",
+  sonsLabel: "Hijos",
+  daughtersLabel: "Hijas",
+  ascendants: "Ascendientes",
+  father: "Padre",
+  mother: "Madre",
+  grandfather: "Abuelo",
+  grandmother: "Abuela",
+  siblings: "Hermanos de padre y madre",
+  brothersLabel: "Hermanos",
+  sistersLabel: "Hermanas",
+  heir: "Heredero",
+  share: "Cuota",
+  amount: "Importe",
+  each: (f: string) => `(${f} por persona)`,
+  selectPrompt: "Selecciona los herederos supervivientes para ver el reparto.",
+  hWife: "Esposa",
+  hWives: (n: number) => `Esposas (${n}, en conjunto)`,
+  hSon: "Hijo",
+  hSons: (n: number) => `Hijos (${n}, en conjunto)`,
+  hDaughter: "Hija",
+  hDaughters: (n: number) => `Hijas (${n}, en conjunto)`,
+  hBrother: "Hermano de padre y madre",
+  hBrothers: (n: number) => `Hermanos de padre y madre (${n}, en conjunto)`,
+  hSister: "Hermana de padre y madre",
+  hSisters: (n: number) => `Hermanas de padre y madre (${n}, en conjunto)`,
+  hGrandfather: "Abuelo (en lugar del padre)",
+  noteBlocked: "Aquí los hermanos y hermanas quedan excluidos (los bloquea un hijo, el padre o el abuelo).",
+  note411: "Los hijos y las hijas se reparten el remanente, y cada hijo recibe el doble que cada hija (Corán 4:11).",
+  noteFatherResidue: (label: string) => `${label} recibe 1/6 más el remanente (cuando solo hay hijas).`,
+  noteAwl: (f: string) => `Las cuotas fijas superaban el total (${f}), así que todas se redujeron proporcionalmente ('awl).`,
+  noteRadd: "El remanente se devolvió proporcionalmente a los herederos consanguíneos con cuota fija (radd).",
+  noteRaddSpouse: "Al no haber otros herederos, el remanente se devolvió al cónyuge.",
+  noteBaytAlMal: "Sin ninguno de los herederos de la lista, el patrimonio pasa al tesoro público (bayt al-mal).",
+  disclaimer:
+    "Cubre los herederos habituales y las reglas suníes estándar ('awl, radd, hijb). Los casos menos frecuentes —medio hermanos por parte de padre o de madre, nietos de un hijo fallecido, varias abuelas— requieren un sabio cualificado. Verifícalo siempre antes de repartir una herencia real.",
+  faqEyebrow: "Preguntas frecuentes sobre herencias",
+  faqH2: "Preguntas habituales sobre los fara'id",
+  faq: [
+    {
+      q: "¿De verdad un hijo hereda el doble que una hija?",
+      a: "Dentro de la misma clase de herederos, sí, pero va ligado a la responsabilidad: el hombre debe pagar la dote y mantener económicamente a la familia, mientras que la mujer conserva su parte íntegramente para sí.",
+    },
+    {
+      q: "¿Puedo dejar mis bienes a quien quiera en un testamento?",
+      a: "Puedes legar hasta un tercio de tu patrimonio a personas que no sean ya herederos con cuota fija. Los otros dos tercios deben seguir las cuotas coránicas, y un testamento no puede privar de su parte a un heredero legítimo.",
+    },
+    {
+      q: "¿Heredan las hijas si no hay hijos varones?",
+      a: "Sí. Una sola hija recibe 1/2 y dos o más se reparten 2/3, junto con otros herederos con derecho, como los padres y el cónyuge.",
+    },
+    {
+      q: "¿Y si las cuotas no suman exactamente el total?",
+      a: "Si superan el patrimonio, todas las cuotas se reducen proporcionalmente ('awl). Si no llegan y no hay heredero residual, el excedente se devuelve a los herederos con cuota fija (radd). La calculadora aplica ambos ajustes automáticamente.",
+    },
+    {
+      q: "¿Sustituye esto a un sabio?",
+      a: "No. Cubre con precisión los casos habituales, pero las herencias reales pueden incluir herederos menos frecuentes y disputas. Confírmalo siempre con un sabio cualificado o un tribunal islámico antes de repartir una herencia real.",
+    },
+  ],
+};

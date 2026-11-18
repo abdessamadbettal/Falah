@@ -37,6 +37,7 @@ export default function NamesOfAllahClient({ children }: { children?: React.Reac
       n.meaning.toLowerCase().includes(q) ||
       n.meaningFr.toLowerCase().includes(q) ||
       n.meaningId.toLowerCase().includes(q) ||
+      n.meaningEs.toLowerCase().includes(q) ||
       n.meaningAr.includes(query.trim()) ||
       n.explanation.toLowerCase().includes(q) ||
       n.arabic.includes(query.trim()),
