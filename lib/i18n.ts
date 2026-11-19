@@ -2,12 +2,13 @@ import { en } from "@/locales/en";
 import { ar } from "@/locales/ar";
 import { fr } from "@/locales/fr";
 import { id } from "@/locales/id";
+import { es } from "@/locales/es";
 
-export const locales = ["en", "ar", "fr", "id"] as const;
+export const locales = ["en", "ar", "fr", "id", "es"] as const;
 export type Locale = (typeof locales)[number];
 export type Dict = typeof en;
 
-const dicts: Record<Locale, Dict> = { en, ar, fr, id };
+const dicts: Record<Locale, Dict> = { en, ar, fr, id, es };
 
 export function getDict(locale: string): Dict {
   return dicts[(isLocale(locale) ? locale : "en") as Locale];

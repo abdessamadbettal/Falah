@@ -9,7 +9,7 @@
  * and each carries its own heading, prose and navigation.
  *
  * Only the surah and juz views are indexed. The 60 hizb and 604 mushaf pages
- * re-cut verses the surah pages already carry — ~2,600 URLs across the four
+ * re-cut verses the surah pages already carry — ~3,300 URLs across the five
  * locales of text Google already has — so they render with `noindex, follow`
  * and stay out of the sitemap. */
 
@@ -96,7 +96,9 @@ export function surahName(locale: Locale, s: SurahMeta): string {
  * "La Caverne". It is what people actually search for — "sourate la
  * caverne" — so it has to be translated, never left in English. */
 export function surahMeaning(locale: Locale, s: SurahMeta): string {
-  return locale === "fr" ? s.meaningFr : s.meaning;
+  if (locale === "fr") return s.meaningFr;
+  if (locale === "es") return s.meaningEs;
+  return s.meaning;
 }
 
 export function juzName(locale: Locale, n: number): string {
@@ -132,6 +134,7 @@ const LIST_JOIN: Record<Locale, { comma: string; tail: string }> = {
   ar: { comma: "، ", tail: " و" },
   fr: { comma: ", ", tail: " et " },
   id: { comma: ", ", tail: " dan " },
+  es: { comma: ", ", tail: " y " },
 };
 
 function joinNames(locale: Locale, names: string[]): string {
@@ -145,6 +148,7 @@ const BOOK_NAME: Record<Locale, string> = {
   ar: "القرآن الكريم",
   fr: "Le Saint Coran",
   id: "Al-Qur'an",
+  es: "El Sagrado Corán",
 };
 
 /** trailingSlash is on, so the canonical form carries the slash. Structured

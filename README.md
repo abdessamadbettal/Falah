@@ -38,7 +38,7 @@ The project is free to use, free to fork, and will stay that way.
 
 - **Runs in your browser.** There is no Falah backend and no database. Prayer times, Qibla, Hijri dates, Zakat and inheritance are all computed on your device.
 - **Works offline.** It's an installable PWA. Prayer times keep working once your location is saved.
-- **Four languages.** [English](https://falah.io/en/), [العربية](https://falah.io/ar/) with a full right-to-left layout, [Français](https://falah.io/fr/) and [Bahasa Indonesia](https://falah.io/id/).
+- **Five languages.** [English](https://falah.io/en/), [العربية](https://falah.io/ar/) with a full right-to-left layout, [Français](https://falah.io/fr/), [Bahasa Indonesia](https://falah.io/id/) and [Español](https://falah.io/es/).
 - **Sources are cited.** Every text and dataset is credited [below](#data-sources-and-credits), so you can check it.
 
 ## The tools
@@ -150,7 +150,7 @@ The first `npm run dev` takes a few minutes. A pre-step downloads the Quran, had
 | `npm run lint` | ESLint |
 | `npx tsc --noEmit` | Type check (CI runs this with lint and build) |
 
-> **Heads-up:** a full `npm run build` prerenders tens of thousands of pages (every surah, hadith book, country and city in four languages). Expect it to take a while and to need several GB of free disk.
+> **Heads-up:** a full `npm run build` prerenders tens of thousands of pages (every surah, hadith book, country and city in five languages). Expect it to take a while and to need several GB of free disk.
 
 **Environment variables** (both optional):
 
@@ -172,7 +172,7 @@ The first `npm run dev` takes a few minutes. A pre-step downloads the Quran, had
 
 ```text
 app/
-  [locale]/          one route tree for /en, /ar, /fr and /id; each tool is page.tsx + client.tsx
+  [locale]/          one route tree for /en, /ar, /fr, /id and /es; each tool is page.tsx + client.tsx
   (redirect)/        "/" picks your language; old unprefixed URLs forward to /en
   sitemap-*.xml/     split sitemaps: site, prayer countries and cities, names, quran, hadith
 components/          shared UI, one component per file under ui/

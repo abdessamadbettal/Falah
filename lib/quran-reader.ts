@@ -91,6 +91,7 @@ export const TRANSLATIONS = [
   { id: "en.transliteration", name: "Transliteration" },
   { id: "fr.hamidullah", name: "Hamidullah · FR" },
   { id: "id.indonesian", name: "Bahasa Indonesia · ID" },
+  { id: "es.cortes", name: "Julio Cortés · ES" },
   { id: "ar.muyassar", name: "التفسير الميسّر · AR" },
 ];
 
